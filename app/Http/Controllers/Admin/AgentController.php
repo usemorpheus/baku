@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Components\Agent;
 use Merlion\Components\Button;
+use Merlion\Components\Card;
+use Merlion\Components\Flex;
 use Merlion\Components\Form\Errors;
 use Merlion\Components\Form\Fields\Text;
 use Merlion\Components\Form\Fields\Textarea;
 use Merlion\Components\Form\Form;
-use Merlion\Components\Layouts\Card;
-use Merlion\Components\Layouts\Flex;
 
 class AgentController
 {

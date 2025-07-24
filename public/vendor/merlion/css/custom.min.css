@@ -1,4 +1,17 @@
-/*# sourceMappingURL=custom.min.css.map */
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+.btn-xs {
+    font-size: .62rem;
+    padding: .12rem .28rem
+}
+
+.hidden {
+    display: none !important;
+}
+
 .input-group {
     width: unset;
 }
@@ -124,5 +137,6 @@ p, .pagination {
     max-height: 384px;
 }
 
-
-
+.w-full {
+    width: 100%;
+}

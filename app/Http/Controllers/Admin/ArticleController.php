@@ -27,14 +27,15 @@ class ArticleController extends CrudController
                 'create',
             ],
             'fields'  => [
-                'title',
                 [
-                    'name'       => 'content',
-                    'type'       => 'textarea',
-                    'rows'       => 10,
-                    'attributes' => [
-                        'class' => 'w-100',
-                    ],
+                    'name'  => 'title',
+                    'rules' => 'required|min:10|max:12',
+                ],
+                [
+                    'name' => 'content',
+                    'type' => 'textarea',
+                    'full' => true,
+                    'rows' => 10,
                 ],
             ],
         ];
