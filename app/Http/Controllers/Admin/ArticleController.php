@@ -14,22 +14,22 @@ class ArticleController extends CrudController
     protected function entities()
     {
         return [
-            'actions' => ['view'],
-            'columns' => [
+            'actions'    => ['view'],
+            'columns'    => [
                 'title',
                 'created_at',
             ],
-            'filters' => [
+            'filters'    => [
                 'title',
             ],
-            'sorts'   => ['title', 'created_at'],
-            'tools'   => [
+            'sorts'      => ['title', 'created_at'],
+            'tools'      => [
                 'create',
             ],
-            'fields'  => [
+            'fields'     => [
                 [
                     'name'  => 'title',
-                    'rules' => 'required|min:10|max:12',
+                    'rules' => 'required|max:150',
                 ],
                 [
                     'name' => 'content',
@@ -37,6 +37,9 @@ class ArticleController extends CrudController
                     'full' => true,
                     'rows' => 10,
                 ],
+            ],
+            'displayers' => [
+                'title',
             ],
         ];
     }
