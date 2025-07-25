@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\ArticleController;
-use Merlion\Components\Pages\Home;
+use App\Models\Article;
 
 Route::group([
     'prefix'     => 'admin',
@@ -12,8 +12,42 @@ Route::group([
     admin('admin')->routes();
     Route::group(['middleware' => 'merlion_auth'], function () {
         Route::get('/', function () {
-            \Illuminate\Support\Facades\Log::debug('1');
-            return admin()->content(Home::make())->render();
+            $json  = [
+                'title'   => 'Dashboard',
+                'back'    => 'admin/agents',
+                'content' => [
+                    [
+                        'type'       => 'flex',
+                        'gap'        => 1,
+                        'alignItems' => 'end',
+                        'content'    => [
+                            [
+                                'type'    => 'button',
+                                'label'   => 'Button 1',
+                                'primary' => true,
+                                'icon'    => 'ri-add-line',
+                            ],
+                            [
+                                'type'   => 'button',
+                                'label'  => 'Button 2',
+                                'danger' => '',
+                                'icon'   => 'ri-add-line',
+                            ],
+                        ],
+                    ],
+                    [
+                        'type'    => 'table',
+                        'columns' => [
+                            'id',
+                            'title',
+                            'created_at',
+                        ],
+                        'rows'    => Article::all(),
+                    ],
+                ],
+            ];
+            $admin = \Merlion\PageBuilder::build('admin', $json);
+            return $admin->render();
         })->name('home');
         Route::resource('articles', ArticleController::class);
         Route::delete('articles/{article}', [ArticleController::class, 'destroy'])->name('articles.delete');

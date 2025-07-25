@@ -10,7 +10,7 @@ use Merlion\Components\Renderable;
  */
 class Agent extends Renderable
 {
-    protected string $view = 'components.agent';
+    public $view = 'components.agent';
 
     public mixed $name = '';
     public mixed $description = '';

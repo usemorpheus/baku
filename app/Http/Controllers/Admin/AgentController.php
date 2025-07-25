@@ -21,11 +21,11 @@ class AgentController extends CrudController
         foreach (\App\Models\Agent::all() as $agent) {
             $agents->content(Agent::make()->model($agent));
         }
-        admin()->section(Admin::SECTION_HEADER_RIGHT, [
+        admin()->content(
             Button::make()
                 ->icon('ti ti-plus icon')
                 ->primary()->link(admin()->route('agents.create'))->label(__('merlion::base.create')),
-        ]);
+            Admin::POSITION_HEADER_RIGHT);
         return admin()->title(__('agent.label_plural'))->content($agents)->render();
     }
 
