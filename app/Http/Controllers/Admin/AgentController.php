@@ -4,48 +4,46 @@ namespace App\Http\Controllers\Admin;
 
 use App\Components\Agent;
 use Merlion\Components\Button;
-use Merlion\Components\Card;
 use Merlion\Components\Flex;
-use Merlion\Components\Form\Errors;
 use Merlion\Components\Form\Fields\Text;
-use Merlion\Components\Form\Fields\Textarea;
-use Merlion\Components\Form\Form;
+use Merlion\Components\Layouts\Admin;
+use Merlion\Http\Controllers\CrudController;
 
-class AgentController
+class AgentController extends CrudController
 {
+    protected string $model = \App\Models\Agent::class;
+    protected string $route = 'agents';
+    protected string $lang = 'agent';
+
     public function index()
     {
         $agents = Flex::make()->wrap()->gap(3);
         foreach (\App\Models\Agent::all() as $agent) {
             $agents->content(Agent::make()->model($agent));
         }
-
+        admin()->section(Admin::SECTION_HEADER_RIGHT, [
+            Button::make()
+                ->icon('ti ti-plus icon')
+                ->primary()->link(admin()->route('agents.create'))->label(__('merlion::base.create')),
+        ]);
         return admin()->title(__('agent.label_plural'))->content($agents)->render();
     }
 
-    public function edit(\App\Models\Agent $agent)
+    protected function schemas()
     {
-        admin()->title(__('merlion::base.edit') . ' ' . $agent->name)
-            ->back(admin()->route('agents.index'));
-        $card = Card::make();
-        $card->body(Flex::make([
-            Errors::make(),
-            Text::make(name: "name", label: __('agent.name'))->value($agent->name),
-            Text::make(name: "description", label: "描述")->value($agent->description),
-            Textarea::make(name: "prompt", label: "提示词")->rows(5)->value($agent->prompt),
-        ])->wrap()->column()->gap(3));
-        $card->footer(Button::make()->primary()->label(__('merlion::base.save')));
-        $form = Form::make($card)->put(admin()->route('agents.update', $agent));
-        return admin()->content($form)->render();
-    }
-
-    public function update(\App\Models\Agent $agent)
-    {
-        request()->validate([
-            'name' => 'required|min:2|max:100',
-        ]);
-        $agent->update(request()->all());
-        admin()->success('Agent updated');
-        return back();
+        return [
+            'fields' => [
+                Text::make(name: 'name')->label(__('agent.name')),
+                [
+                    'name'        => 'description',
+                    'type'        => 'textarea',
+                    'placeholder' => '输入简短描述',
+                    'rows'        => function () {
+                        return 10;
+                    },
+                    'full'        => true,
+                ],
+            ],
+        ];
     }
 }

@@ -53,7 +53,6 @@ class Merlion {
     }
 
     initActionButton() {
-        console.log('initactionbutton');
         $('[data-action]').on('click', async function (event) {
             let confirm_message = $(this).data('confirm');
 

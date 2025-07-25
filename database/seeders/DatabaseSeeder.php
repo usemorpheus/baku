@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AdminUser;
 use App\Models\Agent;
 use App\Models\Article;
 use App\Models\User;
@@ -11,6 +12,12 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+
+        AdminUser::factory()->create([
+            'username' => 'root',
+            'name'     => 'Admin User',
+        ]);
+
         User::factory()->create([
             'name'  => 'Test User',
             'email' => 'test@example.com',
