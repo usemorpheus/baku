@@ -12,17 +12,6 @@ class AdminServiceProvider extends ServiceProvider
     public function boot(): void
     {
         admin()->serving(function () {
-            admin()->scripts(<<<TAWK
-var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-    (function () {
-        var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-        s1.async = true;
-        s1.src = 'https://embed.tawk.to/68831b632f66bc191640cb7f/1j1025vec';
-        s1.setAttribute('crossorigin', '*');
-        s0.parentNode.insertBefore(s1, s0);
-    })();
-TAWK
-            );
             Pages\Login::$username      = 'username';
             Pages\Login::$usernameLabel = 'Username';
 

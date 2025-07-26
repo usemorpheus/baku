@@ -67,6 +67,14 @@ p, .pagination {
     max-width: 24px;
 }
 
+.maxw-32px {
+    max-width: 32px;
+}
+
+.maxw-36px {
+    max-width: 36px;
+}
+
 .maxw-48px {
     max-width: 48px;
 }
@@ -86,7 +94,6 @@ p, .pagination {
 .maxw-384px {
     max-width: 384px;
 }
-
 
 .minh-12px {
     min-height: 12px;
@@ -122,6 +129,18 @@ p, .pagination {
 
 .maxh-24px {
     max-height: 24px;
+}
+
+.maxh-32px {
+    max-height: 32px;
+}
+
+.maxh-36px {
+    max-height: 36px;
+}
+
+.maxh-40px {
+    max-height: 40px;
 }
 
 .maxh-48px {
