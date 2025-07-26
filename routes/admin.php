@@ -12,33 +12,21 @@ Route::group([
     admin('admin')->routes();
     Route::group(['middleware' => 'merlion_auth'], function () {
         Route::get('/', function () {
-            $form = Form::make()->flex()->wrap()->gap(3);
+            $form = Form::make()
+                ->flex()->wrap()->gap(3)->alignItems('end')
+                ->model(['name' => 'Alex']);
             $form->fields([
                 \Merlion\Components\Form\Fields\Text::make()->name('name')->label('Name'),
-                \Merlion\Components\Form\Fields\Space::make()->class('w-full'),
                 \Merlion\Components\Form\Fields\File::make()->name('image')->label('Image'),
+                \Merlion\Components\Form\Fields\Button::make(icon: 'ri-add-line', color: "primary",
+                    label: "Search"),
             ]);
             return admin()->content($form)->render();
-
-            $json    = [
-                'type'       => 'flex',
-                'gap'        => 1,
-                'column'     => true,
-                'alignItems' => 'start',
-                'content'    => [
-                    'type'    => 'form',
-                    'content' => [
-                        [
-                            'type'  => 'fields.text',
-                            'name'  => 'name',
-                            'label' => '姓名',
-                        ],
-                    ],
-                ],
-            ];
-            $content = \Merlion\PageBuilder::build($json);
-            return admin()->content($content)->render();
         })->name('home');
+
+        Route::post('/', function () {
+            return request()->all();
+        });
         Route::resource('articles', ArticleController::class);
         Route::delete('articles/{article}', [ArticleController::class, 'destroy'])->name('articles.delete');
         Route::resource('agents', AgentController::class);
