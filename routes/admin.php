@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\ArticleController;
-use App\Models\Article;
+use Merlion\Components\Form\Form;
 
 Route::group([
     'prefix'     => 'admin',
@@ -12,42 +12,32 @@ Route::group([
     admin('admin')->routes();
     Route::group(['middleware' => 'merlion_auth'], function () {
         Route::get('/', function () {
-            $json  = [
-                'title'   => 'Dashboard',
-                'back'    => 'admin/agents',
-                'content' => [
-                    [
-                        'type'       => 'flex',
-                        'gap'        => 1,
-                        'alignItems' => 'end',
-                        'content'    => [
-                            [
-                                'type'    => 'button',
-                                'label'   => 'Button 1',
-                                'primary' => true,
-                                'icon'    => 'ri-add-line',
-                            ],
-                            [
-                                'type'   => 'button',
-                                'label'  => 'Button 2',
-                                'danger' => '',
-                                'icon'   => 'ri-add-line',
-                            ],
+            $form = Form::make()->flex()->wrap()->gap(3);
+            $form->fields([
+                \Merlion\Components\Form\Fields\Text::make()->name('name')->label('Name'),
+                \Merlion\Components\Form\Fields\Space::make()->class('w-full'),
+                \Merlion\Components\Form\Fields\File::make()->name('image')->label('Image'),
+            ]);
+            return admin()->content($form)->render();
+
+            $json    = [
+                'type'       => 'flex',
+                'gap'        => 1,
+                'column'     => true,
+                'alignItems' => 'start',
+                'content'    => [
+                    'type'    => 'form',
+                    'content' => [
+                        [
+                            'type'  => 'fields.text',
+                            'name'  => 'name',
+                            'label' => '姓名',
                         ],
-                    ],
-                    [
-                        'type'    => 'table',
-                        'columns' => [
-                            'id',
-                            'title',
-                            'created_at',
-                        ],
-                        'rows'    => Article::all(),
                     ],
                 ],
             ];
-            $admin = \Merlion\PageBuilder::build('admin', $json);
-            return $admin->render();
+            $content = \Merlion\PageBuilder::build($json);
+            return admin()->content($content)->render();
         })->name('home');
         Route::resource('articles', ArticleController::class);
         Route::delete('articles/{article}', [ArticleController::class, 'destroy'])->name('articles.delete');

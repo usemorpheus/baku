@@ -12,7 +12,7 @@ class AdminServiceProvider extends ServiceProvider
     public function boot(): void
     {
         admin()->serving(function () {
-            admin()->script(<<<TAWK
+            admin()->scripts(<<<TAWK
 var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
     (function () {
         var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
@@ -22,7 +22,7 @@ var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
         s0.parentNode.insertBefore(s1, s0);
     })();
 TAWK
-);
+            );
             Pages\Login::$username      = 'username';
             Pages\Login::$usernameLabel = 'Username';
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Components\Agent;
 use Merlion\Components\Button;
-use Merlion\Components\Flex;
+use Merlion\Components\Container\Flex;
 use Merlion\Components\Form\Fields\Text;
 use Merlion\Components\Layouts\Admin;
 use Merlion\Http\Controllers\CrudController;

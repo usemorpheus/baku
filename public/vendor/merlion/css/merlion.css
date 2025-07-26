@@ -144,10 +144,6 @@ p, .pagination {
     max-height: 384px;
 }
 
-.w-full {
-    width: 100%;
-}
-
 .auto-width {
     width: 1%;
     white-space: nowrap;
