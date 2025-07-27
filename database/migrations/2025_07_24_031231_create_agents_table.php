@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('agents', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
+            $table->string('code')->unique();
             $table->string('description')->nullable();
             $table->string('image')->nullable();
             $table->string('status')->nullable();

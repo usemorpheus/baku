@@ -17,6 +17,8 @@ return new class extends Migration {
             $table->foreignId('user_id')->nullable();
             $table->string('channel')->nullable();
             $table->string('channel_id')->nullable();
+            $table->string('channel_user')->nullable();
+            $table->string('fast_chat_id')->nullable();
             $table->text('settings')->nullable();
             $table->timestamps();
         });

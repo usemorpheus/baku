@@ -2,9 +2,9 @@
     $agent = $self->getModel();
 @endphp
 
-<div class="card maxw-384px minw-144px">
+<div class="card h-100">
     <div class="card-body">
-        <div class="row g-2 align-items-center">
+        <div class="row g-2 align-items-start">
             <div class="col-auto">
                 <span class="avatar avatar-lg overflow-hidden">
                     <img src="{{$agent->image}}" alt="">
@@ -17,7 +17,7 @@
                         {{$agent->name}}
                     </a>
                 </h4>
-                <div class="text-secondary maxh-36px overflow-hidden">{{$agent->description}}</div>
+                <div class="text-secondary">{{$agent->description}}</div>
             </div>
             <div class="col-auto">
                 <div class="dropdown">

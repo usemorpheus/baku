@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Components\Agent;
 use Merlion\Components\Button;
+use Merlion\Components\Container\Card;
 use Merlion\Components\Container\Flex;
+use Merlion\Components\Container\Row;
+use Merlion\Components\Icon;
 use Merlion\Components\Layouts\Admin;
+use Merlion\Components\Text;
 use Merlion\Http\Controllers\CrudController;
 
 class AgentController extends CrudController
@@ -16,9 +19,19 @@ class AgentController extends CrudController
 
     public function index()
     {
-        $agents = Flex::make()->wrap()->gap(3);
+        $agents = Row::make()->gap();
         foreach (\App\Models\Agent::all() as $agent) {
-            $agents->content(Agent::make()->model($agent));
+            $card = Card::make()
+                ->header(Flex::make()->gap(1)
+                    ->content([
+                        Icon::make()->image($agent->image)->class('rounded maxh-36px shadow bg-lime-lt'),
+                        Flex::make()->column()->gap(1)->content([
+                            Text::make()->h3()->content($agent->name)->class('mb-0'),
+                            '<span><i class="ri-checkbox-blank-circle-fill text-success"></i> Online</span>',
+                        ]),
+                    ]))
+                ->body($agent->description);
+            $agents->column($card, 'col-lg-4 col-sm-6 col-12');
         }
         admin()->content(
             Button::make()
