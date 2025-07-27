@@ -398,7 +398,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="{{asset('js/gsap.min.js')}}"></script>
 <script src="{{asset('js/ScrollTrigger.min.js')}}"></script>
-<script @cspNonce">
+<script @cspNonce>
     $(function () {
         gsap.registerPlugin(ScrollTrigger);
 
