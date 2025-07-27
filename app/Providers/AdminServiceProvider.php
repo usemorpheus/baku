@@ -25,7 +25,7 @@ class AdminServiceProvider extends ServiceProvider
             admin()->brandLogo(asset('/images/logo.png'));
             admin()
                 ->menus([
-                    Menu::make(label: 'Dashboard', link: '/admin', icon: 'ti ti-home fs-2'),
+                    Menu::make(label: __('base.dashboard'), link: '/admin', icon: 'ti ti-home fs-2'),
                     Menu::make(label: __('agent.label_plural'), link: admin()->route('agents.index'),
                         icon: 'ti ti-robot-face fs-2'),
                     Menu::make(label: 'Chats', link: admin()->route('agents.index'),

@@ -28,5 +28,12 @@ class DatabaseSeeder extends Seeder
             'url'         => 'https://play.baku.builders/api',
             'api_key'     => 'fastgpt-yRjWPjTBE7iTcgp6emPT9la5mCyxF4Eu5GjlP8cMRp0gO0ks1GNA',
         ]);
+
+        Agent::factory()->create([
+            'name'        => '1V1记者galin版',
+            'description' => '1V1记者',
+            'url'         => 'https://play.baku.builders/api',
+            'api_key'     => 'fastgpt-q72uqkuPfpHHSAgf9EAn8axWWMgrxIv9YbYxUoGODjGzaQccTd3ojPUzYH',
+        ]);
     }
 }
