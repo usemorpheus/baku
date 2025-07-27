@@ -37,6 +37,7 @@ class TelegramController
         if (empty($message)) {
             return 'ok';
         }
+        Log::debug($message);
         $text = $message->text;
         if (empty($text)) {
             return 'ok';
