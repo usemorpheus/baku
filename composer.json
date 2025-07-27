@@ -7,7 +7,8 @@
         "laravel/tinker": "^2.10.1",
         "prism-php/prism": "^0.81.0",
         "prism-php/relay": "^1.2",
-        "singapura/merlion": "*"
+        "singapura/merlion": "*",
+        "spatie/laravel-csp": "^3.13"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",

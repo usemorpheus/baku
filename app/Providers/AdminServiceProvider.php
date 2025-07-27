@@ -21,6 +21,8 @@ class AdminServiceProvider extends ServiceProvider
                 admin()->title("Home");
                 $this->content(Button::make()->primary()->xs()->label('View'));
             });
+            admin()->cspNonce(app('csp-nonce'));
+            admin()->brandLogo(asset('/images/logo.png'));
             admin()
                 ->menus([
                     Menu::make(label: 'Dashboard', link: '/admin', icon: 'ti ti-home fs-2'),

@@ -33,7 +33,7 @@ Route::group([
                     label: __('merlion::base.save')
                 ),
             ]);
-            $card->body([Errors::make(), $form]);
+            $card->body($form);
             return admin()->content($card)->render();
         })->name('home');
         Route::post('/', function () {

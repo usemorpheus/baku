@@ -32,7 +32,12 @@ class AgentController extends CrudController
     {
         return [
             'fields' => [
-                'name',
+                [
+                    'name'     => 'name',
+                    'required' => true,
+                    'style'    => 'min-width: 288px;',
+                    'rules'    => 'required|min:3|max:100',
+                ],
                 'url',
                 'api_key',
                 [

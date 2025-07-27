@@ -6,7 +6,9 @@
     <div class="card-body">
         <div class="row g-2 align-items-center">
             <div class="col-auto">
-                <span class="avatar avatar-lg" style="background-image: url('{{$agent->image}}')"> </span>
+                <span class="avatar avatar-lg overflow-hidden">
+                    <img src="{{$agent->image}}" alt="">
+                </span>
             </div>
             <div class="col ps-2">
                 <h4 class="card-title mb-1">
