@@ -50,6 +50,10 @@ class TelegramController
                 ->where('channel_user', $message->getFrom()->id)
                 ->first();
 
+            if (empty($fast_chat)) {
+                $text = '我的昵称是:' . $message->getFrom()->last_name . ' ' . $message->getFrom()->first_name . "\n" . $message;
+            }
+
             $fast_gpt         = new FastGPT($agent->url, $agent->api_key);
             $response         = $fast_gpt->send($text, $fast_chat?->fast_chat_id, $chat->username);
             $response_message = $response['choices'][0]['message']['content'] ?? 'error';
