@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->string('description')->nullable();
             $table->string('image')->nullable();
             $table->string('status')->nullable();
+            $table->string('url')->nullable();
+            $table->string('api_key')->nullable();
             $table->text('prompt')->nullable();
             $table->text('tools')->nullable();
             $table->text('mcps')->nullable();

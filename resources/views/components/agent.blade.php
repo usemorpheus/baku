@@ -2,17 +2,20 @@
     $agent = $self->getModel();
 @endphp
 
-<div class="card " style="min-width: 20rem;">
+<div class="card maxw-384px minw-144px">
     <div class="card-body">
         <div class="row g-2 align-items-center">
             <div class="col-auto">
                 <span class="avatar avatar-lg" style="background-image: url('{{$agent->image}}')"> </span>
             </div>
-            <div class="col">
-                <h4 class="card-title m-0">
-                    <a href="#">{{$agent->name}}</a>
+            <div class="col ps-2">
+                <h4 class="card-title mb-1">
+                    <a href="#">
+                        <i class="ri-checkbox-blank-circle-fill text-{{$agent->status}}"></i>
+                        {{$agent->name}}
+                    </a>
                 </h4>
-                <div class="text-secondary">{{$agent->description}}</div>
+                <div class="text-secondary maxh-36px overflow-hidden">{{$agent->description}}</div>
             </div>
             <div class="col-auto">
                 <div class="dropdown">

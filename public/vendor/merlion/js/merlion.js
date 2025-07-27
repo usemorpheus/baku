@@ -88,9 +88,9 @@ class Merlion {
         Toastify({
             newWindow: true,
             text: toastData.text,
-            gravity: toastData.gravity,
-            position: toastData.position,
-            className: "bg-" + toastData.className,
+            gravity: toastData.gravity || 'top',
+            position: toastData.position || 'center',
+            className: 'bg-' + toastData.className,
             stopOnFocus: true,
             escapeMarkup: false,
             offset: {
@@ -99,9 +99,9 @@ class Merlion {
             },
             duration: toastData.duration,
             close: toastData.close === "close",
-            style: toastData.style === "style" ? {
+            style: {
                 background: "linear-gradient(to right, var(--vz-success), var(--vz-primary))"
-            } : "",
+            },
         }).showToast();
     }
 

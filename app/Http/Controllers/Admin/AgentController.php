@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Components\Agent;
 use Merlion\Components\Button;
 use Merlion\Components\Container\Flex;
-use Merlion\Components\Form\Fields\Text;
 use Merlion\Components\Layouts\Admin;
 use Merlion\Http\Controllers\CrudController;
 
@@ -33,7 +32,21 @@ class AgentController extends CrudController
     {
         return [
             'fields' => [
-                Text::make(name: 'name')->label(__('agent.name')),
+                'name',
+                'url',
+                'api_key',
+                [
+                    'name'    => 'status',
+                    'type'    => 'select',
+                    'options' => [
+                        'success' => 'Online',
+                        'danger'  => 'Offline',
+                    ],
+                ],
+                [
+                    'name' => 'image',
+                    'type' => 'image',
+                ],
                 [
                     'name'        => 'description',
                     'type'        => 'textarea',

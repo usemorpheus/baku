@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\AdminUser;
 use App\Models\Agent;
-use App\Models\Article;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -23,7 +22,11 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        Article::factory(20)->create();
-        Agent::factory(2)->create();
+        Agent::factory()->create([
+            'name'        => 'twitter baku短讯海报正式版',
+            'description' => '一个优秀的web3社区记者，支持所有人自动生成自助的web3新闻短讯。你对web3行业，sol bsc base公链非常了解',
+            'url'         => 'https://play.baku.builders/api',
+            'api_key'     => 'fastgpt-yRjWPjTBE7iTcgp6emPT9la5mCyxF4Eu5GjlP8cMRp0gO0ks1GNA',
+        ]);
     }
 }
