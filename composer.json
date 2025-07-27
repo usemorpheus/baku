@@ -77,13 +77,6 @@
     },
     "repositories": [
         {
-            "type": "path",
-            "url": "./packages/**/**",
-            "options": {
-                "symlink": true
-            }
-        },
-        {
             "type": "vcs",
             "url": "git@github.com:singapura-dev/merlion.git"
         }
