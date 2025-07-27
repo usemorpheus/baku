@@ -2,7 +2,7 @@
 
 @task('deploy')
 cd baku
-git pull --recurse-submodules
+git pull
 composer install
 sudo service php8.3-fpm reload
 sudo supervisorctl reload
