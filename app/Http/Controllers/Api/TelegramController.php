@@ -51,7 +51,7 @@ class TelegramController
                 ->first();
 
             if (empty($fast_chat)) {
-                $text = '我的昵称是:' . $message->getFrom()->last_name . ' ' . $message->getFrom()->first_name . "\n" . $message;
+                $text = '我的昵称是:' . $message->getFrom()->last_name . ' ' . $message->getFrom()->first_name . "\n" . $text;
             }
 
             $fast_gpt         = new FastGPT($agent->url, $agent->api_key);
