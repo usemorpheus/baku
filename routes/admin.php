@@ -4,12 +4,15 @@ use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Models\AdminUser;
 use Merlion\Components\Form\Errors;
+use Merlion\Components\Form\Fields\Button;
+use Merlion\Components\Form\Fields\Space;
+use Merlion\Components\Form\Fields\Text;
 use Merlion\Components\Form\Form;
 
 Route::group([
     'prefix'     => 'admin',
     'as'         => 'admin.',
-    'middleware' => 'merlion',
+    'middleware' => ['web', 'merlion'],
 ], function () {
     admin('admin')->routes();
     Route::group(['middleware' => 'merlion_auth'], function () {
@@ -19,22 +22,20 @@ Route::group([
                 ->flex()->wrap()->gap(2)->alignItems('end')
                 ->model(AdminUser::first());
             $form->fields([
-                \Merlion\Components\Form\Fields\Text::make()->name('name')->label('Name'),
-                \Merlion\Components\Form\Fields\Text::make()->name('password')
+                Text::make()->name('name')->label('Name')->rules('max:3'),
+                Text::make()->name('password')
                     ->required()
                     ->label('Password')->value('')->password(),
                 \Merlion\Components\Form\Fields\File::make()->name('avatar')->label('Avatar'),
-                \Merlion\Components\Form\Fields\Space::make(full: true),
-                \Merlion\Components\Form\Fields\Button::make(
+                Space::make(full: true),
+                Button::make(
                     icon: 'ri-save-line me-1',
                     label: __('merlion::base.save')
                 ),
             ]);
-            $card->header(Errors::make());
-            $card->body($form);
+            $card->body([Errors::make(), $form]);
             return admin()->content($card)->render();
         })->name('home');
-
         Route::post('/', function () {
             $user = AdminUser::first();
             if (!\Illuminate\Support\Facades\Hash::check(request('password'), $user->password)) {

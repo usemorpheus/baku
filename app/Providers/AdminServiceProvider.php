@@ -11,6 +11,7 @@ class AdminServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/admin.php');
         admin()->serving(function () {
             Pages\Login::$username      = 'username';
             Pages\Login::$usernameLabel = 'Username';
