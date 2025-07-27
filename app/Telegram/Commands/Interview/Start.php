@@ -14,9 +14,9 @@ class Start extends Command
     public function handle(): void
     {
         $agent = request()->agent;
-        $this->replyWithMessage([
-            'text' => $agent->description,
-        ]);
+//        $this->replyWithMessage([
+//            'text' => $agent->description,
+//        ]);
         // clear chat id
         $chat    = $this->getUpdate()->getChat();
         $message = $this->getUpdate()->getMessage();
