@@ -209,9 +209,10 @@
                 <div class="bg-white rounded d-flex align-items-center">
                     <input rows="1" class="form-control py-4 px-3 fs-4 text-muted border-0 shadow-none"/>
 
-                    <button class="btn btn-dark end-0 top-0 me-3">
+                    <a target="_blank" href="https://play.baku.builders/chat/share?shareId=wtaEds5ZlNP0r6wSHwRVTnat"
+                       class="btn btn-dark end-0 top-0 me-3">
                         <i class="las la-arrow-right"></i>
-                    </button>
+                    </a>
                 </div>
 
                 <div class="d-flex gap-2 mt-3">
