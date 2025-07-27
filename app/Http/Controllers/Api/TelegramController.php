@@ -18,7 +18,7 @@ class TelegramController
     public function __invoke($code)
     {
         $agent = Agent::where('code', $code)->first();
-        if (!$agent) {
+        if (empty($agent)) {
             Log::error('Agent not found: ' . $code, request()->all());
             return 'ok';
         }
