@@ -14,6 +14,9 @@
      ["title" => "news to earn （Comming soon）",
     "desc" => "通过和Baku的交流，评论，投稿，预约采访获得奖励"],
     ];
+
+
+    $baku_chat_url = 'https://play.baku.builders/chat/share?shareId=wtaEds5ZlNP0r6wSHwRVTnat';
 @endphp
     <!doctype html>
 <html lang="en">
@@ -36,6 +39,11 @@
             --bs-border-radius: .75rem;
             --bs-border-color-translucent: #e97d001c;
             --bs-btn-border-radius: 8px;
+        }
+
+        a {
+            color: unset;
+            text-decoration: none;
         }
 
         p {
@@ -209,7 +217,7 @@
                 <div class="bg-white rounded d-flex align-items-center">
                     <input rows="1" class="form-control py-4 px-3 fs-4 text-muted border-0 shadow-none"/>
 
-                    <a target="_blank" href="https://play.baku.builders/chat/share?shareId=wtaEds5ZlNP0r6wSHwRVTnat"
+                    <a target="_blank" href="{{$baku_chat_url}}"
                        class="btn btn-dark end-0 top-0 me-3">
                         <i class="las la-arrow-right"></i>
                     </a>
@@ -217,18 +225,18 @@
 
                 <div class="d-flex gap-2 mt-3">
                     <div class="btn btn-sh w-50 py-2">
-                        我需要个人职业专访
+                        <a href="{{$baku_chat_url}}" target="_blank">我需要个人职业专访</a>
                     </div>
                     <div class="btn btn-sh flex w-50 py-2">
-                        我要评论一个项目
+                        <a href="{{$baku_chat_url}}" target="_blank">我要评论一个项目</a>
                     </div>
                 </div>
                 <div class="d-flex gap-2 mt-2">
                     <div class="btn btn-sh w-50 py-2">
-                        我有一个重要观点要发布
+                        <a href="{{$baku_chat_url}}" target="_blank">我有一个重要观点要发布</a>
                     </div>
                     <div class="btn btn-sh w-50 py-2">
-                        我需要个人职业专访
+                        <a href="{{$baku_chat_url}}" target="_blank">我需要个人职业专访</a>
                     </div>
                 </div>
             </div>
@@ -369,9 +377,10 @@
                     <div class="rounded p-3 w-50 bg-purple">
                         <h5>Try banker free</h5>
                         <p>Get up to 10 messages per day for free!</p>
-                        <div class="bg-dark d-inline-block text-white fs-5 px-4 py-1 pb-2 my-3 rounded-1">
+                        <a href="{{$baku_chat_url}}" target="_blank"
+                           class="bg-dark d-inline-block text-white fs-5 px-4 py-1 pb-2 my-3 rounded-1">
                             TRY FOR FREE <i class="las la-share ps-1"></i>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
