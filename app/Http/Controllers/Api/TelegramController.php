@@ -27,6 +27,9 @@ class TelegramController
             Start::class,
         ]);
         $updates = Telegram::commandsHandler(true);
+        if (empty($updates)) {
+            return 'ok';
+        }
         Log::debug($updates);
 
         $chat    = $updates->getChat();
