@@ -28,12 +28,8 @@ class AdminServiceProvider extends ServiceProvider
                     Menu::make(label: __('base.dashboard'), link: '/admin', icon: 'ti ti-home fs-2'),
                     Menu::make(label: __('agent.label_plural'), link: admin()->route('agents.index'),
                         icon: 'ti ti-robot-face fs-2'),
-                    Menu::make(label: 'Chats', link: admin()->route('agents.index'),
-                        icon: 'ti ti-message fs-2'),
-                    Menu::make(label: __('article.label_plural'),
-                        link: admin()->route('articles.index'),
-                        icon: 'ti ti-news fs-2'
-                    ),
+                    Menu::make(label: __('article.label_plural'), link: admin()->route('articles.index'),
+                        icon: 'ti ti-news fs-2'),
                 ]);
         });
     }

@@ -1,0 +1,3 @@
+[submodule "packages/singapura/merlion"]
+	path = packages/singapura/merlion
+	url = git@github.com:singapura-dev/merlion.git

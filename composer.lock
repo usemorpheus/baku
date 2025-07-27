@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "11c254aafbf9da23f84245b237d0c06c",
+    "content-hash": "6e4191d4ad006102dcf8fdac713acac5",
     "packages": [
         {
             "name": "brick/math",
@@ -3632,7 +3632,7 @@
             "dist": {
                 "type": "path",
                 "url": "./packages/singapura/merlion",
-                "reference": "d8498c9d24e452265343252b1ccf74f776c4b3db"
+                "reference": "e391e4775b6dc79228fefb15fe404545bed85d60"
             },
             "require": {
                 "spatie/laravel-query-builder": "^6.0"
@@ -3654,7 +3654,6 @@
                 ]
             },
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
@@ -9859,7 +9858,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.2"
+        "php": "^8.3"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"
