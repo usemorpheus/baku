@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Agent;
 use Merlion\Components\Button;
 use Merlion\Components\Container\Card;
 use Merlion\Components\Container\Flex;
 use Merlion\Components\Container\Row;
+use Merlion\Components\Dropdown;
 use Merlion\Components\Icon;
 use Merlion\Components\Layouts\Admin;
 use Merlion\Components\Text;
@@ -13,25 +15,15 @@ use Merlion\Http\Controllers\CrudController;
 
 class AgentController extends CrudController
 {
-    protected string $model = \App\Models\Agent::class;
+    protected string $model = Agent::class;
     protected string $route = 'agents';
     protected string $lang = 'agent';
 
     public function index()
     {
         $agents = Row::make()->gap();
-        foreach (\App\Models\Agent::all() as $agent) {
-            $card = Card::make()
-                ->header(Flex::make()->gap(1)
-                    ->content([
-                        Icon::make()->image($agent->image)->class('rounded maxh-36px shadow bg-lime-lt'),
-                        Flex::make()->column()->gap(1)->content([
-                            Text::make()->h3()->content($agent->name)->class('mb-0'),
-                            '<span><i class="ri-checkbox-blank-circle-fill text-success"></i> Online</span>',
-                        ]),
-                    ]))
-                ->body($agent->description);
-            $agents->column($card, 'col-lg-4 col-sm-6 col-12');
+        foreach (Agent::latest()->get() as $agent) {
+            $agents->column($this->getAgentItem($agent), 'col-lg-4 col-sm-6 col-12');
         }
         admin()->content(
             Button::make()
@@ -41,10 +33,35 @@ class AgentController extends CrudController
         return admin()->title(__('agent.label_plural'))->content($agents)->render();
     }
 
+    protected function getAgentItem($agent)
+    {
+        $card = Card::make()
+            ->header([
+                Icon::make()->image($agent->image)->class('rounded maxh-36px shadow bg-lime-lt'),
+                Flex::make()->column()->gap(1)->content([
+                    Text::make()->h3()->content($agent->name)
+                        ->class('mb-0')
+                        ->link(admin()->route('agents.edit', $agent)),
+                    '<span><i class="ri-checkbox-blank-circle-fill text-success"></i> Online</span>',
+                ]),
+                Dropdown::make()->class('card-actions')
+                    ->button([
+                        'icon'  => 'ri-more-2-fill',
+                        'color' => 'action',
+                    ])
+                    ->actions([
+                        ['content' => __('merlion::base.edit'), 'link' => '/admin/agents/' . $agent->id . '/edit'],
+                    ]),
+            ])
+            ->body($agent->description);
+        $card->getHeader()->gap(3)->alignItems();
+        return $card;
+    }
+
     protected function schemas()
     {
         return [
-            'fields' => [
+            'fields'  => [
                 [
                     'name'     => 'name',
                     'required' => true,
@@ -75,6 +92,7 @@ class AgentController extends CrudController
                     'full'        => true,
                 ],
             ],
+            'actions' => ['view'],
         ];
     }
 }

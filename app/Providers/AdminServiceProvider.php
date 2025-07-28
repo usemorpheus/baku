@@ -21,6 +21,9 @@ class AdminServiceProvider extends ServiceProvider
                 admin()->title("Home");
                 $this->content(Button::make()->primary()->xs()->label('View'));
             });
+
+            admin()->theme(radius: 1);
+
             admin()->cspNonce(app('csp-nonce'));
             admin()->brandLogo(asset('/images/logo.png'));
             admin()

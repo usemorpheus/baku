@@ -136,6 +136,10 @@ p, .pagination {
     max-height: 24px;
 }
 
+.maxh-28px {
+    max-height: 28px;
+}
+
 .maxh-32px {
     max-height: 32px;
 }
