@@ -3632,12 +3632,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:singapura-dev/merlion.git",
-                "reference": "9e0926dda777e82af7782c46ccf59bc3378a2d64"
+                "reference": "2925e455c700a4c578152180a3e7fc7aedda27c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/singapura-dev/merlion/zipball/9e0926dda777e82af7782c46ccf59bc3378a2d64",
-                "reference": "9e0926dda777e82af7782c46ccf59bc3378a2d64",
+                "url": "https://api.github.com/repos/singapura-dev/merlion/zipball/2925e455c700a4c578152180a3e7fc7aedda27c3",
+                "reference": "2925e455c700a4c578152180a3e7fc7aedda27c3",
                 "shasum": ""
             },
             "require": {
@@ -3664,7 +3664,7 @@
                 "source": "https://github.com/singapura-dev/merlion/tree/main",
                 "issues": "https://github.com/singapura-dev/merlion/issues"
             },
-            "time": "2025-07-27T12:34:39+00:00"
+            "time": "2025-07-28T02:25:40+00:00"
         },
         {
             "name": "spatie/laravel-csp",
