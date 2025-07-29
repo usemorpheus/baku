@@ -3,19 +3,19 @@
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\DashboardController;
-use Merlion\Components\Form\Errors;
+use App\Http\Controllers\Admin\DynamicImageController;
+use App\Http\Controllers\Admin\SocialAccountController;
+use App\Http\Controllers\Admin\TwitterController;
 
-Route::group([
-    'prefix'     => 'admin',
-    'as'         => 'admin.',
-    'middleware' => ['web', 'merlion'],
-], function () {
-    admin('admin')->routes();
-    Route::group(['middleware' => 'merlion_auth'], function () {
-        Route::get('/', DashboardController::class)->name('home');
-        Route::resource('articles', ArticleController::class);
-        Route::delete('articles/{article}', [ArticleController::class, 'destroy'])->name('articles.delete');
-        Route::resource('agents', AgentController::class);
-        Route::delete('agents/{agent}', [AgentController::class, 'destroy'])->name('agents.delete');
-    });
+admin('admin')->routes();
+
+admin()->routeAuthedGroup(function () {
+    Route::get('image', [DynamicImageController::class, 'generateImage']);
+    Route::get('/', DashboardController::class)->name('home');
+    Route::get('twitter/login', [TwitterController::class, 'login'])->name('twitter.login');
+    Route::get('twitter/callback', [TwitterController::class, 'callback'])->name('twitter.callback');
+    Route::get('twitter/refresh', [TwitterController::class, 'refresh'])->name('twitter.refresh');
+    Route::resource('articles', ArticleController::class);
+    Route::resource('agents', AgentController::class);
+    Route::resource('social_accounts', SocialAccountController::class);
 });

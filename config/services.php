@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    'twitter' => [
+        'api_key'             => env('TWITTER_CONSUMER_KEY'),
+        'api_secret'          => env('TWITTER_CONSUMER_SECRET'),
+        'access_token'        => env('TWITTER_ACCESS_TOKEN'),
+        'access_token_secret' => env('TWITTER_ACCESS_TOKEN_SECRET'),
+        'bearer_token'        => env('TWITTER_BEARER_TOKEN'),
+        'api_version'         => env('TWITTER_API_VERSION', 2),
+        'api_url'             => env('TWITTER_API_URL', 'https://api.twitter.com'),
+        'client_id'           => env('TWITTER_CLIENT_ID'),
+        'client_secret'       => env('TWITTER_CLIENT_SECRET'),
+    ],
+
 ];
