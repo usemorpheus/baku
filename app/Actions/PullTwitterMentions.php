@@ -12,6 +12,14 @@ class PullTwitterMentions
 {
     use AsAction;
 
+    public $commandSignature = 'baku:pull_twitter_mentions';
+    public $commandDescription = '拉取Twitter的@消息';
+
+    public function asCommand(): void
+    {
+        $this->handle();
+    }
+
     public function handle()
     {
         $account = SocialAccount::where('platform', 'twitter')->first();
