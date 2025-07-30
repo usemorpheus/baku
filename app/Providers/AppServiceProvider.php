@@ -2,14 +2,15 @@
 
 namespace App\Providers;
 
+use App\Actions\PullTwitterMentions;
 use Illuminate\Support\ServiceProvider;
-use Merlion\Components\Button;
-use Merlion\Components\Menu;
-use Merlion\Components\Pages;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        $this->commands([
+            PullTwitterMentions::class,
+        ]);
     }
 }
