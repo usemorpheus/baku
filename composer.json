@@ -13,7 +13,8 @@
         "prism-php/relay": "^1.2",
         "singapura/merlion": "*",
         "spatie/laravel-csp": "*",
-        "ext-gd": "*"
+        "ext-gd": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",

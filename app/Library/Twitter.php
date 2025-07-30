@@ -14,6 +14,7 @@ class Twitter
     protected string $api_key;
     protected string $api_secret;
     protected string $access_token;
+    protected string $refresh_token;
     protected string $access_token_secret;
     protected string $bearer_token;
     protected string $api_version;
@@ -29,13 +30,11 @@ class Twitter
 
     public function __construct()
     {
-        $this->api_key             = config('services.twitter.api_key');
-        $this->api_secret          = config('services.twitter.api_key');
-        $this->access_token        = config('services.twitter.access_token');
-        $this->access_token_secret = config('services.twitter.access_token_secret');
-        $this->api_version         = config('services.twitter.api_version');
-        $this->bearer_token        = config('services.twitter.bearer_token');
-        $this->api_url             = config('services.twitter.api_url');
+        $this->api_key      = config('services.twitter.api_key');
+        $this->api_secret   = config('services.twitter.api_key');
+        $this->api_version  = config('services.twitter.api_version');
+        $this->bearer_token = config('services.twitter.bearer_token');
+        $this->api_url      = config('services.twitter.api_url');
 
         $this->auth_mode = self::AUTH_MODE_APP;
     }
@@ -46,9 +45,24 @@ class Twitter
         return $this;
     }
 
+    public function upload($data)
+    {
+        $this->auth_mode = self::AUTH_MODE_USER;
+        return $this->post('media/upload', $data);
+    }
+
+    public function withRefreshToken($refresh_token): static
+    {
+        $this->refresh_token = $refresh_token;
+        return $this;
+    }
+
     public function me()
     {
-        return $this->get('users/me');
+        $this->auth_mode = self::AUTH_MODE_USER;
+        return $this->get('users/me', [
+            'user.fields' => 'id,name,username,profile_image_url',
+        ]);
     }
 
     /**
@@ -78,9 +92,9 @@ class Twitter
     /**
      * @throws ConnectionException
      */
-    public function userMentions($user_id)
+    public function userMentions($user_id, $params = [])
     {
-        return $this->get('users/' . $user_id . '/mentions', $this->getPostParameters());
+        return $this->get('users/' . $user_id . '/mentions', array_merge($this->getPostParameters(), $params));
     }
 
     /**
@@ -133,7 +147,7 @@ class Twitter
             'state'                 => $state,
             'code_challenge'        => $codeChallenge,
             'code_challenge_method' => $codeChallengeMethod,
-            'scope'                 => 'offline.access tweet.read tweet.write users.read follows.read follows.write',
+            'scope'                 => 'offline.access tweet.read tweet.write users.read follows.read follows.write media.write',
         ];
 
         return 'https://twitter.com/i/oauth2/authorize?' . http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);
@@ -235,7 +249,6 @@ class Twitter
         }
 
         $response = $client->send($method, $url, $data);
-
         return $response->json();
     }
 }
