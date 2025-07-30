@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\TwitterController;
 admin('admin')->routes();
 
 admin()->routeAuthedGroup(function () {
-    Route::get('image', [DynamicImageController::class, 'generateImage']);
+    Route::get('image', [DynamicImageController::class, 'index']);
     Route::get('/', DashboardController::class)->name('home');
     Route::get('twitter/login', [TwitterController::class, 'login'])->name('twitter.login');
     Route::get('twitter/callback', [TwitterController::class, 'callback'])->name('twitter.callback');

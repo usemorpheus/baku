@@ -14,36 +14,23 @@ class GenerateImage
     {
         try {
             // 获取动态文本参数
-            $fontSize        = 14;
+            $fontSize        = 13;
             $textColor       = '#000000';
             $backgroundColor = '#FDF1E5';
-            $quality         = 90;  // 图片质量 0-100
-            $scale           = 1;   // 高分辨率缩放倍数
+            $quality         = 100;  // 图片质量 0-100
+            $scale           = 1;    // 高分辨率缩放倍数
 
-            $titleFontSize = 18;
+            $titleFontSize = 16;
 
             // 图片路径配置
             $topImagePath    = public_path('images/top.png');
             $bottomImagePath = public_path('images/bottom.png');
-            $fontPath        = public_path('fonts/arial.ttc');
-
-            // 检查必要文件是否存在
-            if (!file_exists($topImagePath) || !file_exists($bottomImagePath)) {
-                return response()->json(['error' => '顶部或底部图片文件不存在'], 404);
-            }
-
-            // 检查GD库是否可用
-            if (!extension_loaded('gd')) {
-                return response()->json(['error' => 'GD库未安装'], 500);
-            }
+            $fontPath        = public_path('fonts/SourceHanSansCN-Bold.otf');
+            $contentFontPath = public_path('fonts/SourceHanSansCN-Regular.otf');
 
             // 加载顶部和底部图片
             $topImage    = $this->loadHighQualityImage($topImagePath);
             $bottomImage = $this->loadHighQualityImage($bottomImagePath);
-
-            if (!$topImage || !$bottomImage) {
-                return response()->json(['error' => '图片加载失败'], 500);
-            }
 
             // 获取原始图片尺寸
             $originalWidth        = max(imagesx($topImage), imagesx($bottomImage));
@@ -63,18 +50,16 @@ class GenerateImage
 
             // 计算文本区域高度
             $titleHeight    = $this->calculateTextHeight($title, $titleScaledFontSize, $width, $fontPath);
-            $textAreaHeight = $this->calculateTextHeight($text, $scaledFontSize, $width, $fontPath);
+            $textAreaHeight = max(280, $this->calculateTextHeight($text, $scaledFontSize, $width, $contentFontPath));
             $padding        = (int)(40 * $scale);
-            $middleHeight   = max($titleHeight + $textAreaHeight + $padding * 3, (int)(100 * $scale));
+            $middleHeight   = $titleHeight + $textAreaHeight + $padding * 2;
 
             // 创建高分辨率最终图片
             $totalHeight = $topHeight + $middleHeight + $bottomHeight;
             $finalImage  = imagecreatetruecolor($width, $totalHeight);
 
             // 启用抗锯齿
-            if (function_exists('imageantialias')) {
-                imageantialias($finalImage, true);
-            }
+            imageantialias($finalImage, true);
 
             // 设置高质量背景色
             $bgColor         = $this->hexToRgb($backgroundColor);
@@ -87,26 +72,23 @@ class GenerateImage
 
             // 在中间区域添加高质量文本
             $this->addHighQualityTextToImage($finalImage, $title, $titleScaledFontSize, $textColor, $fontPath,
-                0, $topHeight, $width, $titleHeight + $padding, $scale);
+                0, $topHeight + 20, $width, $titleHeight + $padding, $scale);
 
-            $this->addHighQualityTextToImage($finalImage, $text, $scaledFontSize, '#333333', $fontPath,
-                0, $topHeight + $titleHeight, $width, $textAreaHeight + $padding * 3, $scale);
+            $this->addHighQualityTextToImage($finalImage, $text, $scaledFontSize, '#333333', $contentFontPath,
+                0, $topHeight + $titleHeight + 40, $width, $textAreaHeight, $scale);
 
             // 高质量拼接底部图片
             imagecopyresampled($finalImage, $scaledBottomImage, 0, $topHeight + $middleHeight, 0, 0,
                 $width, $bottomHeight, imagesx($scaledBottomImage), imagesy($scaledBottomImage));
 
             // add time stampe
-            $this->addHighQualityTextToImage($finalImage, date('Y-m-d H:i:s'), $scaledFontSize, '#000000', $fontPath,
-                185, $totalHeight - 75, $width, 50, $scale);
+            $this->addHighQualityTextToImage($finalImage, date("Y-m-d"), 22, '#000000',
+                public_path('fonts/Jersey15-Regular.ttf'),
+                185, $totalHeight - 80, $width, 50, $scale);
 
-            // 如果需要，缩放回原始尺寸（保持高质量）
-            if ($scale > 1.0) {
-                $outputImage = $this->resizeImageHighQuality($finalImage, $originalWidth,
-                    (int)($totalHeight / $scale));
-                imagedestroy($finalImage);
-                $finalImage = $outputImage;
-            }
+            $this->addHighQualityTextToImage($finalImage, date("H:i:s"), 22, '#000000',
+                public_path('fonts/Jersey15-Regular.ttf'),
+                185, $totalHeight - 50, $width, 50, $scale);
 
             // 输出高质量图片
             ob_start();
@@ -232,7 +214,7 @@ class GenerateImage
         $width,
         $height,
         $scale = 1.0
-    ) {
+    ): void {
         // 分配文本颜色（抗锯齿）
         $rgb       = $this->hexToRgb($color);
         $textColor = imagecolorallocate($image, $rgb['r'], $rgb['g'], $rgb['b']);
@@ -243,7 +225,7 @@ class GenerateImage
 
         // 计算文本起始Y位置（垂直居中）
         $totalTextHeight = count($lines) * $lineHeight;
-        $startY          = $y + ($height - $totalTextHeight) / 2;
+        $startY          = $y;
 
         // 逐行绘制高质量文本
         foreach ($lines as $index => $line) {
@@ -266,7 +248,7 @@ class GenerateImage
     /**
      * 十六进制颜色转RGB
      */
-    private function hexToRgb($hex)
+    private function hexToRgb($hex): array
     {
         $hex = ltrim($hex, '#');
         if (strlen($hex) == 3) {
@@ -282,7 +264,7 @@ class GenerateImage
     /**
      * 在图片上添加文本（支持自动换行）
      */
-    private function addTextToImage($image, $text, $fontSize, $color, $fontPath, $x, $y, $width, $height)
+    private function addTextToImage($image, $text, $fontSize, $color, $fontPath, $x, $y, $width, $height): void
     {
         // 分配文本颜色
         $rgb       = $this->hexToRgb($color);
@@ -313,7 +295,7 @@ class GenerateImage
     /**
      * 智能文本自动换行（支持中英文混合）
      */
-    private function wrapText($text, $fontSize, $maxWidth, $fontPath)
+    private function wrapText($text, $fontSize, $maxWidth, $fontPath): array
     {
         $lines = [];
 
@@ -340,7 +322,7 @@ class GenerateImage
     /**
      * 检测文本是否包含中文字符
      */
-    private function containsChinese($text)
+    private function containsChinese($text): false|int
     {
         return preg_match('/[\x{4e00}-\x{9fff}]/u', $text);
     }
@@ -348,7 +330,7 @@ class GenerateImage
     /**
      * 中文文本换行处理
      */
-    private function wrapChineseText($text, $fontSize, $maxWidth, $fontPath)
+    private function wrapChineseText($text, $fontSize, $maxWidth, $fontPath): array
     {
         $lines       = [];
         $currentLine = '';
@@ -382,7 +364,7 @@ class GenerateImage
     /**
      * 英文文本换行处理（按单词分割）
      */
-    private function wrapEnglishText($text, $fontSize, $maxWidth, $fontPath)
+    private function wrapEnglishText($text, $fontSize, $maxWidth, $fontPath): array
     {
         $lines       = [];
         $words       = preg_split('/(\s+)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -430,7 +412,7 @@ class GenerateImage
     /**
      * 计算文本区域所需高度
      */
-    private function calculateTextHeight($text, $fontSize, $maxWidth, $fontPath)
+    private function calculateTextHeight($text, $fontSize, $maxWidth, $fontPath): float
     {
         $lines = $this->wrapText($text, $fontSize, $maxWidth - 80, $fontPath);
         return count($lines) * $fontSize * 1.7;
