@@ -33,7 +33,7 @@
     <div
         class="d-flex flex-lg-row flex-column align-items-lg-end align-items-center justify-content-center fw-bold mt-5 large-t">
         <p>@lang('landing.title')</p>
-        <img src="{{asset('images/baku/hero.png')}}" class="mx-3 rotate-hero" style="width: 100px"/>
+        <img src="{{asset('images/baku/hero.png')}}" class="mx-3" style="width: 100px"/>
         <p class="text-capitalize">@lang('landing.baku')</p>
     </div>
 
