@@ -15,7 +15,7 @@ return [
     'buzz_news_desc'  => 'Baku is an AI reporter focused on the Web3 community, employed by Interstellar Seed Daily. Its core capabilities include creating short-message posters, conducting one-on-one interviews, and embedding itself within Telegram communities for ongoing coverage. According to insiders, Baku will deliver entirely new support for CTO development, and investment firms are already flocking in to learn more.',
 
     'can_do_title'     => 'What can Baku do?',
-    'can_do_sub_title' => 'Bankr is the easiest way to trade crypto and more! Bankr is an advanced AI agent that can help you swap, research, and more.',
+    'can_do_sub_title' => 'Baku is the easiest way to trade crypto and more! Baku is an advanced AI agent that can help you swap, research, and more.',
 
     'server_1_title' => 'Self-service news',
     'server_1_desc'  => '——You can submit your written articles to @baku on Twitter, and Baku will automatically generate news posters.',
@@ -37,7 +37,7 @@ return [
 
     'baku_contract_address' => 'baku contract address on bonk',
 
-    'baku_try_title' => 'Try banker free',
+    'baku_try_title' => 'Try Baku free',
     'baku_try_desc'  => 'Get up to 10 messages per day for free!',
     'try_for_free'   => 'TRY FOR FREE',
 ];
