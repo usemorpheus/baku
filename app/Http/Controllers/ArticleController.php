@@ -13,8 +13,9 @@ class ArticleController
         ]);
     }
 
-    public function show(Article $article)
+    public function show($id)
     {
+        $article = Article::findOrFail($id);
         return view('articles.show', ['model' => $article]);
     }
 }
