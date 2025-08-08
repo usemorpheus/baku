@@ -7,4 +7,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('articles', ArticleController::class);
+Route::resource('news', ArticleController::class);
