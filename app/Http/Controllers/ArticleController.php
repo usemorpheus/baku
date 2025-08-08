@@ -9,7 +9,7 @@ class ArticleController
     public function index()
     {
         return view('articles.index', [
-            'models' => Article::latest()->paginate(),
+            'models' => Article::published()->latest()->paginate(),
         ]);
     }
 

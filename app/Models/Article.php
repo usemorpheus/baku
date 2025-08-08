@@ -12,4 +12,9 @@ class Article extends Model
     protected $guarded = [];
 
     protected $casts = ['data' => 'array'];
+
+    protected function scopePublished($query)
+    {
+        return $query->where('published', true);
+    }
 }
