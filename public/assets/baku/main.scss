@@ -60,6 +60,18 @@ p {
     --bs-btn-border-radius: 8px;
 }
 
+.nav-pills .nav-link {
+    --bs-nav-pills-border-radius: 6px;
+    --bs-nav-pills-link-active-color: #fff;
+    --bs-nav-pills-link-active-bg: #292521;
+    --bs-nav-link-color: #fff;
+    margin-left: 12px;
+}
+.nav-pills .nav-link:hover {
+    background-color: #292521;
+    color: #fff;
+}
+
 .sh-input {
 
 }

@@ -4,11 +4,12 @@
     $telegram_bot_link = "https://t.me/baku_news_bot";
 @endphp
 
-    <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="style-src 'self' 'unsafe-inline'">
     <title>Baku | Web3 Community Reporte</title>
     <link rel="stylesheet" href="{{asset('assets/css/bootstrap.5-3-7.min.css')}}">
     <link rel="stylesheet" href="{{asset('assets/css/line-awesome.min.css')}}">

@@ -11,9 +11,9 @@
   --bs-font-sans-serif: "HarmonyOS Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-/*#landing-page {*/
-/*    font-family: var(--bs-font-sans-serif), sans-serif !important;*/
-/*}*/
+#landing-page {
+  font-family: HarmonyOS Sans, sans-serif;
+}
 
 p {
   margin: 0;
@@ -57,6 +57,19 @@ p {
   --bs-btn-disabled-bg: #FF5D38;
   --bs-btn-disabled-border-color: #FF5D38;
   --bs-btn-border-radius: 8px;
+}
+
+.nav-pills .nav-link {
+  --bs-nav-pills-border-radius: 6px;
+  --bs-nav-pills-link-active-color: #fff;
+  --bs-nav-pills-link-active-bg: #292521;
+  --bs-nav-link-color: #fff;
+  margin-left: 12px;
+}
+
+.nav-pills .nav-link:hover {
+  background-color: #292521;
+  color: #fff;
 }
 
 .sh-input::placeholder {

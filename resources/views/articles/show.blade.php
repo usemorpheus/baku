@@ -1,7 +1,27 @@
-<div>
-    <h1>{{$model->title}}</h1>
-    <small>{{$model->created_at}}</small>
-    <div>
-        {!! $model->content !!}
+@extends('layouts.app')
+
+@section('content')
+    <div class="container" style="min-height: 70vh">
+        <h2 class="mb-5">News</h2>
+
+        <article class="mb-5 article">
+            <a href="{{route('news.show', $model)}}">
+                <h4 class="fs-4 m-0">{{$model->title}}</h4>
+            </a>
+            <p class="mt-2">
+                {{$model->content}}
+                <a class="text-primary" href="{{route('news.show', $model)}}">继续阅读</a>
+            </p>
+            <div class="mt-3 text-muted">
+                <i class="lar la-clock"></i>
+                <span>{{$model->created_at}}</span>
+                <i class="las la-eye"></i>
+                <span>阅读: 103</span>
+            </div>
+        </article>
     </div>
-</div>
+@endsection
+
+@push('styles')
+    <link rel="stylesheet" href="{{asset('assets/baku/news.css')}}">
+@endpush
