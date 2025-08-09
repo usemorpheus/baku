@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container" style="min-height: 70vh">
-        <h2 class="mb-5">News</h2>
+        <h2 class="mb-5"><a href="/news"> 🔙 </a></h2>
 
         <article class="mb-5 article">
             <a href="{{route('news.show', $model)}}">
@@ -10,13 +10,12 @@
             </a>
             <p class="mt-2">
                 {{$model->content}}
-                <a class="text-primary" href="{{route('news.show', $model)}}">继续阅读</a>
             </p>
             <div class="mt-3 text-muted">
                 <i class="lar la-clock"></i>
                 <span>{{$model->created_at}}</span>
                 <i class="las la-eye"></i>
-                <span>阅读: 103</span>
+                <span>{{$model->read_count??0}}</span>
             </div>
         </article>
     </div>

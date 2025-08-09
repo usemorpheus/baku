@@ -16,6 +16,7 @@ class ArticleController
     public function show($id)
     {
         $article = Article::findOrFail($id);
+        $article->increment('read_count');
         return view('articles.show', ['model' => $article]);
     }
 }

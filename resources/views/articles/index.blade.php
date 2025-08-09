@@ -17,7 +17,7 @@
                     <i class="lar la-clock"></i>
                     <span>{{$model->created_at}}</span>
                     <i class="las la-eye"></i>
-                    <span>阅读: 103</span>
+                    <span>{{$model->read_count??0}}</span>
                 </div>
             </article>
         @endforeach
