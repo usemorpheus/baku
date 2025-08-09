@@ -2,6 +2,7 @@
     $webchat_link = "https://play.baku.builders/chat/share?shareId=pJaog9I66rW1x2L8JTkHZFjL";
     $twitter_link = "https://x.com/Baku_agent";
     $telegram_bot_link = "https://t.me/baku_news_bot";
+    $news_link = "/news";
 @endphp
 
     <!doctype html>
@@ -95,7 +96,7 @@
         <div class="row">
             <div class="col-sm-12 col-md-12">
                 <div class="d-flex flex-column flex-xl-row justify-content-between">
-                    <div class="chat-left p-40 d-flex flex-column">
+                    <div class="chat-left p-40 d-flex flex-column" role="button" onclick="window.open('{{$news_link}}')">
                         <div class="d-flex align-items-center">
                             <svg width="24" height="27" viewBox="0 0 24 27" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -283,7 +284,7 @@
                                 class="rounded-3 d-flex flex-column align-items-center justify-content-center text-center px-3"
                                 style="background-color: #292521; min-height: 160px">
                                 <p class="text-white fs-6 mb-3">@lang('landing.baku_contract_address')</p>
-                                <p style="color: #F6F4F3; font-size: 14px; opacity: 50%; overflow-x: auto; word-break: break-all">
+                                <p style="filter: blur(2px);-webkit-filter: blur(2px);color: #F6F4F3; font-size: 14px; opacity: 50%; overflow-x: auto; word-break: break-all">
                                     0x22aF33FE49fD1Fa80c7149773dDe5890D3c76F3b
                                 </p>
                             </div>
