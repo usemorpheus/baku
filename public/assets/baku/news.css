@@ -1,0 +1,20 @@
+a {
+    color: #333;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #E67300;
+}
+
+.article p {
+    color: #555;
+}
+
+.pagination {
+    --bs-pagination-active-bg: #E67300 !important;
+    --bs-pagination-active-border-color: #E67300 !important;
+    --bs-pagination-color: #E67300 !important;
+}
+
+/*# sourceMappingURL=news.css.map */

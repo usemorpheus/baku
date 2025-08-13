@@ -1,0 +1,64 @@
+@charset "UTF-8";
+/*!
+ * HarmonyOS Fonts v1.0.0 by IKKI - https://github.com/IKKI2000/
+ * Copyright 2021-2022 IKKI
+ * Released under the MIT License - https://ikki2000.github.io/harmonyos-fonts/LICENSE
+ */
+
+/* CSS for HarmonyOS Sans | Written by IKKI | 2022-01-12 */
+
+/* Simplified Chinese */
+
+/* Thin */
+@font-face {
+    font-family: 'HarmonyOS Sans';
+        url('/assets/fonts/HarmonyOS_Sans/HarmonyOS_Sans_Thin.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Light */
+@font-face {
+    font-family: 'HarmonyOS Sans';
+        url('/assets/fonts/HarmonyOS_Sans/HarmonyOS_Sans_Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Regular */
+@font-face {
+    font-family: 'HarmonyOS Sans';
+        url('/assets/fonts/HarmonyOS_Sans/HarmonyOS_Sans_Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Medium */
+@font-face {
+    font-family: 'HarmonyOS Sans';
+        url('/assets/fonts/HarmonyOS_Sans/HarmonyOS_Sans_Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Bold */
+@font-face {
+    font-family: 'HarmonyOS Sans';
+        url('/assets/fonts/HarmonyOS_Sans/HarmonyOS_Sans_Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Black */
+@font-face {
+    font-family: 'HarmonyOS Sans';
+        url('/assets/fonts/HarmonyOS_Sans/HarmonyOS_Sans_Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}

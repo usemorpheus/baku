@@ -1,0 +1,208 @@
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    color: unset;
+    text-decoration: none;
+}
+
+.nav-link-icon {
+    width: unset;
+    margin-right: 0.3rem;
+}
+
+.btn-xs {
+    font-size: .62rem;
+    padding: .12rem .28rem;
+    line-height: 0.8rem;
+    min-height: 0.8rem;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.input-group {
+    width: unset;
+}
+
+.page-title-box h4 {
+    text-transform: unset;
+}
+
+p, .pagination {
+    margin: unset;
+}
+
+.minw-12px {
+    min-width: 12px;
+}
+
+.minw-24px {
+    min-width: 24px;
+}
+
+.minw-48px {
+    min-width: 48px;
+}
+
+.minw-96px {
+    min-width: 96px;
+}
+
+.minw-144px {
+    min-width: 144px;
+}
+
+.minw-288px {
+    min-width: 288px;
+}
+
+.minw-240px {
+    min-width: 240px;
+}
+
+.maxw-12px {
+    max-width: 12px;
+}
+
+.maxw-24px {
+    max-width: 24px;
+}
+
+.maxw-32px {
+    max-width: 32px;
+}
+
+.maxw-36px {
+    max-width: 36px;
+}
+
+.maxw-48px {
+    max-width: 48px;
+}
+
+.maxw-96px {
+    max-width: 96px;
+}
+
+.maxw-144px {
+    max-width: 144px;
+}
+
+.maxw-288px {
+    max-width: 288px;
+}
+
+.maxw-384px {
+    max-width: 384px;
+}
+
+.minh-12px {
+    min-height: 12px;
+}
+
+.minh-24px {
+    min-height: 24px;
+}
+
+.minh-48px {
+    min-height: 48px;
+}
+
+.minh-96px {
+    min-height: 96px;
+}
+
+.minh-144px {
+    min-height: 144px;
+}
+
+.minh-288px {
+    min-height: 288px;
+}
+
+.minh-240px {
+    min-height: 240px;
+}
+
+.maxh-12px {
+    max-height: 12px;
+}
+
+.maxh-24px {
+    max-height: 24px;
+}
+
+.maxh-28px {
+    max-height: 28px;
+}
+
+.maxh-32px {
+    max-height: 32px;
+}
+
+.maxh-36px {
+    max-height: 36px;
+}
+
+.maxh-40px {
+    max-height: 40px;
+}
+
+.maxh-48px {
+    max-height: 48px;
+}
+
+.maxh-96px {
+    max-height: 96px;
+}
+
+.maxh-144px {
+    max-height: 144px;
+}
+
+.maxh-288px {
+    max-height: 288px;
+}
+
+.maxh-384px {
+    max-height: 384px;
+}
+
+.auto-width {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.h-28px {
+    height: 28px;
+}
+
+.h-32px {
+    height: 32px;
+}
+
+.h-36px {
+    height: 36px;
+}
+
+.h-40px {
+    height: 40px;
+}
+
+.h-48px {
+    height: 48px;
+}
+
+.brand-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.grid-full {
+    grid-column: 1 / -1;
+}
