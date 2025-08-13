@@ -8,7 +8,7 @@ return [
     'sh_action_1' => 'I need a personal career interview',
     'sh_action_2' => 'I want to comment on a project',
     'sh_action_3' => 'I have an important point to make',
-    'sh_action_4' => 'I need a personal career interview',
+    'sh_action_4' => 'I want to announce a new campaign',
 
     'buzz_news_tag'   => '7x24hr Buzz News',
     'buzz_news_title' => 'The Baku News Agent went live today, sending the community’s adrenaline levels soaring by 586%.',
@@ -32,7 +32,7 @@ return [
     'news_to_earn_title' => 'News To Earn',
     'news_to_earn_desc'  => 'Earn rewards by completing high-quality interviews or news content (coming soon...)',
 
-    'coingecko'      => 'coingecko',
+    'coingecko'  => 'coingecko',
     '$baku'      => '$baku',
     '$baku_desc' => '$Baku is the native token of baku, and we are still exploring its use cases.',
 
@@ -42,6 +42,6 @@ return [
     'baku_try_desc'  => 'Get up to 10 messages per day for free!',
     'try_for_free'   => 'TRY FOR FREE',
 
-    'section_footer_title' => 'Baku Agent',
+    'section_footer_title'     => 'Baku Agent',
     'section_footer_sub_title' => 'Your voice, your reporter',
 ];
