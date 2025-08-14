@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Webhooks;
 
+use App\Actions\GenerateImage;
 use App\Models\Article;
 use Illuminate\Support\Str;
 
@@ -24,8 +25,16 @@ class ArticleController
             'data'      => to_json(request('data')),
         ]);
 
+        if ($article->category == 'buzz_news') {
+            $image = GenerateImage::run($article->title, $article->content);
+            $article->update([
+                'image' => $image,
+            ]);
+        }
+
         return [
-            'url' => route('news.show', $article->uuid),
+            'article' => $article,
+            'url'     => route('news.show', $article->uuid),
         ];
     }
 }
