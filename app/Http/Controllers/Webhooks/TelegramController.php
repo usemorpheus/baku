@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Webhooks;
 use App\Models\TelegramChat;
 use App\Models\TelegramMessage;
 use App\Models\TelegramUser;
+use Illuminate\Support\Carbon;
 
 class TelegramController
 {
@@ -52,5 +53,24 @@ class TelegramController
         }
 
         return $data;
+    }
+
+    public function getMessagesContext()
+    {
+        $chat_id = request('chat_id');
+
+        $messages = TelegramMessage::where('telegram_chat_id', $chat_id)
+            ->orderBy('datetime', 'desc')
+            ->limit(1000)
+            ->get();
+
+        $result = '';
+        foreach ($messages as $message) {
+            $result .= $message->user->first_name . '(' . $messages->user->username . ') [' . Carbon::createFromTimestamp($message->datetime)->toString() . ']:' . $message->text . "\n";
+        }
+
+        return [
+            'context' => $result,
+        ];
     }
 }
