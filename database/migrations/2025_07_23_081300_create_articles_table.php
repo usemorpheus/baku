@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->string('author')->nullable();
             $table->text('content')->nullable();
             $table->text('data')->nullable();
-            $table->boolean('read_count')->default(0);
+            $table->integer('read_count')->default(0);
             $table->timestamps();
         });
     }
