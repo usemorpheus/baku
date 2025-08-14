@@ -24,6 +24,8 @@ class ArticleController
             'data'      => request('data'),
         ]);
 
-        return route('news.show', $article->uuid);
+        return [
+            'url' => route('news.show', $article->uuid),
+        ];
     }
 }
