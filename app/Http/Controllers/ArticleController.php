@@ -25,6 +25,11 @@ class ArticleController
     {
         $article = Article::firstWhere('uuid', $uuid);
         $article->update(['published' => 1]);
+
+        $data = $article->data;
+        if (!empty($data['chat_id'])) {
+            \Http::post('https://n8n.baku.builders/webhook/f5b3f27a-0578-4556-996e-4006a92ac5b8', ['chat_id' => $data['chat_id']]);
+        }
         return back();
     }
 }
