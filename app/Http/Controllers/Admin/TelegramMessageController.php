@@ -21,7 +21,7 @@ class TelegramMessageController extends CrudController
     {
         return [
             'id',
-            'chat.title',
+            'chat_id',
             'user.first_name',
             'text',
             'datetime' => [
