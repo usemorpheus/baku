@@ -43,6 +43,7 @@ class TelegramController
             TelegramMessage::updateOrCreate([
                 'message_id' => $message['message_id'],
             ], [
+                'telegram_chat_id' => $message['chat']['id'],
                 'telegram_user_id' => $message['from']['id'] ?? null,
                 'text'             => $message['text'] ?? null,
                 'data'             => $message,
