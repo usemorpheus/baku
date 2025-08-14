@@ -73,6 +73,7 @@ class TelegramController
         }
 
         return [
+            'chat_id' => $chat_id,
             'context' => $result,
         ];
     }
