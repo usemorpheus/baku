@@ -3,11 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Article;
+use Illuminate\Database\Eloquent\Builder;
 use Merlion\Http\Controllers\CrudController;
 
 class ArticleController extends CrudController
 {
     protected string $model = Article::class;
+
+    protected function getQueryBuilder(): Builder
+    {
+        return Article::query()->latest();
+    }
 
     protected function schemas(): array
     {
