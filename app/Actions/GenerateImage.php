@@ -242,7 +242,7 @@ class GenerateImage
         ob_end_clean();
 
         $fileName = Str::random() . '.jpg';
-        $path     = '/articles/images/' . $fileName;
+        $path     = '/uploads/images/' . $fileName;
         $fullPath = public_path($path);
 
         // 确保目录存在
