@@ -28,7 +28,15 @@ class ArticleController extends CrudController
                     1 => 'Y',
                 ],
             ],
-            'category',
+            'category'   => [
+                'type'       => 'select',
+                'filterable' => true,
+                'options'    => [
+                    'private_interview' => 'Private Interview',
+                    'group_report'      => 'Group report',
+                    'buzz_news'         => 'Buzz news',
+                ],
+            ],
             'content'    => [
                 'type'     => 'editor',
                 'hideFrom' => 'index',
