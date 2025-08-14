@@ -14,7 +14,7 @@ class TelegramMessageController extends CrudController
 
     protected function getQueryBuilder(): Builder
     {
-        return TelegramMessage::query()->with(['chat', 'user']);
+        return TelegramMessage::query()->with(['user']);
     }
 
     protected function schemas(): array
