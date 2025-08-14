@@ -34,7 +34,7 @@ class ArticleController
 
         return [
             'article' => $article,
-            'url'     => route('news.show', $article->uuid),
+            'url'     => route('articles.show', $article->uuid),
         ];
     }
 }
