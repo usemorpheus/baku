@@ -18,6 +18,7 @@ class ArticleController extends CrudController
             'published'  => [
                 'filterable' => true,
                 'type'       => 'select',
+                'exact'      => true,
                 'options'    => [
                     0 => 'N',
                     1 => 'Y',
