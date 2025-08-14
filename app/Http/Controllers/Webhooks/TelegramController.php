@@ -61,6 +61,7 @@ class TelegramController
 
         $messages = TelegramMessage::where('telegram_chat_id', $chat_id)
             ->orderBy('datetime', 'desc')
+            ->with(['user', 'chat'])
             ->limit(1000)
             ->get();
 
