@@ -8,7 +8,9 @@ class SettingController
 {
     public function show($key)
     {
-        return Setting::where('key', $key)->first()->value ?? null;
+        return [
+            'value' => Setting::where('key', $key)->first()->value ?? null,
+        ];
     }
 
     public function update($key)
