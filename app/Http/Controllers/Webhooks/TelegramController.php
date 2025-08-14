@@ -74,9 +74,8 @@ class TelegramController
             $result .= $message->user->first_name . '(' . $message->user->username . ') [' . Carbon::createFromTimestamp($message->datetime)->toString() . ']:' . $message->text . "\n";
         }
 
-
         $telegram_users = TelegramUser::whereHas('chats', function ($query) use ($chat) {
-            $query->where('id', $chat->id);
+            $query->where('telegram_chat_id', $chat->id);
         })
             ->withCount([
                 'messages' => function ($query) use ($created_at) {
