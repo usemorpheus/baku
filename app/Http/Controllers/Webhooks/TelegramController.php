@@ -67,7 +67,7 @@ class TelegramController
 
         $result = '';
         foreach ($messages as $message) {
-            $result .= $message->user->first_name . '(' . $messages->user->username . ') [' . Carbon::createFromTimestamp($message->datetime)->toString() . ']:' . $message->text . "\n";
+            $result .= $message->user->first_name . '(' . $message->user->username . ') [' . Carbon::createFromTimestamp($message->datetime)->toString() . ']:' . $message->text . "\n";
         }
 
         return [
