@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TelegramUser extends Model
 {
@@ -19,5 +20,10 @@ class TelegramUser extends Model
     public function chats(): BelongsToMany
     {
         return $this->belongsToMany(TelegramChat::class, 'telegram_user_chat');
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(TelegramMessage::class, 'telegram_user_id');
     }
 }

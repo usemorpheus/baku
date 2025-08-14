@@ -68,15 +68,33 @@ class TelegramController
             ->where('created_at', '>=', $created_at)
             ->limit(1000)
             ->get();
+        $result   = '';
 
-        $result = '';
         foreach ($messages as $message) {
             $result .= $message->user->first_name . '(' . $message->user->username . ') [' . Carbon::createFromTimestamp($message->datetime)->toString() . ']:' . $message->text . "\n";
+        }
+
+
+        $telegram_users = TelegramUser::whereHas('chats', function ($query) use ($chat) {
+            $query->where('id', $chat->id);
+        })
+            ->withCount([
+                'messages' => function ($query) use ($created_at) {
+                    $query->where('created_at', '>=', $created_at);
+                },
+            ])
+            ->get();
+
+        $users = '';
+
+        foreach ($telegram_users as $user) {
+            $users .= $user->first_name . '(' . $user->username . '): ' . $user->messages_count . "\n";
         }
 
         return [
             'chat'    => $chat,
             'context' => $result,
+            'users'   => $users,
         ];
     }
 
