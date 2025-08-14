@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Merlion\Components\Layouts\Admin;
 use Merlion\Components\Menu;
+use Opcodes\LogViewer\Facades\LogViewer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+
+        LogViewer::auth(function ($request) {
+            return true;
+        });
+
         Gate::before(function ($user, $ability) {
             return true;
         });
