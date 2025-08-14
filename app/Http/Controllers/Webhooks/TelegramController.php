@@ -76,4 +76,20 @@ class TelegramController
             'context' => $result,
         ];
     }
+
+    public function getGroupChats()
+    {
+        $from       = request('from', '-3 days');
+        $created_at = Carbon::parse($from);
+
+        $chats = TelegramChat::whereIn('type', ['group', 'supergroup'])
+            ->withCount([
+                'messages' => function ($query) use ($created_at) {
+                    $query->where('created_at', '>=', $created_at);
+                },
+            ])
+            ->get();
+
+        return $chats;
+    }
 }

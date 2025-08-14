@@ -10,5 +10,6 @@ Route::post('webhook/telegram', TelegramController::class);
 Route::group(['middleware' => [ApiVerifyMiddleware::class]], function () {
     Route::post('webhook/articles', ArticleController::class);
     Route::get('webhook/messages', [TelegramController::class, 'getMessagesContext']);
+    Route::get('webhook/chats', [TelegramController::class, 'getGroupChats']);
 });
 
