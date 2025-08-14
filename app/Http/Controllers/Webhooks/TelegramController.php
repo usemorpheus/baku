@@ -47,7 +47,7 @@ class TelegramController
                 'telegram_user_id' => $message['from']['id'] ?? null,
                 'text'             => $message['text'] ?? null,
                 'data'             => $message,
-                'datetime'         => $message['date'] * 1000,
+                'datetime'         => $message['date'],
             ]);
         }
 
