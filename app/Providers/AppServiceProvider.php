@@ -35,13 +35,13 @@ class AppServiceProvider extends ServiceProvider
                 Menu::make('logs', 'Logs')->icon('ti ti-logs icon')->link('/admin/logs'),
             ], 'user');
             admin()->menus([
-                Menu::make('dashboard', 'Dashboard')->icon('ti ti-home icon')->link('/admin'),
-                Menu::make('articles', 'Articles')->icon('ti ti-news icon')->link('/admin/articles'),
+                Menu::make('dashboard', __('admin.dashboard'))->icon('ti ti-home icon')->link('/admin'),
+                Menu::make('articles', __('admin.articles'))->icon('ti ti-news icon')->link('/admin/articles'),
                 Menu::make('telegram', 'Telegram')->icon('ti ti-brand-telegram icon')
                     ->content([
-                        Menu::make('chat', 'Chats')->link('/admin/telegram-chats'),
-                        Menu::make('user', 'Users')->link('/admin/telegram-users'),
-                        Menu::make('message', 'Messages')->link('/admin/telegram-messages'),
+                        Menu::make('chat', __('admin.chats'))->link('/admin/telegram-chats'),
+                        Menu::make('user', __('admin.users'))->link('/admin/telegram-users'),
+                        Menu::make('message', __('admin.messages'))->link('/admin/telegram-messages'),
                     ]),
             ]);
         });
