@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('first_name')->nullable();
             $table->string('username')->nullable();
             $table->string('avatar')->nullable();
+            $table->boolean('is_bot')->nullable();
             $table->string('language')->nullable();
             $table->timestamps();
         });

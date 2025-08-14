@@ -10,6 +10,10 @@ class TelegramMessage extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'data' => 'array',
+    ];
+
     public function chat(): BelongsTo
     {
         return $this->belongsTo(TelegramChat::class, 'telegram_chat_id');
