@@ -21,7 +21,7 @@ class ArticleController
             'content'   => request('content'),
             'category'  => request('category'),
             'author'    => request('author'),
-            'data'      => request('data'),
+            'data'      => to_json(request('data')),
         ]);
 
         return [
