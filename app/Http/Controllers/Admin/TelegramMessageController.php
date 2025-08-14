@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\TelegramMessage;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Merlion\Http\Controllers\CrudController;
 
 class TelegramMessageController extends CrudController
@@ -12,17 +11,12 @@ class TelegramMessageController extends CrudController
     protected string $model = TelegramMessage::class;
     protected string $route = 'telegram-messages';
 
-    protected function getQueryBuilder(): Builder
-    {
-        return TelegramMessage::query()->with(['user']);
-    }
-
     protected function schemas(): array
     {
         return [
             'message_id',
-            'chat_id',
-            'user.first_name',
+            'telegram_chat_id',
+            'telegram_user_id',
             'text',
             'datetime' => [
                 'display' => function ($schema) {
