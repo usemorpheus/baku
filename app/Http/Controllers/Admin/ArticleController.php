@@ -33,6 +33,9 @@ class ArticleController extends CrudController
             'created_at' => [
                 'showOn' => ['index', 'show'],
             ],
+            'data'       => [
+                'showOn' => 'show',
+            ],
         ];
     }
 }
