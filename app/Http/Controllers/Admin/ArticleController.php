@@ -12,20 +12,25 @@ class ArticleController extends CrudController
     protected function schemas(): array
     {
         return [
-            'title'     => [
+            'title'      => [
                 'filterable' => true,
             ],
-            'published' => [
-                'type'    => 'select',
-                'options' => [
+            'published'  => [
+                'filterable' => true,
+                'type'       => 'select',
+                'options'    => [
                     0 => 'N',
                     1 => 'Y',
                 ],
             ],
-            'content'   => [
+            'category',
+            'content'    => [
                 'type'     => 'editor',
                 'hideFrom' => 'index',
                 'full'     => true,
+            ],
+            'created_at' => [
+                'showOn' => ['index', 'show'],
             ],
         ];
     }
