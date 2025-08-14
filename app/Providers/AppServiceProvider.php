@@ -32,6 +32,9 @@ class AppServiceProvider extends ServiceProvider
         Admin::serving(function () {
             admin()->brandLogo(asset('images/baku/logo.png'));
             admin()->menus([
+                Menu::make('logs', 'Logs')->icon('ti ti-logs icon')->link('/admin/logs'),
+            ], 'user');
+            admin()->menus([
                 Menu::make('dashboard', 'Dashboard')->icon('ti ti-home icon')->link('/admin'),
                 Menu::make('articles', 'Articles')->icon('ti ti-news icon')->link('/admin/articles'),
                 Menu::make('telegram', 'Telegram')->icon('ti ti-brand-telegram icon')
