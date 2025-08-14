@@ -11,6 +11,9 @@ class TelegramChat extends Model
     public $incrementing = false;
 
     protected $guarded = [];
+    protected $casts = [
+        'id' => 'string',
+    ];
 
     public function messages(): HasMany
     {

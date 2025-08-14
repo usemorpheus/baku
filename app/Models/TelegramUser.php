@@ -11,6 +11,10 @@ class TelegramUser extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'id' => 'string',
+    ];
+
     public function chats(): BelongsToMany
     {
         return $this->belongsToMany(TelegramChat::class, 'telegram_user_chat');

@@ -20,7 +20,7 @@ class TelegramMessageController extends CrudController
     protected function schemas(): array
     {
         return [
-            'id',
+            'message_id',
             'chat_id',
             'user.first_name',
             'text',
