@@ -6,6 +6,8 @@ class TelegramController
 {
     public function __invoke()
     {
-        return request()->all();
+        return [
+            'success' => true,
+        ];
     }
 }
