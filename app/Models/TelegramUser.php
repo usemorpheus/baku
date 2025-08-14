@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class TelegramUser extends Model
 {
     public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $guarded = [];
 
