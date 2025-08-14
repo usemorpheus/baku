@@ -3,23 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Article;
-use Illuminate\Database\Eloquent\Builder;
 use Merlion\Http\Controllers\CrudController;
 
 class ArticleController extends CrudController
 {
     protected string $model = Article::class;
 
-    protected function getQueryBuilder(): Builder
-    {
-        return Article::query()->latest();
-    }
-
     protected function schemas(): array
     {
         return [
             'title'      => [
                 'filterable' => true,
+                'sortable'   => [
+                    'title'  => 'A - Z',
+                    '-title' => 'Z - A',
+                ],
             ],
             'published'  => [
                 'filterable' => true,
@@ -37,7 +35,14 @@ class ArticleController extends CrudController
                 'full'     => true,
             ],
             'created_at' => [
-                'showOn' => ['index', 'show'],
+                'showOn'   => ['index', 'show'],
+                'sortable' => [
+                    'created_at'  => 'Oldest',
+                    '-created_at' => [
+                        'label'   => 'Newest',
+                        'default' => true,
+                    ],
+                ],
             ],
             'data'       => [
                 'showOn' => 'show',
