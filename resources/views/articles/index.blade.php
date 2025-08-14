@@ -6,12 +6,12 @@
 
         @foreach($articles as $model)
             <article class="mb-5 article">
-                <a href="{{route('news.show', $model->uuid)}}">
+                <a href="{{route('articles.show', $model->uuid)}}">
                     <h4 class="fs-4 m-0">{{$model->title}}</h4>
                 </a>
                 <p class="mt-2">
                     {{\Illuminate\Support\Str::limit(strip_tags($model->content), 200, '...')}}
-                    <a class="text-primary" href="{{route('news.show', $model->uuid)}}">继续阅读</a>
+                    <a class="text-primary" href="{{route('articles.show', $model->uuid)}}">继续阅读</a>
                 </p>
                 <div class="mt-3 text-muted">
                     <i class="lar la-clock"></i>

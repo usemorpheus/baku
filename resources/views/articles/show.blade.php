@@ -2,18 +2,21 @@
 
 @section('content')
     <div class="container" style="min-height: 70vh">
-        <h2 class="mb-5"><a href="/news"> 🔙 </a></h2>
+        <h2 class="mb-5"><a href="{{route('articles.index')}}"> 🔙 </a></h2>
 
         @if(!$article->published)
             <div class="alert alert-success">
                 <h4>This news is not published yet.</h4>
-                <a href="{{route('news.publish', $article->uuid)}}" class="btn btn-primary">Publish now</a>
+                <a href="{{route('articles.publish', $article->uuid)}}" class="btn btn-primary">Publish now</a>
             </div>
         @endif
 
         <article class="mb-5 article">
             <h4 class="fs-4 m-0">{{$article->title}}</h4>
             <div class="mt-3">
+                @if($article->image)
+                    <img src="{{$article->image}}" alt="">
+                @endif
                 {!! $article->content !!}
             </div>
             <div class="mt-3 text-muted">

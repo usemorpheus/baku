@@ -20,11 +20,11 @@ class ArticleController extends CrudController
                 ],
             ],
             'uuid'       => [
-                'showOn' => 'show',
-                'link'   => function ($text) {
-                    return '/news/' . $text->getModel()->uuid;
+                'hideFrom' => 'index',
+                'link'     => function ($text) {
+                    return '/articles/' . $text->getModel()->uuid;
                 },
-                'target' => '_blank',
+                'target'   => '_blank',
             ],
             'published'  => [
                 'filterable' => true,
