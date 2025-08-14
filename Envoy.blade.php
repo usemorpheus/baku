@@ -3,5 +3,5 @@
 @task('deploy')
 cd /home/forge/baku
 git pull
-composer install
+composer install --no-dev
 @endtask

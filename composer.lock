@@ -3421,12 +3421,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/singapura-dev/merlion.git",
-                "reference": "c463dcf9071481b3cc6fdcfec0a28c09c0f5a082"
+                "reference": "fe9fca00e45f913a0e01d1a715ac2de6f947fe46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/singapura-dev/merlion/zipball/c463dcf9071481b3cc6fdcfec0a28c09c0f5a082",
-                "reference": "c463dcf9071481b3cc6fdcfec0a28c09c0f5a082",
+                "url": "https://api.github.com/repos/singapura-dev/merlion/zipball/fe9fca00e45f913a0e01d1a715ac2de6f947fe46",
+                "reference": "fe9fca00e45f913a0e01d1a715ac2de6f947fe46",
                 "shasum": ""
             },
             "require": {
@@ -3454,7 +3454,7 @@
                 "source": "https://github.com/singapura-dev/merlion/tree/main",
                 "issues": "https://github.com/singapura-dev/merlion/issues"
             },
-            "time": "2025-08-14T07:42:16+00:00"
+            "time": "2025-08-14T07:49:39+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
