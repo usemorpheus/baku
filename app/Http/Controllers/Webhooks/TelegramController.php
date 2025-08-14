@@ -15,7 +15,7 @@ class TelegramController
         if (!empty($data['message']['text'])) {
             $message = $data['message'];
 
-            if (empty($message['chat'])) {
+            if (!empty($message['chat'])) {
                 $chat = TelegramChat::updateOrCreate([
                     'id' => $message['chat']['id'],
                 ], [
@@ -24,7 +24,7 @@ class TelegramController
                 ]);
             }
 
-            if (empty($message['from'])) {
+            if (!empty($message['from'])) {
                 $user = TelegramUser::updateOrCreate([
                     'id'     => $message['from']['id'],
                     'is_bot' => $message['from']['is_bot'] ?? false,
@@ -47,7 +47,7 @@ class TelegramController
                 'telegram_user_id' => $message['from']['id'] ?? null,
                 'text'             => $message['text'] ?? null,
                 'data'             => $message,
-                'datetime'         => $message['date'],
+                'datetime'         => $message['date'] * 1000,
             ]);
         }
 
