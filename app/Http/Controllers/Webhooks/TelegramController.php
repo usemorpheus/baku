@@ -99,10 +99,21 @@ class TelegramController
 
     public function getGroupChats()
     {
-        $from       = request('from', '-3 days');
+        $from    = request('from', '-3 days');
+        $private = request('is_private', false);
+        if ($private) {
+            $type = [
+                'private',
+            ];
+        } else {
+            $type = [
+                'group',
+                'supergroup',
+            ];
+        }
         $created_at = Carbon::parse($from);
 
-        $chats = TelegramChat::whereIn('type', ['group', 'supergroup'])
+        $chats = TelegramChat::whereIn('type', $type)
             ->withCount([
                 'messages' => function ($query) use ($created_at) {
                     $query->where('created_at', '>=', $created_at);
