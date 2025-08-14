@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "198b77e1702617c326b9a5668407b807",
+    "content-hash": "5bedd6d643a6c34d4adbe135b7d3d371",
     "packages": [
         {
             "name": "brick/math",
@@ -3277,22 +3277,15 @@
         {
             "name": "singapura/merlion",
             "version": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/singapura-dev/merlion.git",
-                "reference": "41c2a482e8b90ed1d67bec601b09905cf67e066a"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/singapura-dev/merlion/zipball/41c2a482e8b90ed1d67bec601b09905cf67e066a",
-                "reference": "41c2a482e8b90ed1d67bec601b09905cf67e066a",
-                "shasum": ""
+                "type": "path",
+                "url": "./packages/singapura/merlion",
+                "reference": "41c2a482e8b90ed1d67bec601b09905cf67e066a"
             },
             "require": {
                 "php": "^8.3",
                 "spatie/laravel-query-builder": "^6.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3309,11 +3302,10 @@
                     "src/helpers.php"
                 ]
             },
-            "support": {
-                "source": "https://github.com/singapura-dev/merlion/tree/main",
-                "issues": "https://github.com/singapura-dev/merlion/issues"
-            },
-            "time": "2025-08-13T14:25:39+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "spatie/laravel-package-tools",

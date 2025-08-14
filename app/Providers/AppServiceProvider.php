@@ -17,9 +17,6 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         Gate::before(function ($user, $ability) {
@@ -31,6 +28,12 @@ class AppServiceProvider extends ServiceProvider
             admin()->menus([
                 Menu::make('dashboard', 'Dashboard')->icon('ti ti-home icon')->link('/admin'),
                 Menu::make('articles', 'Articles')->icon('ti ti-news icon')->link('/admin/articles'),
+                Menu::make('telegram', 'Telegram')->icon('ti ti-brand-telegram icon')
+                    ->content([
+                        Menu::make('chat', 'Chats')->link('/admin/telegram-chats'),
+                        Menu::make('user', 'Users')->link('/admin/telegram-users'),
+                        Menu::make('message', 'Messages')->link('/admin/telegram-messages'),
+                    ]),
             ]);
         });
     }

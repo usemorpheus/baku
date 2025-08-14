@@ -12,11 +12,11 @@ class TelegramMessage extends Model
 
     public function chat(): BelongsTo
     {
-        return $this->belongsTo(TelegramChat::class);
+        return $this->belongsTo(TelegramChat::class, 'telegram_chat_id');
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(TelegramUser::class);
+        return $this->belongsTo(TelegramUser::class, 'telegram_user_id');
     }
 }

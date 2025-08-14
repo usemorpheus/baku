@@ -7,4 +7,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', HomeController::class);
 Route::resource('/news', ArticleController::class);
 
+require __DIR__ . '/webhook.php';
 require __DIR__ . '/admin.php';
