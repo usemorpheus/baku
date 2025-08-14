@@ -19,6 +19,13 @@ class ArticleController extends CrudController
                     '-title' => 'Z - A',
                 ],
             ],
+            'uuid'       => [
+                'showOn' => 'show',
+                'link'   => function ($text) {
+                    return '/news/' . $text->getModel()->uuid;
+                },
+                'target' => '_blank',
+            ],
             'published'  => [
                 'filterable' => true,
                 'type'       => 'select',
