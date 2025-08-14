@@ -14,10 +14,17 @@ class ArticleController
         return view('news.index', compact('articles'));
     }
 
-    public function show($id)
+    public function show($uuid)
     {
-        $article = Article::findOrFail($id);
+        $article = Article::firstWhere('uuid', $uuid);
         $article->increment('read_count');
         return view('news.show', compact('article'));
+    }
+
+    public function publish($uuid)
+    {
+        $article = Article::firstWhere('uuid', $uuid);
+        $article->update(['published' => 1]);
+        return back();
     }
 }

@@ -12,6 +12,7 @@ return new class extends Migration {
     {
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->nullable();
             $table->string('title')->nullable();
             $table->string('slug')->nullable();
             $table->string('category')->nullable();
