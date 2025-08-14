@@ -13,10 +13,12 @@
 
         <article class="mb-5 article">
             <h4 class="fs-4 m-0">{{$article->title}}</h4>
-            <div class="mt-3">
-                @if($article->image)
+            @if($article->image)
+                <div class="my-3">
                     <img src="{{$article->image}}" alt="">
-                @endif
+                </div>
+            @endif
+            <div class="mt-3">
                 {!! $article->content !!}
             </div>
             <div class="mt-3 text-muted">
