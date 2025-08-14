@@ -12,7 +12,7 @@ class TelegramController
     {
         $data = request()->all();
 
-        if (!empty($data['message'])) {
+        if (!empty($data['message']['text'])) {
             $message = $data['message'];
 
             if (empty($message['chat'])) {
