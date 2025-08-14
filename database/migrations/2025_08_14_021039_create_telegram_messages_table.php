@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('telegram_messages', function (Blueprint $table) {
             $table->id();
-            $table->string('message_id')->index();
-            $table->string('telegram_chat_id')->index();
+            $table->string('message_id')->nullable();
+            $table->string('telegram_chat_id')->nullable();
             $table->string('telegram_user_id')->nullable();
             $table->text('text')->nullable();
             $table->time('datetime')->nullable();
@@ -22,11 +22,4 @@ return new class extends Migration {
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('telegram_messages');
-    }
 };

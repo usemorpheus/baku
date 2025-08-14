@@ -50,8 +50,6 @@ class TelegramController
             ]);
         }
 
-        return [
-            'success' => true,
-        ];
+        return $data;
     }
 }

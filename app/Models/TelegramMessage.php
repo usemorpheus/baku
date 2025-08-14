@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TelegramMessage extends Model
 {
-
     protected $guarded = [];
 
     protected $casts = [
