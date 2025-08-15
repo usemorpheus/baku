@@ -31,6 +31,14 @@
     </div>
 @endsection
 
+@pushonce('head')
+    @if($article->image)
+        <meta name="twitter:card" content="summary_large_image"/>
+        <meta name="twitter:image" content="{{$article->image}}"/>
+    @endif
+    <meta name="twitter:title" content="{{$article->title}}"/>
+@endpushonce
+
 @push('styles')
     <link rel="stylesheet" href="{{asset('assets/baku/news.css')}}">
 @endpush
