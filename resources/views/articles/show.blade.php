@@ -15,7 +15,7 @@
             <h4 class="fs-4 m-0">{{$article->title}}</h4>
             @if($article->image)
                 <div class="my-3">
-                    <img src="{{$article->image}}" alt="">
+                    <img src="{{$article->image}}" alt="" style="max-width: 100%;">
                 </div>
             @endif
             <div class="mt-3">
