@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use Illuminate\Support\Facades\Http;
 
 class ArticleController
 {
@@ -35,7 +36,7 @@ class ArticleController
 
         $data = $article->data;
         if (!empty($data['chat_id'])) {
-            \Http::post('https://n8n.baku.builders/webhook/f5b3f27a-0578-4556-996e-4006a92ac5b8',
+            Http::post('https://n8n.baku.builders/webhook/f5b3f27a-0578-4556-996e-4006a92ac5b8',
                 ['chat_id' => $data['chat_id']]);
         }
         return back();
