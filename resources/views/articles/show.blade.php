@@ -33,7 +33,7 @@
 
 @pushonce('head')
     @if($article->image)
-        <meta name="twitter:card" content="summary_large_image"/>
+        <meta name="twitter:card" content="summary"/>
         <meta name="twitter:image" content="{{$article->image}}"/>
     @endif
     <meta name="twitter:title" content="{{$article->title}}"/>
