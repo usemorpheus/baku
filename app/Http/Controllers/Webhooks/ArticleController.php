@@ -32,6 +32,12 @@ class ArticleController
             ]);
         }
 
+        if ($article->category == 'group_report') {
+            $article->update([
+                'published' => true,
+            ]);
+        }
+
         return [
             'article' => $article,
             'url'     => route('articles.show', $article->uuid),
