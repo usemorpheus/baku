@@ -17,7 +17,7 @@ class ArticleController
 
         $article = Article::create([
             'uuid'      => Str::uuid(),
-            'published' => false,
+            'published' => true,
             'title'     => request('title'),
             'content'   => request('content'),
             'category'  => request('category'),
@@ -32,9 +32,9 @@ class ArticleController
             ]);
         }
 
-        if ($article->category == 'group_report') {
+        if ($article->category == 'private_interview') {
             $article->update([
-                'published' => true,
+                'published' => false,
             ]);
         }
 
