@@ -20,14 +20,14 @@
                 </a>
                 <p class="mt-2">
                     {{\Illuminate\Support\Str::limit(strip_tags($model->content), 200, '...')}}
-                    <a class="text-primary" href="{{route('articles.show', $model->uuid)}}">继续阅读</a>
+                    <a class="text-primary" href="{{route('articles.show', $model->uuid)}}">More</a>
                 </p>
                 <div class="mt-3 text-muted">
                     <i class="lar la-clock"></i>
                     <span>{{$model->created_at}}</span>
                     @if($model->author)
-                    <i class="las la-microphone"></i>
-                    <span>{{$model->author ?: '-'}}</span>
+                        <i class="las la-microphone"></i>
+                        <span>{{$model->author ?: '-'}}</span>
                     @endif
                     <i class="las la-eye"></i>
                     <span>{{$model->read_count??0}}</span>
