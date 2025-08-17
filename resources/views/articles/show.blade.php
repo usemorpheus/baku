@@ -35,7 +35,7 @@
                 <i class="lar la-clock"></i>
                 <span>{{$article->created_at}}</span>
                 <i class="las la-microphone"></i>
-                <span>{{$model->author ?: '-'}}</span>
+                <span>{{$article->author ?: '-'}}</span>
                 <i class="las la-eye"></i>
                 <span>{{$article->read_count??0}}</span>
             </div>
