@@ -25,6 +25,8 @@
                 <div class="mt-3 text-muted">
                     <i class="lar la-clock"></i>
                     <span>{{$model->created_at}}</span>
+                    <i class="las la-microphone"></i>
+                    <span>{{$model->author ?: '-'}}</span>
                     <i class="las la-eye"></i>
                     <span>{{$model->read_count??0}}</span>
                 </div>
