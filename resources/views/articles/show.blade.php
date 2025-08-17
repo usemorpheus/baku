@@ -34,8 +34,11 @@
             <div class="mt-3 text-muted">
                 <i class="lar la-clock"></i>
                 <span>{{$article->created_at}}</span>
-                <i class="las la-microphone"></i>
-                <span>{{$article->author ?: '-'}}</span>
+
+                @if($article->author)
+                    <i class="las la-microphone"></i>
+                    <span>{{$article->author ?: '-'}}</span>
+                @endif
                 <i class="las la-eye"></i>
                 <span>{{$article->read_count??0}}</span>
             </div>
