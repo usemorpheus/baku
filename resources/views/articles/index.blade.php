@@ -10,7 +10,7 @@
 
 @section('content')
     <div class="container" style="min-height: 70vh">
-        <h2 class="mb-5">News</h2>
+        <h2 class="mb-5"><a href="{{route('articles.index')}}">News</a></h2>
 
         @foreach($articles as $model)
             <article class="mb-5 article">
