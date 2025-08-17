@@ -21,8 +21,9 @@
 
         <article class="mb-5 article">
             <h4 class="fs-4 m-0">{{$article->title}}</h4>
-            <span class="badge bg-primary">{{$categories[$article->category]??''}}</span>
-
+            <a href="{{route('articles.index')}}?category={{$article->category}}">
+                <span class="badge bg-primary">{{$categories[$article->category]??''}}</span>
+            </a>
             @if($article->image)
                 <div class="my-3">
                     <img src="{{$article->image}}" alt="" style="max-width: 100%;">

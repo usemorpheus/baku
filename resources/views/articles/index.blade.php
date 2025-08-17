@@ -16,6 +16,8 @@
             <article class="mb-5 article">
                 <a href="{{route('articles.show', $model->uuid)}}">
                     <h4 class="fs-4 m-0">{{$model->title}}</h4>
+                </a>
+                <a href="{{route('articles.index')}}?category={{$model->category}}">
                     <span class="badge bg-primary">{{$categories[$model->category]??''}}</span>
                 </a>
                 <p class="mt-2">
