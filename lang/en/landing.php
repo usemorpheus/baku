@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'tips'        => 'You can @baku to submit your written articles, Baku will automatically generate news posters for you 🤝',
+    'tips'        => 'You can @baku to submit your written articles, Baku will automatically generate news posters for you ',
     'title'       => 'Interview with',
     'baku'        => 'baku',
     'shadow_tips' => 'Your voice, your reporter',

@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
+@php
+    $categories = [
+        'private_interview' => 'Private Interview',
+        'group_report'      => 'Group report',
+        'buzz_news'         => 'Buzz news',
+    ];
+@endphp
+
 @section('content')
     <div class="container" style="min-height: 70vh">
         <h2 class="mb-5"><a href="{{route('articles.index')}}"> 🔙 </a></h2>
@@ -13,6 +21,8 @@
 
         <article class="mb-5 article">
             <h4 class="fs-4 m-0">{{$article->title}}</h4>
+            <span class="badge bg-primary">{{$categories[$article->category]??''}}</span>
+
             @if($article->image)
                 <div class="my-3">
                     <img src="{{$article->image}}" alt="" style="max-width: 100%;">

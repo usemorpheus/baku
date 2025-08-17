@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
+@php
+    $categories = [
+        'private_interview' => 'Private Interview',
+        'group_report'      => 'Group report',
+        'buzz_news'         => 'Buzz news',
+    ];
+@endphp
+
 @section('content')
     <div class="container" style="min-height: 70vh">
         <h2 class="mb-5">News</h2>
@@ -7,6 +15,7 @@
         @foreach($articles as $model)
             <article class="mb-5 article">
                 <a href="{{route('articles.show', $model->uuid)}}">
+                    <span class="badge bg-primary">{{$categories[$model->category]??''}}</span>
                     <h4 class="fs-4 m-0">{{$model->title}}</h4>
                 </a>
                 <p class="mt-2">
