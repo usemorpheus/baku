@@ -78,37 +78,25 @@
             <div class="rounded-4 border border-1" style="background: #F6F4F3; padding: 40px">
                 <div class="bg-white rounded d-flex align-items-center">
                     <input rows="1"
-                           placeholder="Give me an exclusive interview..."
+                           placeholder="{{$chat_links[0]['label']}}"
                            class="form-control px-3 fs-6 text-muted border-0 shadow-none sh-input"
                            style="padding: 37px"/>
-                    <a href="{{$webchat_link}}"
+                    <a href="{{$chat_links[0]['link']}}" target="_blank"
                        class="btn btn-dark end-0 top-0 me-3">
                         <i class="las la-arrow-right"></i>
                     </a>
                 </div>
 
                 <div class="d-flex flex-wrap gap-3 mt-4 justify-content-center">
-                    <div class="btn btn-sh w-lg-40 w-100 py-2"
-                         onclick="window.open('https://play.baku.builders/chat/share?shareId=v7JP85tfmp1vicGxAqtKebJe')">
-                        <a target="_blank"
-                           href="https://play.baku.builders/chat/share?shareId=v7JP85tfmp1vicGxAqtKebJe">@lang('landing.sh_action_1')</a>
-                    </div>
-                    <div class="btn btn-sh w-lg-40 w-100 py-2"
-                         onclick="window.open('https://play.baku.builders/chat/share?shareId=uoumQyuCOzITm89PSQrc71Am')">
-                        <a target="_blank"
-                           href="https://play.baku.builders/chat/share?shareId=uoumQyuCOzITm89PSQrc71Am">@lang('landing.sh_action_2')</a>
-                    </div>
-
-                    <div class="btn btn-sh w-lg-40 w-100 py-2"
-                         onclick="window.open('https://play.baku.builders/chat/share?shareId=ltGnCmpWbD1DyFyr7w654fif');">
-                        <a target="_blank"
-                           href="https://play.baku.builders/chat/share?shareId=ltGnCmpWbD1DyFyr7w654fif">@lang('landing.sh_action_3')</a>
-                    </div>
-                    <div class="btn btn-sh w-lg-40 w-100 py-2"
-                         onclick="window.open('https://play.baku.builders/chat/share?shareId=wPIXgm5uxSomZa53FU8WcZUb');">
-                        <a target="_blank"
-                           href="https://play.baku.builders/chat/share?shareId=wPIXgm5uxSomZa53FU8WcZUb">@lang('landing.sh_action_4')</a>
-                    </div>
+                    @foreach($chat_links as $chat_link)
+                        @if($loop->first)
+                            @continue
+                        @endif
+                        <div class="btn btn-sh w-lg-40 w-100 py-2"
+                             onclick="window.open('{{$chat_links[$loop->index]['link'] ?? ''}}')">
+                            {{$chat_links[$loop->index]['label'] ?: '-'}}
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
