@@ -12,7 +12,6 @@ class HomeController
         $twitter_link      = "https://x.com/Baku_agent";
         $telegram_bot_link = "https://t.me/baku_news_bot";
         $news_link         = route('articles.index');
-
         $chat_links = [];
 
         for ($index = 0; $index <= 4; $index++) {

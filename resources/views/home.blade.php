@@ -41,7 +41,7 @@
 <div class="container pt-2">
     <div class="d-flex align-items-end gap-2 justify-content-end">
         <a class="btn btn-dark" href="{{$news_link}}" target="_blank">News</a>
-        <a class="btn btn-dark" href="#" target="_blank">Docs</a>
+        <a class="btn btn-dark" href="https://docs.baku.builders" target="_blank">Docs</a>
         <a href="{{$telegram_bot_link}}" class="btn btn-dark" target="_blank">
             <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="40" height="40" rx="10" fill="#292521"></rect>
