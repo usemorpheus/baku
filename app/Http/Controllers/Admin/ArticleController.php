@@ -3,11 +3,23 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Article;
+use Merlion\Components\Table\BatchActions\BatchAction;
 use Merlion\Http\Controllers\CrudController;
 
 class ArticleController extends CrudController
 {
     protected string $model = Article::class;
+
+    protected function getBatchActions(): array
+    {
+        return [
+            BatchAction::make('batch_delete', __('merlion::base.batch_delete'))
+                ->confirm('Are you sure?')
+                ->class('text-danger')
+                ->icon('ti ti-trash')
+                ->action($this->route('batch-destroy')),
+        ];
+    }
 
     protected function schemas(): array
     {

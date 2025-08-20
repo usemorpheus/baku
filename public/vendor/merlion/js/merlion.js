@@ -11,20 +11,17 @@ async function copyText(text) {
 
     // 方法2: 使用 execCommand
     try {
-        const textArea = document.createElement('textarea');
+        const textArea = document.createElement('input');
         textArea.value = text;
         textArea.style.position = 'absolute';
         textArea.style.left = '-9999px';
-
         document.body.appendChild(textArea);
-
         // 选中文本
         textArea.select();
         textArea.setSelectionRange(0, 99999); // 移动端支持
 
         const successful = document.execCommand('copy');
         document.body.removeChild(textArea);
-
         if (successful) {
             return true;
         }
@@ -36,30 +33,6 @@ async function copyText(text) {
     console.log('自动复制失败，请手动复制');
     return false;
 }
-
-(function () {
-    document.querySelectorAll('[data-copyable]').forEach(function (element) {
-        // add a copy icon
-        element.insertAdjacentHTML('beforeend', '<i role="button" class="ti ti-clipboard"></i>');
-        // click icon to copy to clipboard
-        element.querySelector('i').addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            copyText(element.getAttribute('data-copyable'))
-                .then(() => {
-                    element.querySelector('i').classList.add('ti-clipboard-check', 'text-success');
-                    element.querySelector('i').classList.remove('ti-clipboard');
-                    setTimeout(function () {
-                        element.querySelector('i').classList.remove('ti-clipboard-check', 'text-success');
-                        element.querySelector('i').classList.add('ti-clipboard');
-                    }, 2000);
-                })
-                .catch(err => {
-                    console.error('复制失败:', err);
-                });
-        })
-    });
-})();
 
 (function () {
     'use strict';
@@ -164,18 +137,110 @@ async function copyText(text) {
     window.addEventListener('popstate', initActiveMenu);
 })();
 
-(function () {
+class LazyLoad {
+    constructor(element, options) {
+        this.element = element;
+        this.options = options;
+        this.loaded = false;
+        this.observer = null;
+        this.init();
+    }
 
-    function initActions() {
-        document.querySelectorAll("[data-action]").forEach(function (el) {
-            el.addEventListener('click', function (e) {
+    init() {
+        if (this.observer) {
+            this.observer.disconnect(); // 清理之前的 observer
+        }
+        let that = this;
+        this.observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (that.loaded) {
+                        return;
+                    }
+                    that.load(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1, // 当10%的元素可见时触发
+            rootMargin: '0px' // 可以设置边距
+        });
+        this.observer.observe(this.element);
+    }
+
+    async load(el) {
+        let renderable = el.getAttribute("data-renderable");
+        let payload = el.getAttribute("data-payload");
+        let response = await fetch('/merlion-api/lazy-render?renderable=' + renderable + '&payload=' + payload);
+        el.innerHTML = await response.text();
+        this.loaded = true;
+        admin().init(el);
+    }
+}
+
+class Merlion {
+    static getInstance() {
+        if (!Merlion.instance) {
+            Merlion.instance = new Merlion()
+        }
+        return Merlion.instance
+    }
+
+    init(container) {
+        if (!container) {
+            container = document;
+        }
+        this.initCopyable(container);
+        this.initActions(container);
+        this.initBatchActions(container);
+        this.initLazyLoad(container);
+        this.initTable(container);
+        return 'ok';
+    }
+
+    initCopyable(container) {
+        container.querySelectorAll('[data-copyable]').forEach(function (element) {
+            const value = element.getAttribute('data-copyable');
+            if (!value) {
+                return;
+            }
+            element.insertAdjacentHTML('beforeend', '<i role="button" class="ti ti-clipboard"></i>');
+            element.querySelector('i.ti-clipboard').addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                let textToCopy = element.getAttribute('data-copyable');
+                console.log(textToCopy);
+                copyText(element.getAttribute('data-copyable'))
+                    .then(() => {
+                        element.querySelector('i').classList.add('ti-clipboard-check', 'text-success');
+                        element.querySelector('i').classList.remove('ti-clipboard');
+                        setTimeout(function () {
+                            element.querySelector('i').classList.remove('ti-clipboard-check', 'text-success');
+                            element.querySelector('i').classList.add('ti-clipboard');
+                            console.log('成功:');
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        console.error('复制失败:', err);
+                    });
+            })
+        });
+    }
+
+    initActions(container) {
+        let that = this;
+        container.querySelectorAll("[data-action]").forEach(function (el) {
+            el.addEventListener('click', async function (e) {
                 e.stopPropagation();
                 e.preventDefault();
                 let button = e.currentTarget;
                 const confirm_title = button.getAttribute('data-confirm');
-                if (confirm_title && !confirm(confirm_title)) {
-                    return;
+                if (confirm_title) {
+                    let result = await that.showConfirm(confirm_title);
+                    if (!result.isConfirmed) {
+                        return;
+                    }
                 }
+
                 const action = button.getAttribute('data-action');
                 const data = button.getAttribute('data-payload');
                 const method = button.getAttribute('data-method') || 'post';
@@ -189,25 +254,11 @@ async function copyText(text) {
                     },
                     body: data,
                 }).then(response => {
-                    if (response.ok) {
-                        return response.json()
-                    }
-                    console.log(response);
+                    return response.json();
                 }).then(data => {
-                    switch (data.action) {
-                        case 'refresh':
-                        case 'reload':
-                            location.reload();
-                            break;
-                        case 'rediret':
-                            location.href = data.url;
-                            break;
-                        case 'dismiss':
-                            button.closest('.modal').remove();
-                            break;
-                    }
+                    that.handleFetchData(data);
                 }).catch(error => {
-                    onerror(error);
+                    console.error(error);
                 }).finally(() => {
                     button.classList.remove('disabled');
                 });
@@ -215,54 +266,117 @@ async function copyText(text) {
         })
     }
 
-    document.addEventListener('DOMContentLoaded', initActions);
-})();
-
-(function () {
-    class LazyLoad {
-        constructor(element, options) {
-            this.element = element;
-            this.options = options;
-            this.loaded = false;
-            this.observer = null;
-            this.init();
-        }
-
-        init() {
-            if (this.observer) {
-                this.observer.disconnect(); // 清理之前的 observer
+    initBatchActions(container) {
+        let that = this;
+        container.querySelectorAll("[data-batch-action]").forEach(function (el) {
+            const action = el.getAttribute('data-batch-action');
+            if (!action) {
+                return;
             }
-            let that = this;
-            this.observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        if (that.loaded) {
-                            return;
-                        }
-                        that.load(entry.target);
+            el.addEventListener('click', async function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                let button = e.currentTarget;
+                const table_id = button.getAttribute('data-table');
+                const selected_ids = container.querySelector(`#${table_id}`).querySelectorAll('.row-select:checked');
+                const ids = selected_ids ? Array.from(selected_ids).map(el => el.value) : null;
+                if (ids.length === 0) {
+                    return;
+                }
+                const confirm_title = button.getAttribute('data-confirm');
+                if (confirm_title) {
+                    const result = await that.showConfirm(confirm_title, 'total:' + ids.length);
+                    if (!result.isConfirmed) {
+                        return;
                     }
+                }
+                const action = button.getAttribute('data-batch-action');
+                const data = button.getAttribute('data-payload') || {};
+                const method = button.getAttribute('data-method') || 'post';
+
+                data.ids = ids;
+                button.classList.add('disabled');
+                fetch(action, {
+                    method: method,
+                    headers: {
+                        "Content-type": "application/json",
+                        "Accept": "application/json",
+                        "X-Requested-With": "XMLHttpRequest",
+                        'X-CSP-NONCE': document.querySelector('meta[name="csp-nonce"]').getAttribute('content'),
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                    body: JSON.stringify(data)
+                }).then(response => {
+                    return response.json()
+                }).then(data => {
+                    that.handleFetchData(data);
+                }).catch(error => {
+                    console.error(error);
+                }).finally(() => {
+                    button.classList.remove('disabled');
                 });
-            }, {
-                threshold: 0.1, // 当10%的元素可见时触发
-                rootMargin: '0px' // 可以设置边距
             });
-            this.observer.observe(this.element);
-        }
+        })
+    }
 
-        async load(el) {
-            let renderable = el.getAttribute("data-renderable");
-            let payload = el.getAttribute("data-payload");
-            let response = await fetch('/merlion-api/lazy-render?renderable=' + renderable + '&payload=' + payload);
-            el.innerHTML = await response.text();
-            this.loaded = true;
+    initLazyLoad(container) {
+        container.querySelectorAll('[data-lazy]').forEach(function (element) {
+            new LazyLoad(element, {});
+        });
+    }
+
+    initTable(container) {
+        container.querySelectorAll('.table-selectable').forEach(function (element) {
+            element.querySelectorAll('.row-select-all').forEach(function (checkbox) {
+                checkbox.addEventListener('change', function (e) {
+                    element.querySelectorAll('.row-select').forEach(function (row_checkbox) {
+                        row_checkbox.checked = e.target.checked;
+                    });
+                })
+            });
+        });
+    }
+
+    handleFetchData(data, onsuccess, onerror) {
+        if (data && data.action) {
+            switch (data.action) {
+                case 'refresh':
+                case 'reload':
+                    location.reload();
+                    break;
+                case 'rediret':
+                    location.href = data.url;
+                    break;
+            }
+            if (onsuccess) {
+                onsuccess(data);
+            }
+        } else {
+            if (onerror) {
+                onerror(data);
+            }
+            Swal.fire({
+                icon: "error",
+                title: data.message,
+            })
         }
     }
 
-    window.lazyLoad = function (selector, options) {
-        new LazyLoad(selector, options);
+    async showConfirm(title, text) {
+        return await Swal.fire({
+            title: title,
+            text: text,
+            icon: "warning",
+            showCancelButton: true,
+        })
     }
+}
 
-    document.querySelectorAll('[data-lazy]').forEach(function (element) {
-        window.lazyLoad(element);
-    });
-})();
+window.admin = function () {
+    return Merlion.getInstance();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    admin().init();
+});
+

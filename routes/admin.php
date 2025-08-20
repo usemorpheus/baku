@@ -16,6 +16,8 @@ Route::group([
     Route::group(['middleware' => 'auth'], function () {
         Route::get('/', DashboardController::class);
         Route::resource('articles', ArticleController::class);
+        Route::post('batch-delete-articles',
+            [ArticleController::class, 'batchDestroy'])->name('articles.batch-destroy');
         Route::resource('telegram-chats', TelegramChatController::class);
         Route::resource('telegram-users', TelegramUserController::class);
         Route::resource('telegram-messages', TelegramMessageController::class);
