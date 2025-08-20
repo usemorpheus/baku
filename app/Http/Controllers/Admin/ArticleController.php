@@ -44,6 +44,9 @@ class ArticleController extends CrudController
                     'buzz_news'         => 'Buzz news',
                 ],
             ],
+            'author'     => [
+                'filterable' => true,
+            ],
             'content'    => [
                 'type'     => 'editor',
                 'hideFrom' => 'index',
