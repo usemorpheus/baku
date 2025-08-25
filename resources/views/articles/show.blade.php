@@ -29,7 +29,7 @@
                     <img src="{{$article->image}}" alt="" style="max-width: 100%;">
                 </div>
             @endif
-            <div class="mt-3">
+            <div>
                 {!! $article->content !!}
             </div>
         </article>
