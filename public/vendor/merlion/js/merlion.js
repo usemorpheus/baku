@@ -337,6 +337,20 @@ class Merlion {
         });
     }
 
+    showToast(options) {
+        Toastify({
+            text: options.message,
+            duration: (options.duration || 3000),
+            position: (options.position || 'center'),
+            gravity: (options.gravity || 'top'),
+            stopOnFocus: true,
+            style: {
+                background: "unset",
+            },
+            className: "bg-" + (options.type || 'primary'),
+        }).showToast();
+    }
+
     handleFetchData(data, onsuccess, onerror) {
         if (data && data.action) {
             switch (data.action) {

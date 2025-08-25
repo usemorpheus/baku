@@ -17,4 +17,8 @@ a:hover {
     --bs-pagination-color: #E67300 !important;
 }
 
+.article {
+    white-space: pre-line;
+}
+
 /*# sourceMappingURL=news.css.map */
