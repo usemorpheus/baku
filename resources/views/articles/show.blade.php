@@ -23,16 +23,6 @@
         <a href="{{route('articles.index')}}?category={{$article->category}}">
             <span class="badge bg-primary">{{$categories[$article->category]??''}}</span>
         </a>
-        <article class="mt-1 article">
-            @if($article->image)
-                <div class="my-3">
-                    <img src="{{$article->image}}" alt="" style="max-width: 100%;">
-                </div>
-            @endif
-            <div>
-                {!! $article->content !!}
-            </div>
-        </article>
         <div class="my-1 text-muted">
             <i class="lar la-clock"></i>
             <span>{{$article->created_at}}</span>
@@ -44,6 +34,16 @@
             <i class="las la-eye"></i>
             <span>{{$article->read_count??0}}</span>
         </div>
+        <article class="mt-1 article">
+            @if($article->image)
+                <div class="my-3">
+                    <img src="{{$article->image}}" alt="" style="max-width: 100%;">
+                </div>
+            @endif
+            <div>
+                {!! $article->content !!}
+            </div>
+        </article>
     </div>
 @endsection
 
