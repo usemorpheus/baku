@@ -13,17 +13,17 @@
         <h2 class="mb-5"><a href="{{route('articles.index')}}">News</a></h2>
 
         @foreach($articles as $model)
-            <article class="mb-5 article">
+            <article class="mb-5">
                 <a href="{{route('articles.show', $model->uuid)}}">
                     <h4 class="fs-4 m-0">{{$model->title}}</h4>
                 </a>
                 <a href="{{route('articles.index')}}?category={{$model->category}}">
                     <span class="badge bg-primary">{{$categories[$model->category]??''}}</span>
                 </a>
-                <p class="mt-2">
+                <div class="mt-2 article">
                     {{\Illuminate\Support\Str::limit(strip_tags($model->content), 200, '...')}}
                     <a class="text-primary" href="{{route('articles.show', $model->uuid)}}">More</a>
-                </p>
+                </div>
                 <div class="mt-3 text-muted">
                     <i class="lar la-clock"></i>
                     <span>{{$model->created_at}}</span>
