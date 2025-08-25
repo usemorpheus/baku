@@ -41,7 +41,7 @@
                 </div>
             @endif
             <div>
-                {!! $article->content !!}
+                {!! \Illuminate\Support\Str::ltrim($article->content) !!}
             </div>
         </article>
     </div>
