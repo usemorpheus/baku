@@ -20,7 +20,7 @@
                 <a href="{{route('articles.index')}}?category={{$model->category}}">
                     <span class="badge bg-primary">{{$categories[$model->category]??''}}</span>
                 </a>
-                <div class="mt-2 article">
+                <div class="mt-2">
                     {{\Illuminate\Support\Str::limit(strip_tags($model->content), 200, '...')}}
                     <a class="text-primary" href="{{route('articles.show', $model->uuid)}}">More</a>
                 </div>
