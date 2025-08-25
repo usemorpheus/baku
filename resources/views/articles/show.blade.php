@@ -40,9 +40,7 @@
                     <img src="{{$article->image}}" alt="" style="max-width: 100%;">
                 </div>
             @endif
-            <div>
-                {!! ltrim($article->content) !!}
-            </div>
+            <div>{!! ltrim($article->content) !!}</div>
         </article>
     </div>
 @endsection
