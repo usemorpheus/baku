@@ -15,11 +15,6 @@
             text-decoration: none;
         }
 
-        .hover-card .server-box:hover {
-            box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-
         .table th {
             font-weight: 400;
             font-size: 12px;
@@ -28,11 +23,33 @@
         table td {
             vertical-align: middle;
         }
+
+        .bg-gray {
+            background-color: #f8f9fa;
+        }
+
+        table thead th {
+            background-color: #eeeeee !important;
+            color: #fff;
+            vertical-align: middle;
+        }
+
+        /* 左上角、左下角圆角 */
+        table thead th:first-child {
+            border-top-left-radius: 1rem;
+            border-bottom-left-radius: 1rem;
+        }
+
+        /* 右上角、右下角圆角 */
+        table thead th:last-child {
+            border-top-right-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
     </style>
 </head>
 <body>
-<div class="container pt-4">
-    <section class="p-4 border bg-gray rounded">
+<div id="landing-page" class="container pt-4">
+    <section class="p-4 bg-gray shadow-lg rounded">
         <div class="row gy-3">
             <div class="col-lg-5 col-12">
                 <div class="d-flex flex-column  gap-3">
@@ -51,7 +68,7 @@
             </div>
             <div class="col-lg-7 col-12">
                 <div class="d-flex h-100 bg-dark p-4 rounded flex-column justify-content-between text-white">
-                    <div class="fs-5 fw-light">Total points distributed</div>
+                    <div class="fw-light opacity-75">Total points distributed</div>
                     <div class="fs-2 fw-bold">
                         13,750,098
                     </div>
@@ -92,7 +109,7 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table">
+            <table class="table table-borderless">
                 <thead class="text-center">
                 <tr>
                     <th>Rank Name</th>
@@ -111,7 +128,35 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
+                <tr class="bg-gray">
+                    <td>
+                        <div class="d-flex gap-2">
+                            <img class="rounded-circle" width="30" height="30" src="{{asset('images/baku/avatar.png')}}"
+                                 alt="">
+                            <div class="d-flex flex-column">
+                                <div style="font-size: 14px; font-weight: 500;">Baku Community</div>
+                                <div style="font-size: 11px; color: #888888;">
+                                    <a href="#">https://t.me/baku_community</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </td>
+                    <td><strong>$56.4M</strong></td>
+                    <td><span class="text-success">+1.08%</span></td>
+                    <td>1987</td>
+                    <td>205/1024</td>
+                    <td><img class="rounded-circle" width="30" height="30" src="{{asset('images/baku/avatar.png')}}"
+                             alt=""></td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>2</td>
+                </tr>
+                <tr class="bg-gray">
                     <td>
                         <div class="d-flex gap-2">
                             <img class="rounded-circle" width="30" height="30" src="{{asset('images/baku/avatar.png')}}"
