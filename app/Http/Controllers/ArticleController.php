@@ -24,7 +24,7 @@ class ArticleController
 
     public function show($uuid)
     {
-        $article = Article::firstWhere('uuid', $uuid);
+        $article = Article::where('uuid', $uuid)->firstOrFail();
         $article->increment('read_count');
         return view('articles.show', compact('article'));
     }

@@ -228,6 +228,12 @@ class Merlion {
 
     initActions(container) {
         let that = this;
+        container.querySelectorAll("[data-bs-toggle=dropdown],[data-bs-toggle=modal]").forEach(function (el) {
+            el.addEventListener('click', function (e) {
+                e.stopPropagation();
+            })
+        })
+
         container.querySelectorAll("[data-action]").forEach(function (el) {
             el.addEventListener('click', async function (e) {
                 e.stopPropagation();
@@ -262,6 +268,19 @@ class Merlion {
                 }).finally(() => {
                     button.classList.remove('disabled');
                 });
+            });
+        })
+
+        container.querySelectorAll("[data-redirect]").forEach(function (el) {
+            const redirect = el.getAttribute('data-redirect');
+            if (!redirect) {
+                return;
+            }
+            el.addEventListener('click', async function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                const target = el.getAttribute('data-target');
+                window.open(redirect, target);
             });
         })
     }

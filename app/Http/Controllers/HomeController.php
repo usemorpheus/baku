@@ -12,7 +12,7 @@ class HomeController
         $twitter_link      = "https://x.com/Baku_agent";
         $telegram_bot_link = "https://t.me/baku_news_bot";
         $news_link         = route('articles.index');
-        $chat_links = [];
+        $chat_links        = [];
 
         for ($index = 0; $index <= 4; $index++) {
             $chat_links[] = [
@@ -20,7 +20,13 @@ class HomeController
                 'link'  => Setting::get('baku_link_' . $index, ''),
             ];
         }
-
         return view('home', compact('twitter_link', 'telegram_bot_link', 'news_link', 'chat_links'));
+    }
+
+    public function activity()
+    {
+        $twitter_link      = "https://x.com/Baku_agent";
+        $telegram_bot_link = "https://t.me/baku_news_bot";
+        return view('activity', compact('twitter_link', 'telegram_bot_link'));
     }
 }
