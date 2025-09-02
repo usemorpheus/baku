@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Setting;
+use Cache;
 
 class HomeController
 {
@@ -27,6 +28,39 @@ class HomeController
     {
         $twitter_link      = "https://x.com/Baku_agent";
         $telegram_bot_link = "https://t.me/baku_news_bot";
-        return view('activity', compact('twitter_link', 'telegram_bot_link'));
+
+        $tab = request('tab', 'ranking');
+
+        $categories = [
+            '1d'  => '1D',
+            '7d'  => '7D',
+            '30d' => '30D',
+        ];
+        $category   = request('category', '1d');
+
+        $total_points = Cache::get('baku_total_points', rand(10000, 20000));
+        $total_points += rand(0, 500);
+        cache()->put('baku_total_points', $total_points);
+
+        $kpis = [
+            [
+                'label' => 'Communities Served',
+                'value' => 720,
+            ],
+            [
+                'label' => 'Community Scounts',
+                'value' => 231,
+            ],
+            [
+                'label' => 'Buzz news',
+                'value' => 33,
+            ],
+            [
+                'label' => 'Reports Generated',
+                'value' => 23,
+            ],
+        ];
+        return view('activity',
+            compact('twitter_link', 'categories', 'total_points', 'tab', 'kpis', 'category', 'telegram_bot_link'));
     }
 }

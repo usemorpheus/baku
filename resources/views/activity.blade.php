@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{asset('assets/css/harmonyos_sans.css')}}">
     <link rel="stylesheet" href="{{asset('assets/baku/main.css')}}">
     <style>
-        a {
+        a, a.nav-link {
             color: unset;
             text-decoration: none;
         }
@@ -49,20 +49,25 @@
 </head>
 <body>
 <div id="landing-page" class="container pt-4">
-    <section class="p-4 bg-gray shadow-lg rounded">
+    <section class="p-4 bg-gray shadow rounded">
         <div class="row gy-3">
             <div class="col-lg-5 col-12">
-                <div class="d-flex flex-column  gap-3">
+                <div class="d-flex flex-column gap-3">
                     <div>
                         <img src="{{asset('images/baku/banner.png')}}" width="100%" alt="">
                     </div>
-                    <div class="d-flex gap-3">
-                        <button class="btn btn-dark w-75">Invite Baku</button>
-                        <button class="btn btn-secondary w-25">Share</button>
+                    <div class="row g-3">
+                        <div class="col-12 col-lg-7">
+                            <button class="btn btn-dark w-100">Invite Baku</button>
+                        </div>
+                        <div class="col-12 col-lg-5">
+                            <button class="btn btn-secondary  w-100">Share</button>
+                        </div>
                     </div>
                     <div>
                         <small
-                            class="text-muted">Invite baku to join my telegram community for follow-up coveerage</small>
+                            class="text-muted">Invite baku to join my telegram community for follow-up
+                            coveerage</small>
                     </div>
                 </div>
             </div>
@@ -70,25 +75,23 @@
                 <div class="d-flex h-100 bg-dark p-4 rounded flex-column justify-content-between text-white">
                     <div class="fw-light opacity-75">Total points distributed</div>
                     <div class="fs-2 fw-bold">
-                        13,750,098
+                        {{\Illuminate\Support\Number::format($total_points)}}
                     </div>
                     <div class="row">
-                        <div class="col text-center">
-                            <small class="opacity-50">Commuities Served</small>
-                            <div class="fs-4 fw-medium">720</div>
-                        </div>
-                        <div class="col text-center">
-                            <small class="opacity-50">Commuities Scounts</small>
-                            <div class="fs-4 fw-medium">120</div>
-                        </div>
-                        <div class="col text-center">
-                            <small class="opacity-50">News Generated</small>
-                            <div class="fs-4 fw-medium">1720</div>
-                        </div>
-                        <div class="col text-center">
-                            <small class="opacity-50">Reports Generated</small>
-                            <div class="fs-4 fw-medium">172</div>
-                        </div>
+                        @foreach($kpis as $kpi)
+                            <div class="col-lg-3 col-12">
+                                <div class="row">
+                                    <div class="col-8 col-lg-12 text-start text-lg-center">
+                                        <small class="opacity-50">
+                                            {{$kpi['label']}}
+                                        </small>
+                                    </div>
+                                    <div class="col-4 col-lg-12 text-end text-lg-center">
+                                        <div class="fs-4 fw-medium">{{$kpi['value']}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -96,15 +99,26 @@
     </section>
     <section class="mt-5">
         <div class="my-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex gap-3">
-                    <button class="btn btn-lg btn-dark">Baku community ranking</button>
-                    <button class="btn btn-lg btn-light">Baku community ranking</button>
+            <div class="d-flex gap-3 flex-wrap justify-content-between align-items-center">
+                <div class="flex-grow-1">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a href="?tab=ranking&category={{$category}}"
+                               class="fs-6 nav-link {{$tab=='ranking' ? 'active':''}}">Baku community
+                                ranking</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="?tab=points&category={{$category}}"
+                               class="fs-6 nav-link {{$tab=='points' ? 'active':''}}">Baku Star Scout
+                                Points</a>
+                        </li>
+                    </ul>
                 </div>
                 <div class="d-flex gap-1">
-                    <button class="btn btn-dark">1d</button>
-                    <button class="btn btn-light">7d</button>
-                    <button class="btn btn-light">30d</button>
+                    @foreach($categories as $key => $label)
+                        <a href="?category={{$key}}&tab={{$tab}}"
+                           class="btn btn-{{$key==$category?'dark':'light'}}">{{$label}}</a>
+                    @endforeach
                 </div>
             </div>
         </div>
