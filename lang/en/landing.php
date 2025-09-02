@@ -17,7 +17,7 @@ return [
     'can_do_title'     => 'What can Baku do?',
     'can_do_sub_title' => 'Baku is the easiest way to trade crypto and more! Baku is an advanced AI agent that can help you swap, research, and more.',
 
-    'server_1_title' => 'Self-service news',
+    'server_1_title' => 'Buzz news',
     'server_1_desc'  => '——You can submit your written articles to @baku on Twitter, and Baku will automatically generate news posters.',
     'server_2_title' => 'Special<br/>interview',
     'server_2_desc'  => '——If you want to conduct in-depth reporting, you can have a deep conversation with baku, which will engage in multiple rounds of dialogue with you and organize it into a long article for publication.',
