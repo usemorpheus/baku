@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Actions\UpdateBakuCommunity;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Merlion\Components\Layouts\Admin;
@@ -20,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->commands([
+            UpdateBakuCommunity::class,
+        ]);
 
         LogViewer::auth(function ($request) {
             return true;
