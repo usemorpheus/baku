@@ -55,6 +55,31 @@ class TelegramController
             ]);
         }
 
+        if (!empty($data['my_chat_member'])) {
+            $message = $data['my_chat_member'];
+            if (!empty($message['from'])) {
+                $user = TelegramUser::updateOrCreate([
+                    'id'     => $message['from']['id'],
+                    'is_bot' => $message['from']['is_bot'] ?? false,
+                ], [
+                    'first_name' => $message['from']['first_name'],
+                    'username'   => $message['from']['username'],
+                ]);
+            }
+            if (!empty($message['chat'])) {
+                $chat = TelegramChat::updateOrCreate([
+                    'id' => $message['chat']['id'],
+                ], [
+                    'type'  => $message['chat']['type'] ?? 'private',
+                    'title' => $message['chat']['title'] ?? $message['chat']['username'],
+                ]);
+
+                if ($chat->wasRecentlyCreated && !empty($user)) {
+                    $chat->setMeta('inviter', $user->id);
+                }
+            }
+        }
+
         return $data;
     }
 
