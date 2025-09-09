@@ -16,7 +16,7 @@ class TelegramController
 
         Log::debug($data);
 
-        if (!empty($data['message']['text'])) {
+        if (!empty($data['message'])) {
             $message = $data['message'];
 
             if (!empty($message['chat'])) {
@@ -44,15 +44,17 @@ class TelegramController
                 ]);
             }
 
-            TelegramMessage::updateOrCreate([
-                'message_id' => $message['message_id'],
-            ], [
-                'telegram_chat_id' => $message['chat']['id'],
-                'telegram_user_id' => $message['from']['id'] ?? null,
-                'text'             => $message['text'] ?? null,
-                'data'             => $message,
-                'datetime'         => $message['date'],
-            ]);
+            if (!empty($message['text'])) {
+                TelegramMessage::updateOrCreate([
+                    'message_id' => $message['message_id'],
+                ], [
+                    'telegram_chat_id' => $message['chat']['id'],
+                    'telegram_user_id' => $message['from']['id'] ?? null,
+                    'text'             => $message['text'],
+                    'data'             => $message,
+                    'datetime'         => $message['date'],
+                ]);
+            }
         }
 
         if (!empty($data['my_chat_member'])) {

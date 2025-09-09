@@ -10,6 +10,7 @@ return new class extends Migration {
     {
         Schema::create('telegram_chats', function (Blueprint $table) {
             $table->string('id')->index();
+            $table->string('status')->nullable();
             $table->string('title')->nullable();
             $table->string('type')->nullable();
             $table->string('invite_by')->nullable();
