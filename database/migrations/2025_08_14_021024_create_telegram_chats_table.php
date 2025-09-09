@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->string('id')->index();
             $table->string('title')->nullable();
             $table->string('type')->nullable();
+            $table->string('invite_by')->nullable();
             $table->text('data')->nullable();
             $table->timestamps();
         });
