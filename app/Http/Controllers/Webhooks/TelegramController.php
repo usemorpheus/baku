@@ -123,4 +123,23 @@ class TelegramController
 
         return $chats;
     }
+
+    public function saveMessage()
+    {
+        request()->validate([
+            'chat_id' => 'required',
+            'user_id' => 'required',
+            'text'    => 'required|max:50000',
+        ]);
+
+        TelegramMessage::create([
+            'telegram_chat_id' => request('chat_id'),
+            'telegram_user_id' => request('user_id'),
+            'text'             => request('text'),
+        ]);
+
+        return response()->json([
+            'success' => true,
+        ]);
+    }
 }

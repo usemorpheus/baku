@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Metric;
 use App\Models\Setting;
 use Cache;
 
@@ -31,16 +32,21 @@ class HomeController
 
         $tab = request('tab', 'ranking');
 
-        $categories = [
-            '1d'  => '1D',
-            '7d'  => '7D',
-            '30d' => '30D',
+        $dimensions = [
+            '1'  => '1D',
+            '7'  => '7D',
+            '30' => '30D',
         ];
-        $category   = request('category', '1d');
+        $dimension  = request('dimension', '1');
 
         $total_points = Cache::get('baku_total_points', rand(10000, 20000));
         $total_points += rand(0, 500);
         cache()->put('baku_total_points', $total_points);
+
+        $metrics = Metric::with('chat')->where('dimension', $dimension)
+            ->orderBy('baku_index')
+            ->paginate()
+            ->appends(request()->except('page'));
 
         $kpis = [
             [
@@ -61,6 +67,7 @@ class HomeController
             ],
         ];
         return view('activity',
-            compact('twitter_link', 'categories', 'total_points', 'tab', 'kpis', 'category', 'telegram_bot_link'));
+            compact('twitter_link', 'dimensions', 'total_points', 'tab', 'kpis', 'dimension', 'telegram_bot_link',
+                'metrics'));
     }
 }

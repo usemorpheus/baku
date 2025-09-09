@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\TelegramChat;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -19,5 +20,6 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
             'email'    => 'test@example.com',
         ]);
+
     }
 }
