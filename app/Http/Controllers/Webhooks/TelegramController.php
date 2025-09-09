@@ -76,7 +76,7 @@ class TelegramController
             }
         }
 
-        if (!empty($chat) && $chat->wasRecentlyCreated && !empty($user)) {
+        if (!empty($chat) && empty($chat->getMeta('invit_by')) && !empty($user)) {
             $chat->setMeta('invit_by', $user->id);
         }
 
