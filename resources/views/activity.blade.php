@@ -120,9 +120,9 @@
                                     <span class="text-danger">{{$metric->change}} %</span>
                                 @endif
                             </td>
-                            <td>{{$metric->group_messages}}</td>
-                            <td>{{$metric->active_members}}/{{$metric->total_members}}</td>
-                            <td><img class="rounded-circle" width="30" height="30"
+                            <td class="text-center">{{$metric->group_messages}}</td>
+                            <td class="text-center">{{$metric->active_members}}/{{$metric->total_members}}</td>
+                            <td class="text-center"><img class="rounded-circle" width="30" height="30"
                                      src="{{asset('images/baku/avatar.png')}}"
                                      alt=""></td>
                             <td class="text-center">V{{$metric->builder_level}}</td>
