@@ -6,12 +6,15 @@ use App\Models\TelegramChat;
 use App\Models\TelegramMessage;
 use App\Models\TelegramUser;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class TelegramController
 {
     public function __invoke()
     {
         $data = request()->all();
+
+        Log::debug($data);
 
         if (!empty($data['message']['text'])) {
             $message = $data['message'];
