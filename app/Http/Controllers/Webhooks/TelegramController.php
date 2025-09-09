@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Webhooks;
 
+use App\Actions\Telegram\UpdateChatInfo;
 use App\Models\TelegramChat;
 use App\Models\TelegramMessage;
 use App\Models\TelegramUser;
@@ -84,6 +85,10 @@ class TelegramController
                 $chat->update([
                     'invite_by' => $user->id,
                 ]);
+            }
+
+            if ($chat->wasRecentlyCreated) {
+                UpdateChatInfo::dispatch($chat);
             }
         }
 
