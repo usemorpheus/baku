@@ -20,6 +20,9 @@ Route::group([
         Route::post('batch-delete-articles',
             [ArticleController::class, 'batchDestroy'])->name('articles.batch-destroy');
         Route::resource('telegram-chats', TelegramChatController::class);
+        Route::get('telegram-chats/{id}/update-info',
+            [TelegramChatController::class, 'updateInfo'])->name('telegram-chats.update-info');
+
         Route::resource('telegram-users', TelegramUserController::class);
         Route::resource('telegram-messages', TelegramMessageController::class);
         Route::resource('settings', SettingController::class);
