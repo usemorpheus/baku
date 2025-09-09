@@ -123,7 +123,7 @@
                             <td class="text-center">{{$metric->group_messages}}</td>
                             <td class="text-center">{{$metric->active_members}}/{{$metric->total_members}}</td>
                             <td class="text-center"><img class="rounded-circle" width="30" height="30"
-                                     src="{{asset('images/baku/avatar.png')}}"
+                                     src="{{$metric->photo ?: asset('images/baku/avatar.png')}}"
                                      alt=""></td>
                             <td class="text-center">V{{$metric->builder_level}}</td>
                             <td class="text-center">{{$metric->baku_interactions}}</td>
