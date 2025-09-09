@@ -73,11 +73,11 @@ class TelegramController
                     'type'  => $message['chat']['type'] ?? 'private',
                     'title' => $message['chat']['title'] ?? $message['chat']['username'],
                 ]);
-
-                if ($chat->wasRecentlyCreated && !empty($user)) {
-                    $chat->setMeta('inviter', $user->id);
-                }
             }
+        }
+
+        if (!empty($chat) && $chat->wasRecentlyCreated && !empty($user)) {
+            $chat->setMeta('invit_by', $user->id);
         }
 
         return $data;
