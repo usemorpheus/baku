@@ -100,7 +100,7 @@
                             <td>
                                 <div class="d-flex gap-2">
                                     <img class="rounded-circle" width="30" height="30"
-                                         src="{{$metric->photo ?: asset('images/baku/avatar.png')}}"
+                                         src="{{$metric->chat->photo ?: asset('images/baku/avatar.png')}}"
                                          alt="">
                                     <div class="d-flex flex-column">
                                         <div style="font-size: 14px; font-weight: 500;">{{$metric->chat->title}}</div>
