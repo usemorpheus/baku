@@ -10,6 +10,6 @@ class GetKeyBuildersMetric
 
     public function handle($chat, $dimension): int
     {
-        return rand(0, 1000);
+        return 0;
     }
 }

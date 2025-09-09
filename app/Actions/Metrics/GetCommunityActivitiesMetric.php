@@ -10,6 +10,6 @@ class GetCommunityActivitiesMetric
 
     public function handle($chat, $dimension): int
     {
-        return rand(0, 10);
+        return 0;
     }
 }

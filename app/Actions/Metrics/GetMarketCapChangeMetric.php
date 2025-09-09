@@ -10,6 +10,6 @@ class GetMarketCapChangeMetric
 
     public function handle($chat, $dimension)
     {
-        return rand(0, 100) / 100;
+        return rand(-100, 100) / 100;
     }
 }

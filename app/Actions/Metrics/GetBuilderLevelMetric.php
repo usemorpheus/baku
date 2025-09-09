@@ -10,6 +10,6 @@ class GetBuilderLevelMetric
 
     public function handle($chat, $dimension): int
     {
-        return rand(0, 5);
+        return 1;
     }
 }

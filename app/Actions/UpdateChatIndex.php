@@ -23,7 +23,7 @@ class UpdateChatIndex
             $rank = 1;
             foreach ($metrics as $metric) {
                 $metric->update([
-                    'ranking_growth_rate' => rand(1, 3),
+                    'ranking_growth_rate' => 0,
                     'baku_index'          => $rank,
                 ]);
                 $rank++;
