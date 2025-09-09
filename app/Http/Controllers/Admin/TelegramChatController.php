@@ -21,11 +21,12 @@ class TelegramChatController extends CrudController
 
     public function getRowActions(): array
     {
-        $actions   = parent::getRowActions();
-        $actions[] = Action::make('update-info')->label('Update Info')
+        $actions = parent::getRowActions();
+        array_unshift($actions, Action::make('update-info')
+            ->label('<i class="ti ti-refresh"></i>  Update Info')
             ->rendering(function ($action) {
                 $action->withAttributes(['href' => $this->route('update-info', $action->getModelKey())]);
-            });;
+            }));
         return $actions;
     }
 

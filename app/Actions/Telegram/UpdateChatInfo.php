@@ -18,7 +18,7 @@ class UpdateChatInfo
         }
 
         if ($info['type'] == 'private') {
-            $chat->title = $info['first_name'] . ' ' . $info['last_name'] . ' ' . $info['username'];
+            $chat->title = $info['first_name'] . ' ' . $info['username'];
         } else {
             $chat->title = $info['title'];
         }
