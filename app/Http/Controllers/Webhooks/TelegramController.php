@@ -80,6 +80,10 @@ class TelegramController
             $chat->setMeta('invit_by', $user->id);
         }
 
+        if (!empty($chat)) {
+            $chat->setMeta('last_touch', now());
+        }
+
         return $data;
     }
 
