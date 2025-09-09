@@ -4,4 +4,4 @@ use App\Actions\UpdateBakuCommunity;
 
 \Illuminate\Support\Facades\Schedule::call(
     UpdateBakuCommunity::class
-)->everyMinute();
+)->dailyAt('00:00');
