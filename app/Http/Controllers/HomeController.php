@@ -27,7 +27,7 @@ class HomeController
 
     public function activity()
     {
-        $twitter_link      = "https://x.com/Baku_agent";
+        $twitter_link      = "https://x.com/Baku_builders";
         $telegram_bot_link = "https://t.me/baku_news_bot";
 
         $tab = request('tab', 'ranking');
