@@ -35,7 +35,6 @@
                 <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/>
             </svg>
         </a></p>
-
 </div>
 
 <div class="container pt-2">
