@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Metric;
 use Cache;
+use Carbon\Carbon;
 
 class ActivityController
 {
@@ -15,7 +16,11 @@ class ActivityController
         ];
         $dimension = request('dimension', '1');
 
-        $data['metrics'] = Metric::with('chat')->where('dimension', $dimension)
+        $date = Carbon::yesterday()->format('Y-m-d');
+
+        $data['metrics'] = Metric::with('chat')
+            ->where('dimension', $dimension)
+            ->where('data', $date)
             ->orderBy('baku_index')
             ->paginate()
             ->appends(request()->except('page'));
