@@ -11,10 +11,12 @@
                         </div>
                         <div class="row g-3">
                             <div class="col-12 col-lg-7">
-                                <button class="btn btn-dark w-100">Invite Baku</button>
+                                <a class="btn btn-dark w-100" href="{{$telegram_bot_link}}" target="_blank">
+                                    Invite Baku
+                                </a>
                             </div>
                             <div class="col-12 col-lg-5">
-                                <button class="btn btn-secondary  w-100">Share</button>
+                                <button class="btn btn-secondary w-100">Share</button>
                             </div>
                         </div>
                         <div>
