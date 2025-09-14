@@ -20,7 +20,7 @@ class ActivityController
 
         $data['metrics'] = Metric::with('chat')
             ->where('dimension', $dimension)
-            ->where('data', $date)
+            ->where('date', $date)
             ->orderBy('baku_index')
             ->paginate()
             ->appends(request()->except('page'));
