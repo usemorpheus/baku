@@ -270,7 +270,7 @@
 </div>
 
 {{--section bnku--}}
-<div class="container-fluid text-start py-5">
+<div class="container-fluid text-start py-5" style="display: none;">
     <div class="container">
         <div class="row">
             <div class="col-sm-12 col-md-12">
