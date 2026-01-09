@@ -182,4 +182,17 @@ class TelegramController
             'success' => true,
         ]);
     }
+
+    public function addBaku()
+    {
+        $data = request()->all();
+        $from = $data['from'];
+        $chat = $data['chat'];
+        $add_bot = $data['add_bot'];
+        $delete_bot = $data['delete_bot'];
+
+        return response()->json([
+            'success' => true,
+        ]);
+    }
 }
