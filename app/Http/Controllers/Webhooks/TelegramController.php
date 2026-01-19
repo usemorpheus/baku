@@ -195,4 +195,14 @@ class TelegramController
             'success' => true,
         ]);
     }
+
+    public function saveBakuCommunityData()
+    {
+        $data = request()->all();
+        
+
+        return response()->json([
+            'success' => true,
+        ]);
+    }
 }

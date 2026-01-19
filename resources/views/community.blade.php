@@ -5,19 +5,19 @@
         <table class="table table-borderless">
             <thead class="text-center">
             <tr>
-                <th>Rank Name</th>
+                <th>Community</th>
                 <th>Market Cap</th>
-                <th>Change</th>
-                <th>Group Messages</th>
+                <th>Price Change</th>
+                <th>Community Messages</th>
                 <th>Active Members</th>
                 <th>Key Builders</th>
-                <th>Builder Level</th>
-                <th>Baku Interactions</th>
-                <th>Community activities</th>
-                <th>Voice Communication</th>
+                <th>Build Level</th>
+                <th>BAKU Interactions</th>
+                <th>Community Activities</th>
+                <th>Voice Sessions</th>
                 <th>Community Sentiment</th>
-                <th>Ranking Growth Rate</th>
-                <th class="text-end">Baku Index</th>
+                <th>Rank Momentum</th>
+                <th class="text-end">BAKU Index</th>
             </tr>
             </thead>
             <tbody>
