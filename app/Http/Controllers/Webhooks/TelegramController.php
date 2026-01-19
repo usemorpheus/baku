@@ -199,7 +199,7 @@ class TelegramController
     public function saveBakuCommunityData()
     {
         $data = request()->all();
-        
+        Log::debug($data);
 
         return response()->json([
             'success' => true,
