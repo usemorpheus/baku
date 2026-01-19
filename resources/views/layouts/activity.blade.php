@@ -59,8 +59,8 @@
                         <ul class="nav nav-tabs">
                             <li class="nav-item">
                                 <a href="/activity/community?dimension={{$dimension}}"
-                                   class="fs-6 nav-link {{$tab=='community' ? 'active':''}}">Baku community
-                                    ranking</a>
+                                   class="fs-6 nav-link {{$tab=='community' ? 'active':''}}">Baku Community
+                                    Ranking</a>
                             </li>
                             <li class="nav-item">
                                 <a href="/activity/points?dimension={{$dimension}}"
