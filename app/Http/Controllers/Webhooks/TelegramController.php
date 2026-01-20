@@ -6,6 +6,7 @@ use App\Actions\Telegram\UpdateChatInfo;
 use App\Models\TelegramChat;
 use App\Models\TelegramMessage;
 use App\Models\TelegramUser;
+use App\Models\Metric;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -200,6 +201,39 @@ class TelegramController
     {
         $data = request()->all();
         Log::debug($data);
+
+        $metrics = $data['output'];
+        $data = Metric::updateOrCreate(
+            [
+                // 唯一标识条件
+                'telegram_chat_id' => $metrics['telegram_chat_id'],
+                'date' => $metrics['date'],
+            ],
+            [
+                // 要更新/创建的字段
+                'year' => $metrics['year'],
+                'month' => $metrics['month'],
+                'day' => $metrics['day'],
+                'dimension' => $metrics['dimension'],
+                'market_cap' => $metrics['market_cap'],
+                'change' => $metrics['price_change'],
+                'group_messages' => $metrics['community_messages'],
+                'total_members' => $metrics['total_members'],
+                'active_members' => $metrics['active_members'],
+                'key_builders' => $metrics['key_builders'],
+                'builder_level' => $metrics['build_level'],
+                'baku_interactions' => $metrics['baku_interactions'],
+                'community_activities' => $metrics['community_activities'],
+                'voice_communications' => $metrics['voice_sessions'],
+                'community_sentiment' => $metrics['community_sentiment'],
+                'ranking_growth_rate' => $metrics['ranking_growth_rate'],
+                'baku_score' => $metrics['baku_score'],
+                'baku_index' => $metrics['baku_index'],
+                'meta' => $metrics['meta'],
+                // 'created_at' => Carbon::now()->toIso8601String(),
+                'updated_at' => Carbon::now()->toIso8601String(),
+            ]
+        );
 
         return response()->json([
             'success' => true,
