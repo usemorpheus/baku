@@ -37,7 +37,7 @@
                         </div>
                     </td>
                     <td class="text-nowrap">
-                        <strong>${{Number::forHumans($metric->market_cap, abbreviate:true)}}</strong>
+                        <strong>${{Number::forHumans(is_null($metric->market_cap)?0:$metric->market_cap, abbreviate:true)}}</strong>
                     </td>
                     <td class="text-nowrap">
                         @if($metric->change > 0)
