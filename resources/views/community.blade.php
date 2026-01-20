@@ -43,11 +43,11 @@
                         @if($metric->change > 0)
                             <span class="text-success">+{{$metric->change}} %</span>
                         @else
-                            <span class="text-danger">{{$metric->change}} %</span>
+                            <span class="text-danger">0 %</span>
                         @endif
                     </td>
                     <td class="text-center">{{$metric->group_messages}}</td>
-                    <td class="text-center">{{$metric->active_members}}/{{$metric->total_members}}</td>
+                    <td class="text-center">{{$metric->active_members}}</td>
                     <td class="text-center"><img class="rounded-circle" width="30" height="30"
                                                  src="{{asset('images/baku/avatar.png')}}"
                                                  alt=""></td>
