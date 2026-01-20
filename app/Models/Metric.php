@@ -10,9 +10,7 @@ class Metric extends Model
 {
     use HasFactory;
     protected $guarded = [];
-    
-    protected $table = 'community_data';
-    
+
     protected $fillable = [
         'telegram_chat_id',
         'date',
@@ -38,7 +36,7 @@ class Metric extends Model
         'created_at',
         'updated_at',
     ];
-    
+
     /**
      * 自动转换数据类型
      */
