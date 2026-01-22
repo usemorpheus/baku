@@ -21,9 +21,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->commands([
-            UpdateBakuCommunity::class,
-        ]);
+        // $this->commands([
+        //     UpdateBakuCommunity::class,
+        // ]);
 
         LogViewer::auth(function ($request) {
             return true;
@@ -47,10 +47,14 @@ class AppServiceProvider extends ServiceProvider
                         Menu::make('user', __('admin.users'))->link('/admin/telegram-users'),
                         Menu::make('message', __('admin.messages'))->link('/admin/telegram-messages'),
                     ]),
-                Menu::make('metrics',
-                    __('metric.label_plural'))->icon('ti ti-chart-line icon')->link('/admin/metrics'),
-                Menu::make('settings',
-                    __('setting.label_plural'))->icon('ti ti-settings icon')->link('/admin/settings'),
+                Menu::make(
+                    'metrics',
+                    __('metric.label_plural')
+                )->icon('ti ti-chart-line icon')->link('/admin/metrics'),
+                Menu::make(
+                    'settings',
+                    __('setting.label_plural')
+                )->icon('ti ti-settings icon')->link('/admin/settings'),
             ]);
         });
     }
