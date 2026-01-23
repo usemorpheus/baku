@@ -55,7 +55,7 @@ class ActivityController
                 DB::raw('AVG(community_sentiment) as community_sentiment'),
                 // 添加 chat 相关字段
                 DB::raw('(SELECT title FROM telegram_chats WHERE id = metrics.telegram_chat_id LIMIT 1) as chat_title'),
-                DB::raw('ANY_VALUE(telegram_chat_id) as chat_id')
+                DB::raw('(SELECT id FROM telegram_chats WHERE id = metrics.telegram_chat_id LIMIT 1) as chat_id'),
             ])
             ->groupBy('date')
             ->paginate()
