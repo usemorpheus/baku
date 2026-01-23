@@ -29,9 +29,9 @@
                                  src="{{$metric->chat?->photo ?: asset('images/baku/avatar.png')}}"
                                  alt="">
                             <div class="d-flex flex-column">
-                                <div style="font-size: 14px; font-weight: 500;">{{$metric->chat?->title}}</div>
+                                <div style="font-size: 14px; font-weight: 500;">{{$metric->chat_title}}</div>
                                 <div style="font-size: 11px; color: #888888;">
-                                    <a href="#">{{$metric->chat?->id}}</a>
+                                    <a href="#">{{$metric->chat_id}}</a>
                                 </div>
                             </div>
                         </div>
@@ -48,9 +48,7 @@
                     </td>
                     <td class="text-center">{{$metric->group_messages}}</td>
                     <td class="text-center">{{$metric->active_members}}</td>
-                    <td class="text-center"><img class="rounded-circle" width="30" height="30"
-                                                 src="{{asset('images/baku/avatar.png')}}"
-                                                 alt=""></td>
+                    <td class="text-center">{{$metric->key_builders}}</td>
                     <td class="text-center">V{{$metric->builder_level}}</td>
                     <td class="text-center">{{$metric->baku_interactions}}</td>
                     <td class="text-center">{{$metric->community_activities}}</td>

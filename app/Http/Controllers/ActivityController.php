@@ -32,15 +32,24 @@ class ActivityController
                 break;
         }
 
-        $data['metrics'] = Metric::with('chat')
-            ->where('date', '>=', $date)
+        $data['metrics'] = Metric::where('date', '>=', $date)
             ->select([
+                'date',
+                DB::raw('ANY_VALUE(ranking_growth_rate) as ranking_growth_rate'),
+                DB::raw('ANY_VALUE(builder_level) as builder_level'),
+                DB::raw('ANY_VALUE(change) as change'),
+                DB::raw('ANY_VALUE(market_cap) as market_cap'),
+                DB::raw('ANY_VALUE(baku_index) as baku_index'),
                 DB::raw('SUM(group_messages) as group_messages'),
                 DB::raw('SUM(active_members) as active_members'),
+                DB::raw('SUM(key_builders) as key_builders'),
                 DB::raw('SUM(baku_interactions) as baku_interactions'),
                 DB::raw('SUM(community_activities) as community_activities'),
                 DB::raw('SUM(voice_communications) as voice_communications'),
                 DB::raw('AVG(community_sentiment) as community_sentiment'),
+                // 添加 chat 相关字段
+                DB::raw('(SELECT title FROM telegram_chats WHERE id = metrics.telegram_chat_id LIMIT 1) as chat_title'),
+                DB::raw('ANY_VALUE(telegram_chat_id) as chat_id')
             ])
             ->groupBy('date')
             ->paginate()
