@@ -101,7 +101,7 @@ class TelegramController
         $chat_id = request('chat_id');
         $chat    = TelegramChat::findOrFail($chat_id);
 
-        $from       = request('from', '-3 days');
+        $from       = request('from', '-1 days');
         $created_at = Carbon::parse($from);
 
         $messages = TelegramMessage::where('telegram_chat_id', $chat->id)
@@ -237,8 +237,8 @@ class TelegramController
                 'voice_communications' => is_numeric($metrics['voice_sessions']) ? $metrics['voice_sessions'] : null,
                 'community_sentiment' => is_numeric($metrics['community_sentiment']) ? $metrics['community_sentiment'] : null,
                 'ranking_growth_rate' => is_numeric($metrics['ranking_growth_rate']) ? $metrics['ranking_growth_rate'] : null,
-                'baku_score' => is_numeric($metrics['baku_score']) ? $metrics['baku_score'] : null,
-                'baku_index' => is_numeric($metrics['baku_index']) ? $metrics['baku_index'] : null,
+                // 'baku_score' => is_numeric($metrics['baku_score']) ? $metrics['baku_score'] : null,
+                // 'baku_index' => is_numeric($metrics['baku_index']) ? $metrics['baku_index'] : null,
                 'meta' => $metrics['meta'],
                 // 'created_at' => Carbon::now()->toIso8601String(),
                 'updated_at' => Carbon::now()->toIso8601String(),
