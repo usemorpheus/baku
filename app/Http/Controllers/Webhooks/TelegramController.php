@@ -101,7 +101,7 @@ class TelegramController
         $chat_id = request('chat_id');
         $chat    = TelegramChat::findOrFail($chat_id);
 
-        $from       = request('from', '-1 days');
+        $from       = request('from', '-0 days');
         $created_at = Carbon::parse($from);
 
         $messages = TelegramMessage::where('telegram_chat_id', $chat->id)
