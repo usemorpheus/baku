@@ -42,7 +42,13 @@ class ActivityController
                 DB::raw('ANY_VALUE(baku_index) as baku_index'),
                 DB::raw('SUM(group_messages) as group_messages'),
                 DB::raw('SUM(active_members) as active_members'),
-                DB::raw('SUM(key_builders) as key_builders'),
+                DB::raw("SUM(
+                    CASE 
+                        WHEN key_builders ~ '^[0-9]+$' 
+                        THEN CAST(key_builders AS INTEGER)
+                        ELSE 0 
+                    END
+                ) as key_builders"),
                 DB::raw('SUM(baku_interactions) as baku_interactions'),
                 DB::raw('SUM(community_activities) as community_activities'),
                 DB::raw('SUM(voice_communications) as voice_communications'),
