@@ -35,6 +35,7 @@ class ActivityController
         $data['metrics'] = Metric::where('date', '>=', $date)
             ->select([
                 'date',
+                'telegram_chat_id',
                 DB::raw('ANY_VALUE(ranking_growth_rate) as ranking_growth_rate'),
                 DB::raw('ANY_VALUE(builder_level) as builder_level'),
                 DB::raw('ANY_VALUE(change) as change'),
