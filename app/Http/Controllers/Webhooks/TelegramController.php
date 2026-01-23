@@ -202,8 +202,18 @@ class TelegramController
         $data = request()->all();
         Log::debug($data);
 
-        $metrics = $data['output'];
-        $data = Metric::updateOrCreate(
+        foreach ($data as $metrics) {
+            $this->saveOrUpdateCommunityData($metrics);
+        }
+
+        return response()->json([
+            'success' => true,
+        ]);
+    }
+
+    function saveOrUpdateCommunityData($metrics)
+    {
+        $result = Metric::updateOrCreate(
             [
                 // 唯一标识条件
                 'telegram_chat_id' => $metrics['telegram_chat_id'],
@@ -234,9 +244,5 @@ class TelegramController
                 'updated_at' => Carbon::now()->toIso8601String(),
             ]
         );
-
-        return response()->json([
-            'success' => true,
-        ]);
     }
 }

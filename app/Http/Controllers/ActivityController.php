@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers;
@@ -16,11 +17,22 @@ class ActivityController
         ];
         $dimension = request('dimension', '1');
 
-        $date = Carbon::yesterday()->format('Y-m-d');
+        $date = Carbon::now()->format('Y-m-d');
+
+        switch ($dimension) {
+            case '1':
+                $date = Carbon::now()->format('Y-m-d');
+                break;
+            case '7':
+                $date = Carbon::now()->subDays(6)->format('Y-m-d');
+                break;
+            case '30':
+                $date = Carbon::now()->subDays(29)->format('Y-m-d');
+                break;
+        }
 
         $data['metrics'] = Metric::with('chat')
-            ->where('dimension', $dimension)
-            ->where('date', $date)
+            ->where('date', '>=', $date)
             ->orderBy('baku_index')
             ->paginate()
             ->appends(request()->except('page'));
