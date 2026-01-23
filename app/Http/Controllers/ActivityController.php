@@ -58,7 +58,7 @@ class ActivityController
                 DB::raw('(SELECT title FROM telegram_chats WHERE id = metrics.telegram_chat_id LIMIT 1) as chat_title'),
                 DB::raw('(SELECT id FROM telegram_chats WHERE id = metrics.telegram_chat_id LIMIT 1) as chat_id'),
             ])
-            ->groupBy('date')
+            ->groupBy('telegram_chat_id')
             ->paginate()
             ->appends(request()->except('page'));
 
