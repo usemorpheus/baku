@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\Metric;
 use Cache;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ActivityController
 {
@@ -33,7 +34,15 @@ class ActivityController
 
         $data['metrics'] = Metric::with('chat')
             ->where('date', '>=', $date)
-            ->orderBy('baku_index')
+            ->select([
+                DB::raw('SUM(group_messages) as group_messages'),
+                DB::raw('SUM(active_members) as active_members'),
+                DB::raw('SUM(baku_interactions) as baku_interactions'),
+                DB::raw('SUM(community_activities) as community_activities'),
+                DB::raw('SUM(voice_communications) as voice_communications'),
+                DB::raw('AVG(community_sentiment) as community_sentiment'),
+            ])
+            ->groupBy('date')
             ->paginate()
             ->appends(request()->except('page'));
 
