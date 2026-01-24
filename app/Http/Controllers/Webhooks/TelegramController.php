@@ -233,6 +233,7 @@ class TelegramController
                 // 唯一标识条件
                 'telegram_chat_id' => $metrics['telegram_chat_id'],
                 'date' => $metrics['date'],
+                'dimension' => $metrics['dimension'],
             ],
             [
                 // 要更新/创建的字段
