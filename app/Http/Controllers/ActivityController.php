@@ -17,11 +17,11 @@ class ActivityController
         ];
         $dimension = request('dimension', '1');
 
-        $date = Carbon::yesterday()->format('Y-m-d');
+        // $date = Carbon::now()->format('Y-m-d');
 
         $data['metrics'] = Metric::with('chat')
             ->where('dimension', $dimension)
-            ->where('date', $date)
+            // ->where('date', $date)
             ->orderBy('baku_index')
             ->paginate()
             ->appends(request()->except('page'));
