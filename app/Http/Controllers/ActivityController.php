@@ -7,7 +7,6 @@ namespace App\Http\Controllers;
 use App\Models\Metric;
 use Cache;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class ActivityController
 {
@@ -18,47 +17,12 @@ class ActivityController
         ];
         $dimension = request('dimension', '1');
 
-        $date = Carbon::now()->format('Y-m-d');
+        $date = Carbon::yesterday()->format('Y-m-d');
 
-        switch ($dimension) {
-            case '1':
-                $date = Carbon::now()->format('Y-m-d');
-                break;
-            case '7':
-                $date = Carbon::now()->subDays(6)->format('Y-m-d');
-                break;
-            case '30':
-                $date = Carbon::now()->subDays(29)->format('Y-m-d');
-                break;
-        }
-
-        $data['metrics'] = Metric::where('date', '>=', $date)
-            ->select([
-                'date',
-                'telegram_chat_id',
-                DB::raw('ANY_VALUE(ranking_growth_rate) as ranking_growth_rate'),
-                DB::raw('ANY_VALUE(builder_level) as builder_level'),
-                DB::raw('ANY_VALUE(change) as change'),
-                DB::raw('ANY_VALUE(market_cap) as market_cap'),
-                DB::raw('ANY_VALUE(baku_index) as baku_index'),
-                DB::raw('SUM(group_messages) as group_messages'),
-                DB::raw('SUM(active_members) as active_members'),
-                DB::raw("SUM(
-                    CASE 
-                        WHEN key_builders ~ '^[0-9]+$' 
-                        THEN CAST(key_builders AS INTEGER)
-                        ELSE 0 
-                    END
-                ) as key_builders"),
-                DB::raw('SUM(baku_interactions) as baku_interactions'),
-                DB::raw('SUM(community_activities) as community_activities'),
-                DB::raw('SUM(voice_communications) as voice_communications'),
-                DB::raw('AVG(community_sentiment) as community_sentiment'),
-                // 添加 chat 相关字段
-                DB::raw('(SELECT title FROM telegram_chats WHERE id = metrics.telegram_chat_id LIMIT 1) as chat_title'),
-                DB::raw('(SELECT id FROM telegram_chats WHERE id = metrics.telegram_chat_id LIMIT 1) as chat_id'),
-            ])
-            ->groupBy('telegram_chat_id', 'date')
+        $data['metrics'] = Metric::with('chat')
+            ->where('dimension', $dimension)
+            ->where('date', $date)
+            ->orderBy('baku_index')
             ->paginate()
             ->appends(request()->except('page'));
 

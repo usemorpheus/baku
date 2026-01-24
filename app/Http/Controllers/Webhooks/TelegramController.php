@@ -99,9 +99,24 @@ class TelegramController
     public function getMessagesContext()
     {
         $chat_id = request('chat_id');
+        $dimension = request('dimension', '0');
         $chat    = TelegramChat::findOrFail($chat_id);
 
-        $from       = request('from', '-3 days');
+        switch ($dimension) {
+            case '1':
+                $from       = '-1 days';
+                break;
+            case '7':
+                $from       = '-7 days';
+                break;
+            case '30':
+                $from       = '-30 days';
+                break;
+            default:
+                $from       = request('from', '-3 days');
+                break;
+        }
+
         $created_at = Carbon::parse($from);
 
         $messages = TelegramMessage::where('telegram_chat_id', $chat->id)
