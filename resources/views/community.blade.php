@@ -29,9 +29,9 @@
                                  src="{{$metric->chat?->photo ?: asset('images/baku/avatar.png')}}"
                                  alt="">
                             <div class="d-flex flex-column">
-                                <div style="font-size: 14px; font-weight: 500;">{{$metric->chat_title}}</div>
+                                <div style="font-size: 14px; font-weight: 500;">{{$metric->chat?->title}}</div>
                                 <div style="font-size: 11px; color: #888888;">
-                                    <a href="#">{{$metric->chat_id}}</a>
+                                    <a href="#">{{$metric->chat?->id}}</a>
                                 </div>
                             </div>
                         </div>
