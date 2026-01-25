@@ -301,7 +301,7 @@ class TelegramController
                 ],
                 [
                     'market_cap' => $metrics['market_cap'],
-                    'change' => $metrics['price_change'],
+                    'change' => $metrics['change'],
                     'price' => $metrics['price'],
                     'last_price' => $metrics['last_price'],
                     'updated_at' => Carbon::now()->toIso8601String(),
