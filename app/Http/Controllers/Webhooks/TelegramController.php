@@ -262,4 +262,28 @@ class TelegramController
             ]
         );
     }
+
+    public function getMetricData()
+    {
+        $metricsArray = Metric::select([
+            'id',
+            'contract_address',
+            'last_price',
+            'price',
+            'last_baku_index',
+            'baku_index',
+            'group_messages',
+            'active_members',
+            'key_builders',
+            'baku_interactions',
+            'community_activities',
+            'voice_communications',
+            'community_sentiment',
+            'ranking_growth_rate',
+            'builder_level',
+            'telegram_chat_id',
+        ])->get()->toArray();
+
+        return $metricsArray;
+    }
 }
