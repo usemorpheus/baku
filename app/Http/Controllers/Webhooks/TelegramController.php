@@ -240,9 +240,8 @@ class TelegramController
                 'year' => $metrics['year'],
                 'month' => $metrics['month'],
                 'day' => $metrics['day'],
-                'dimension' => $metrics['dimension'],
-                'market_cap' => is_numeric($metrics['market_cap']) ? $metrics['market_cap'] : null,
-                'change' => is_numeric($metrics['price_change']) ? $metrics['price_change'] : null,
+                // 'market_cap' => is_numeric($metrics['market_cap']) ? $metrics['market_cap'] : null,
+                // 'change' => is_numeric($metrics['price_change']) ? $metrics['price_change'] : null,
                 'group_messages' => is_numeric($metrics['community_messages']) ? $metrics['community_messages'] : null,
                 'total_members' => is_numeric($metrics['total_members']) ? $metrics['total_members'] : null,
                 'active_members' => is_numeric($metrics['active_members']) ? $metrics['active_members'] : null,
@@ -252,7 +251,7 @@ class TelegramController
                 'community_activities' => is_numeric($metrics['community_activities']) ? $metrics['community_activities'] : null,
                 'voice_communications' => is_numeric($metrics['voice_sessions']) ? $metrics['voice_sessions'] : null,
                 'community_sentiment' => is_numeric($metrics['community_sentiment']) ? $metrics['community_sentiment'] : null,
-                'ranking_growth_rate' => is_numeric($metrics['ranking_growth_rate']) ? $metrics['ranking_growth_rate'] : null,
+                // 'ranking_growth_rate' => is_numeric($metrics['ranking_growth_rate']) ? $metrics['ranking_growth_rate'] : null,
                 // 'baku_score' => is_numeric($metrics['baku_score']) ? $metrics['baku_score'] : null,
                 // 'baku_index' => is_numeric($metrics['baku_index']) ? $metrics['baku_index'] : null,
                 'meta' => $metrics['meta'],
@@ -286,5 +285,59 @@ class TelegramController
         ])->get()->toArray();
 
         return $metricsArray;
+    }
+
+    public function updateBakuMarketData()
+    {
+        $data = request()->all();
+        Log::debug($data);
+
+        foreach ($data as $metrics) {
+            $result = Metric::updateOrCreate(
+                [
+                    // 唯一标识条件
+                    'telegram_chat_id' => $metrics['telegram_chat_id'],
+                    'dimension' => $metrics['dimension'],
+                ],
+                [
+                    'market_cap' => $metrics['market_cap'],
+                    'change' => $metrics['price_change'],
+                    'price' => $metrics['price'],
+                    'last_price' => $metrics['last_price'],
+                    'updated_at' => Carbon::now()->toIso8601String(),
+                ]
+            );
+        }
+
+        return response()->json([
+            'success' => true,
+        ]);
+    }
+
+    public function updateBakuIndexData()
+    {
+        $data = request()->all();
+        Log::debug($data);
+
+        foreach ($data as $metrics) {
+            $result = Metric::updateOrCreate(
+                [
+                    // 唯一标识条件
+                    'telegram_chat_id' => $metrics['telegram_chat_id'],
+                    'dimension' => $metrics['dimension'],
+                ],
+                [
+                    'ranking_growth_rate' => $metrics['ranking_growth_rate'],
+                    'baku_score' => $metrics['baku_score'],
+                    'baku_index' => $metrics['baku_index'],
+                    'last_baku_index' => $metrics['last_baku_index'],
+                    'updated_at' => Carbon::now()->toIso8601String(),
+                ]
+            );
+        }
+
+        return response()->json([
+            'success' => true,
+        ]);
     }
 }
