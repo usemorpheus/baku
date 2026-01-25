@@ -256,6 +256,7 @@ class TelegramController
                 // 'baku_score' => is_numeric($metrics['baku_score']) ? $metrics['baku_score'] : null,
                 // 'baku_index' => is_numeric($metrics['baku_index']) ? $metrics['baku_index'] : null,
                 'meta' => $metrics['meta'],
+                'contract_address' => $metrics['contract_address'],
                 // 'created_at' => Carbon::now()->toIso8601String(),
                 'updated_at' => Carbon::now()->toIso8601String(),
             ]
