@@ -37,11 +37,17 @@
                         </div>
                     </td>
                     <td class="text-nowrap">
-                        <strong>${{Number::forHumans(is_null($metric->market_cap)?0:$metric->market_cap, abbreviate:true)}}</strong>
+                        <strong>${{$metric->market_cap}}</strong>
                     </td>
                     <td class="text-nowrap">
                         @if($metric->change > 0)
-                            <span class="text-success">+{{$metric->change}} %</span>
+                            <span class="text-success">
+                                @if($metric->price >= $metric->last_price)
+                                +
+                                @else
+                                -
+                                @endif
+                                {{$metric->change}} %</span>
                         @else
                             <span class="text-danger">0 %</span>
                         @endif
