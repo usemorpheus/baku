@@ -37,7 +37,7 @@
                         </div>
                     </td>
                     <td class="text-nowrap">
-                        <strong>${{$metric->market_cap}}</strong>
+                        <strong>{{$metric->market_cap}}</strong>
                     </td>
                     <td class="text-nowrap">
                         @if($metric->change > 0)
