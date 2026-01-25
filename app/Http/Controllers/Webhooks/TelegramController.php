@@ -328,9 +328,9 @@ class TelegramController
                 ],
                 [
                     'ranking_growth_rate' => $metrics['ranking_growth_rate'],
-                    'baku_score' => $metrics['baku_score'],
-                    'baku_index' => $metrics['baku_index'],
-                    'last_baku_index' => $metrics['last_baku_index'],
+                    'baku_score' => intval($metrics['baku_score']),
+                    'baku_index' => intval($metrics['baku_index']),
+                    'last_baku_index' => intval($metrics['last_baku_index']),
                     'updated_at' => Carbon::now()->toIso8601String(),
                 ]
             );
