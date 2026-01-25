@@ -282,6 +282,7 @@ class TelegramController
             'ranking_growth_rate',
             'builder_level',
             'telegram_chat_id',
+            'dimension',
         ])->get()->toArray();
 
         return $metricsArray;
