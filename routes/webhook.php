@@ -23,4 +23,5 @@ Route::group(['middleware' => [ApiVerifyMiddleware::class]], function () {
     Route::get('webhook/chats', [TelegramController::class, 'getGroupChats']);
     Route::get('webhook/setting/{key}', [SettingController::class, 'show']);
     Route::post('webhook/setting/{key}', [SettingController::class, 'update']);
+    Route::post('webhook/calculate-rankings', [TelegramController::class, 'calculateRankings']);
 });

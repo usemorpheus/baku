@@ -221,6 +221,12 @@ class TelegramController
             $this->saveOrUpdateCommunityData($metrics);
         }
 
+        // 如果提供了日期参数，执行排名计算
+        $date = request('date', null);
+        if ($date) {
+            app(\App\Actions\CalculateRankings::class)->handle($date);
+        }
+
         return response()->json([
             'success' => true,
         ]);
@@ -338,6 +344,43 @@ class TelegramController
 
         return response()->json([
             'success' => true,
+        ]);
+    }
+
+    public function calculateRankings()
+    {
+        $date = request('date', null);
+        if (!$date) {
+            $date = date('Y-m-d');
+        }
+
+        // 按维度分别计算排名
+        $dimensions = [1, 7, 30];
+        
+        foreach ($dimensions as $dimension) {
+            // 获取指定日期和维度的所有指标，按某个关键指标降序排列
+            // 这里使用 baku_score 作为排序依据，你可以根据需要调整
+            $metrics = Metric::where('date', $date)
+                ->where('dimension', $dimension)
+                ->orderBy('baku_score', 'desc')
+                ->get();
+
+            // 为每个指标分配排名
+            $rank = 1;
+            foreach ($metrics as $metric) {
+                $metric->update([
+                    'ranking_growth_rate' => $rank,  // 使用 ranking_growth_rate 存储实际排名
+                    'baku_index' => $rank           // baku_index 也设置为排名
+                ]);
+                $rank++;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'date' => $date,
+            'processed_dimensions' => $dimensions,
+            'message' => "Rankings calculated for {$date}"
         ]);
     }
 }
