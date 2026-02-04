@@ -356,12 +356,11 @@ class TelegramController
 
         // 按维度分别计算排名
         $dimensions = [1, 7, 30];
-        
+
         foreach ($dimensions as $dimension) {
             // 获取指定日期和维度的所有指标，按某个关键指标降序排列
             // 这里使用 baku_score 作为排序依据，你可以根据需要调整
-            $metrics = Metric::where('date', $date)
-                ->where('dimension', $dimension)
+            $metrics = Metric::where('dimension', $dimension)
                 ->orderBy('baku_score', 'desc')
                 ->get();
 
@@ -369,7 +368,6 @@ class TelegramController
             $rank = 1;
             foreach ($metrics as $metric) {
                 $metric->update([
-                    'ranking_growth_rate' => $rank,  // 使用 ranking_growth_rate 存储实际排名
                     'baku_index' => $rank           // baku_index 也设置为排名
                 ]);
                 $rank++;
