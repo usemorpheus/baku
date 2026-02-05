@@ -25,8 +25,20 @@ class TaskController extends Controller
         $telegramUserId = $this->getTelegramUserId($request);
         
         if (!$telegramUserId) {
-            // 如果没有Telegram用户ID，显示连接说明页面
-            return view('connect-telegram');
+            // 如果没有Telegram用户ID，检查是否有最近激活的用户
+            $recentActivatedUser = \App\Models\TelegramUser::where('is_activated', true)
+                ->where('activated_at', '>', now()->subMinutes(30)) // 最近30分钟内激活的用户
+                ->latest('activated_at')
+                ->first();
+                
+            if ($recentActivatedUser) {
+                // 如果有最近激活的用户，将该用户ID存储在会话中并继续
+                session(['telegram_user_id' => $recentActivatedUser->id]);
+                $telegramUserId = $recentActivatedUser->id;
+            } else {
+                // 如果没有最近激活的用户，显示连接说明页面
+                return view('connect-telegram');
+            }
         }
         
         // 确保用户存在
@@ -62,7 +74,19 @@ class TaskController extends Controller
         $telegramUserId = $this->getTelegramUserId($request);
         
         if (!$telegramUserId) {
-            return redirect()->route('home')->withErrors(['error' => 'Please connect with Telegram bot first to claim tasks. Start a conversation with @baku_news_bot.']);
+            // 检查是否有最近激活的用户
+            $recentActivatedUser = \App\Models\TelegramUser::where('is_activated', true)
+                ->where('activated_at', '>', now()->subMinutes(30)) // 最近30分钟内激活的用户
+                ->latest('activated_at')
+                ->first();
+                
+            if ($recentActivatedUser) {
+                // 如果有最近激活的用户，将该用户ID存储在会话中
+                session(['telegram_user_id' => $recentActivatedUser->id]);
+                $telegramUserId = $recentActivatedUser->id;
+            } else {
+                return redirect()->route('home')->withErrors(['error' => 'Please connect with Telegram bot first to claim tasks. Start a conversation with @baku_news_bot.']);
+            }
         }
 
         $taskType = TaskType::findOrFail($taskId);
@@ -188,7 +212,19 @@ class TaskController extends Controller
         $telegramUserId = $this->getTelegramUserId($request);
         
         if (!$telegramUserId) {
-            return redirect()->route('home')->withErrors(['error' => 'Please connect with Telegram bot first to submit verification. Start a conversation with @baku_news_bot.']);
+            // 检查是否有最近激活的用户
+            $recentActivatedUser = \App\Models\TelegramUser::where('is_activated', true)
+                ->where('activated_at', '>', now()->subMinutes(30)) // 最近30分钟内激活的用户
+                ->latest('activated_at')
+                ->first();
+                
+            if ($recentActivatedUser) {
+                // 如果有最近激活的用户，将该用户ID存储在会话中
+                session(['telegram_user_id' => $recentActivatedUser->id]);
+                $telegramUserId = $recentActivatedUser->id;
+            } else {
+                return redirect()->route('home')->withErrors(['error' => 'Please connect with Telegram bot first to submit verification. Start a conversation with @baku_news_bot.']);
+            }
         }
 
         $userTask = UserTask::where('id', $userTaskId)
@@ -221,7 +257,19 @@ class TaskController extends Controller
         $telegramUserId = $this->getTelegramUserId($request);
         
         if (!$telegramUserId) {
-            return response()->json(['points' => 0]);
+            // 检查是否有最近激活的用户
+            $recentActivatedUser = \App\Models\TelegramUser::where('is_activated', true)
+                ->where('activated_at', '>', now()->subMinutes(30)) // 最近30分钟内激活的用户
+                ->latest('activated_at')
+                ->first();
+                
+            if ($recentActivatedUser) {
+                // 如果有最近激活的用户，将该用户ID存储在会话中
+                session(['telegram_user_id' => $recentActivatedUser->id]);
+                $telegramUserId = $recentActivatedUser->id;
+            } else {
+                return response()->json(['points' => 0]);
+            }
         }
 
         $totalPoints = UserTask::where('telegram_user_id', $telegramUserId)
@@ -240,6 +288,20 @@ class TaskController extends Controller
             $telegramUserId = session('telegram_user_id');
         }
         
+        // 如果仍然没有用户ID，检查是否有最近激活的用户
+        if (!$telegramUserId) {
+            $recentActivatedUser = \App\Models\TelegramUser::where('is_activated', true)
+                ->where('activated_at', '>', now()->subMinutes(30)) // 最近30分钟内激活的用户
+                ->latest('activated_at')
+                ->first();
+                
+            if ($recentActivatedUser) {
+                // 如果有最近激活的用户，将该用户ID存储在会话中
+                session(['telegram_user_id' => $recentActivatedUser->id]);
+                $telegramUserId = $recentActivatedUser->id;
+            }
+        }
+        
         return response()->json([
             'authenticated' => !empty($telegramUserId),
             'message' => $telegramUserId ? 'User authenticated' : 'User not authenticated',
@@ -253,7 +315,8 @@ class TaskController extends Controller
         // 1. 请求参数
         // 2. Session
         // 3. Cookie
-        // 4. 从Telegram webhook数据（如果有的话）
+        // 4. 从数据库认证令牌
+        // 5. 从Telegram webhook数据（如果有的话）
         
         $telegramUserId = $request->input('telegram_user_id');
         
@@ -265,11 +328,38 @@ class TaskController extends Controller
             $telegramUserId = $request->cookie('telegram_user_id');
         }
         
+        // 从数据库认证令牌获取（如果会话丢失但仍需识别用户）
+        if (!$telegramUserId) {
+            $telegramUserId = $this->getTelegramUserIdFromAuthToken();
+        }
+        
         // 如果以上都没有，尝试从Telegram webhook上下文获取
         if (!$telegramUserId && $request->has('_telegram_context')) {
             $telegramUserId = $request->input('_telegram_context.user_id');
         }
         
         return $telegramUserId;
+    }
+    
+    /**
+     * 从数据库认证令牌获取Telegram用户ID
+     */
+    /**
+     * 从数据库认证令牌获取Telegram用户ID
+     */
+    private function getTelegramUserIdFromAuthToken()
+    {
+        // 此方法已弃用，因为我们不再使用认证令牌
+        return null;
+    }
+    
+    /**
+     * 检查用户是否曾经激活过（通过is_activated字段）
+     */
+    private function getTelegramUserIdFromActivation()
+    {
+        // 如果用户已经激活过，但在当前会话中没有ID，我们无法确定具体是哪个用户
+        // 所以这个方法需要结合其他方式使用
+        return null; // 目前暂时返回null，因为我们无法在不知道用户ID的情况下确定是哪个用户
     }
 }

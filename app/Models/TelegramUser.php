@@ -15,6 +15,8 @@ class TelegramUser extends Model
 
     protected $casts = [
         'id' => 'string',
+        'is_activated' => 'boolean',
+        'activated_at' => 'datetime',
     ];
 
     public function chats(): BelongsToMany

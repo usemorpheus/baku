@@ -9,6 +9,7 @@ use App\Models\TelegramUser;
 use App\Models\Metric;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class TelegramController
 {
@@ -41,6 +42,12 @@ class TelegramController
                 
                 // 保存Telegram用户ID到会话中，以便Web端可以识别用户
                 session(['telegram_user_id' => $user->id]);
+                
+                // 标记用户为已激活状态
+                $user->update([
+                    'is_activated' => true,
+                    'activated_at' => now()
+                ]);
             }
 
             if (!empty($chat) && !empty($user)) {
@@ -73,8 +80,14 @@ class TelegramController
                     'username'   => $message['from']['username'],
                 ]);
                 
-                // 保存Telegram用户ID到会话中
+                // 保存Telegram用户ID到会话中（主要用于同一次请求）
                 session(['telegram_user_id' => $user->id]);
+                
+                // 标记用户为已激活状态
+                $user->update([
+                    'is_activated' => true,
+                    'activated_at' => now()
+                ]);
             }
             if (!empty($message['chat'])) {
                 $chat = TelegramChat::updateOrCreate([
@@ -430,4 +443,4 @@ class TelegramController
             ]);
         }
     }
-}
+    
