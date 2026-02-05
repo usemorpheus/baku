@@ -604,15 +604,18 @@ class TelegramController
         
         // 撤销找到的任务
         foreach ($completedTasks as $task) {
-            // 更新任务状态为已撤销
-            $task->update([
-                'task_status' => 'revoked',
-                'revoked_at' => now(),
-                'revoked_reason' => 'Bot removed from group by user ' . $removerId,
-            ]);
-            
-            // 记录日志
-            \Log::info("Task revoked for user {$task->telegram_user_id} because bot was removed from group {$chatId}");
+            try {
+                // 更新任务状态为已撤销
+                $task->update([
+                    'task_status' => 'revoked',
+                ]);
+                
+                // 记录日志
+                \Log::info("Task revoked for user {$task->telegram_user_id} because bot was removed from group {$chatId}");
+            } catch (\Exception $e) {
+                // 如果更新失败，记录错误
+                \Log::error("Failed to revoke task for user {$task->telegram_user_id}: " . $e->getMessage());
+            }
         }
     }
 }

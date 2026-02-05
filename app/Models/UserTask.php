@@ -24,6 +24,7 @@ class UserTask extends Model
         'task_data' => 'array',
         'completed_at' => 'datetime',
         'verified_at' => 'datetime',
+        'revoked_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

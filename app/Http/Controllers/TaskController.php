@@ -66,6 +66,19 @@ class TaskController extends Controller
             ->whereNotIn('id', $claimedTaskTypeIds)
             ->get();
         
+        // 按状态分组任务
+        $pendingTasks = $userTasks->filter(function ($task) {
+            return $task->task_status === 'pending';
+        });
+        
+        $completedTasks = $userTasks->filter(function ($task) {
+            return $task->task_status === 'completed';
+        });
+        
+        $revokedTasks = $userTasks->filter(function ($task) {
+            return $task->task_status === 'revoked';
+        });
+        
         $completedTasks = $userTasks->filter(function ($task) {
             return $task->task_status === 'completed';
         });
