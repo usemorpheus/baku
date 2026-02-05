@@ -164,6 +164,22 @@ class TaskController extends Controller
                 // 验证Twitter关注
                 return $this->verifyTwitterFollow($userTask);
                 
+            case 'join_telegram_channel':
+                // Telegram频道加入任务 - 通常是手动验证
+                return [
+                    'success' => false,
+                    'message' => 'Telegram channel join task requires manual verification',
+                    'details' => ['requires_manual_verification' => true]
+                ];
+                
+            case 'retweet_post':
+                // 转发推文任务 - 通常是手动验证
+                return [
+                    'success' => false,
+                    'message' => 'Retweet task requires manual verification',
+                    'details' => ['requires_manual_verification' => true]
+                ];
+                
             default:
                 return [
                     'success' => false,
@@ -262,6 +278,16 @@ class TaskController extends Controller
             }
         }
         
+        // 如果是Twitter转发任务，尝试验证
+        if ($userTask->taskType->name === 'retweet_post' && isset($request->tweet_url)) {
+            $verificationResult = $this->verifyRetweet($userTask);
+            if ($verificationResult['success']) {
+                $updateData['task_status'] = 'completed';
+                $updateData['verified_at'] = now();
+                $updateData['completed_at'] = now();
+            }
+        }
+        
         $userTask->update($updateData);
 
         return redirect()->back()->with('status', $verificationResult['message'] ?? 'Verification data submitted. Please wait for review.');
@@ -297,6 +323,50 @@ class TaskController extends Controller
             ->sum('points');
 
         return response()->json(['points' => $totalPoints]);
+    }
+    
+    private function verifyRetweet(UserTask $userTask)
+    {
+        // 从任务数据中获取推文URL和用户的Twitter用户名
+        $tweetUrl = $userTask->task_data['tweet_url'] ?? null;
+        $twitterUsername = $userTask->task_data['twitter_username'] ?? null;
+        
+        if (!$tweetUrl || !$twitterUsername) {
+            return [
+                'success' => false,
+                'message' => 'Please provide tweet URL and your Twitter username for verification',
+                'details' => ['requires_tweet_url_and_username' => true]
+            ];
+        }
+
+        try {
+            // 使用Twitter验证服务检查转发
+            $isRetweeted = $this->twitterService->verifyRetweet(
+                $tweetUrl,
+                $twitterUsername
+            );
+
+            if ($isRetweeted) {
+                return [
+                    'success' => true,
+                    'message' => 'Retweet task verified successfully',
+                    'details' => []
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Retweet task requires manual verification',
+                    'details' => ['requires_manual_verification' => true]
+                ];
+            }
+        } catch (\Exception $e) {
+            \Log::error('Twitter retweet verification error: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Twitter verification temporarily unavailable, please try again later',
+                'details' => ['verification_error' => true]
+            ];
+        }
     }
     
     public function verifyAuth(Request $request)

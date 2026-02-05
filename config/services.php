@@ -37,5 +37,13 @@ return [
 
     'api' => [
         'api_key' => env('API_KEY'),
+    ],
+    
+    'twitter' => [
+        'client_id' => env('TWITTER_CLIENT_ID'),
+        'client_secret' => env('TWITTER_CLIENT_SECRET'),
+        'access_token' => env('TWITTER_ACCESS_TOKEN'),
+        'access_secret' => env('TWITTER_ACCESS_SECRET'),
+        'bearer_token' => env('TWITTER_BEARER_TOKEN'),
     ]
 ];

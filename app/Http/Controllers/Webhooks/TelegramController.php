@@ -99,15 +99,14 @@ class TelegramController
             }
             
             // 检查是否是机器人被添加到群组
-            if (!empty($user) && $user->is_bot && strpos($user->username, 'baku_news_bot') !== false) {
-                // 检查是否有用户将机器人添加到群组
-                if (!empty($message['old_chat_member']) && $message['old_chat_member']['status'] === 'left') {
-                    // 机器人被添加到群组
-                    $inviter_user = TelegramUser::where('id', $message['from']['id'])->first();
-                    if ($inviter_user) {
-                        // 创建任务记录 - 添加机器人到群组任务
-                        $this->handleAddBotToGroupTask($inviter_user, $chat);
-                    }
+            // 当机器人被添加到群组时，new_chat_member是机器人，from是邀请人
+            $newChatMember = $message['new_chat_member']['user'] ?? null;
+            if (!empty($newChatMember) && ($newChatMember['is_bot'] ?? false) && strpos($newChatMember['username'], 'baku_news_bot') !== false) {
+                // 机器人被添加到群组，邀请人是message['from']['id']
+                $inviter_user = TelegramUser::where('id', $message['from']['id'])->first();
+                if ($inviter_user) {
+                    // 创建任务记录 - 添加机器人到群组任务
+                    $this->handleAddBotToGroupTask($inviter_user, $chat);
                 }
             }
         }
