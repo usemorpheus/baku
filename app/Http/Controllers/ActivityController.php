@@ -38,10 +38,12 @@ class ActivityController
         ];
 
         // 获取积分最高的用户排行榜
-        // 按用户ID分组，计算每个用户的总积分
-        $userPoints = UserTask::where('task_status', 'completed')
+        // 按用户ID分组，计算每个用户的净积分（完成的积分减去撤销的积分）
+        $userPoints = UserTask::whereIn('task_status', ['completed', 'revoked'])
             ->groupBy('telegram_user_id')
-            ->selectRaw('telegram_user_id, SUM(points) as total_points')
+            ->selectRaw('telegram_user_id, 
+                         SUM(CASE WHEN task_status = \'completed\' THEN points ELSE 0 END) - 
+                         SUM(CASE WHEN task_status = \'revoked\' THEN points ELSE 0 END) AS total_points')
             ->orderBy('total_points', 'desc')
             ->paginate(15)
             ->appends(request()->except('page'));
@@ -78,8 +80,10 @@ class ActivityController
 
         $data['dimension'] = request('dimension', '1');
 
-        // 计算总积分 - 所有用户完成任务的积分总和
-        $total_points = UserTask::where('task_status', 'completed')->sum('points');
+        // 计算总净积分 - 所有用户完成任务的积分总和减去撤销的积分总和
+        $completed_points = UserTask::where('task_status', 'completed')->sum('points');
+        $revoked_points = UserTask::where('task_status', 'revoked')->sum('points');
+        $total_points = $completed_points - $revoked_points;
         $data['total_points'] = $total_points;
 
         $data['kpis'] = [

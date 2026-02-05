@@ -58,7 +58,7 @@
                     <div class="mb-3">
                         <h5>Total Points</h5>
                         <p class="display-4 text-primary">
-                            {{ $completedTasks->sum('points') }}
+                            {{ $completedTasks->sum('points') - $revokedTasks->sum('points') }}
                         </p>
                     </div>
                     
@@ -76,7 +76,7 @@
                         </ul>
                     </div>
                     
-                    <div>
+                    <div class="mb-3">
                         <h6>Pending Tasks</h6>
                         <ul class="list-group">
                             @forelse($pendingTasks as $task)
@@ -86,6 +86,20 @@
                                 </li>
                             @empty
                                 <li class="list-group-item">No pending tasks</li>
+                            @endforelse
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h6>Revoked Tasks</h6>
+                        <ul class="list-group">
+                            @forelse($revokedTasks as $task)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ $task->taskType->title }} <small class="text-muted">(Revoked)</small></span>
+                                    <span class="badge bg-danger">-{{ $task->points }} pts</span>
+                                </li>
+                            @empty
+                                <li class="list-group-item">No revoked tasks</li>
                             @endforelse
                         </ul>
                     </div>

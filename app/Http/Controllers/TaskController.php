@@ -60,10 +60,13 @@ class TaskController extends Controller
             ->where('telegram_user_id', $telegramUserId)
             ->get();
         
-        // 获取用户尚未认领的任务作为可用任务
-        $claimedTaskTypeIds = $userTasks->pluck('task_type_id')->toArray();
+        // 获取用户已认领但未撤销的任务作为不可用任务
+        $claimedAndActiveTaskTypeIds = $userTasks->filter(function ($task) {
+            return $task->task_status !== 'revoked'; // 只有非revoked的任务才被视为已认领
+        })->pluck('task_type_id')->toArray();
+        
         $availableTasks = TaskType::where('is_active', true)
-            ->whereNotIn('id', $claimedTaskTypeIds)
+            ->whereNotIn('id', $claimedAndActiveTaskTypeIds)
             ->get();
         
         // 按状态分组任务
@@ -78,16 +81,8 @@ class TaskController extends Controller
         $revokedTasks = $userTasks->filter(function ($task) {
             return $task->task_status === 'revoked';
         });
-        
-        $completedTasks = $userTasks->filter(function ($task) {
-            return $task->task_status === 'completed';
-        });
-        
-        $pendingTasks = $userTasks->filter(function ($task) {
-            return $task->task_status !== 'completed';
-        });
 
-        return view('tasks.index', compact('availableTasks', 'completedTasks', 'pendingTasks', 'telegramUser'));
+        return view('tasks.index', compact('availableTasks', 'completedTasks', 'pendingTasks', 'revokedTasks', 'telegramUser'));
     }
 
     public function claimTask(Request $request, $taskId)
@@ -118,12 +113,12 @@ class TaskController extends Controller
 
         $taskType = TaskType::findOrFail($taskId);
 
-        // 检查用户是否已经申请过此任务
+        // 检查用户是否已经申请过此任务（但允许重新申请已撤销的任务）
         $existingTask = UserTask::where('telegram_user_id', $telegramUserId)
             ->where('task_type_id', $taskType->id)
             ->first();
 
-        if ($existingTask) {
+        if ($existingTask && $existingTask->task_status !== 'revoked') {
             return redirect()->back()->withErrors(['error' => 'Task already claimed']);
         }
 
@@ -335,9 +330,17 @@ class TaskController extends Controller
             }
         }
 
-        $totalPoints = UserTask::where('telegram_user_id', $telegramUserId)
+        // 计算已完成任务的积分
+        $completedPoints = UserTask::where('telegram_user_id', $telegramUserId)
             ->where('task_status', 'completed')
             ->sum('points');
+        
+        // 计算已撤销任务的积分
+        $revokedPoints = UserTask::where('telegram_user_id', $telegramUserId)
+            ->where('task_status', 'revoked')
+            ->sum('points');
+
+        $totalPoints = $completedPoints - $revokedPoints;
 
         return response()->json(['points' => $totalPoints]);
     }
