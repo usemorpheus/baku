@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h2>Baku Tasks</h2>
-    <p>Earn points by completing tasks</p>
+    <p>Hello, <strong>{{ $telegramUser->first_name ?? 'User' }}</strong>! Earn points by completing tasks.</p>
     
     <div class="row">
         <div class="col-md-8">
@@ -19,13 +19,17 @@
                                 <p class="card-text">{{ $task->description }}</p>
                                 <p class="text-success"><strong>{{ $task->points_reward }} Points</strong></p>
                                 
-                                @if(in_array($task->name, ['add_bot_to_group']))
+                                @if(in_array($task->name, ['add_bot_to_group', 'follow_twitter', 'join_telegram_channel', 'retweet_post']))
                                     <div class="alert alert-info">
                                         <strong>Instructions:</strong> 
                                         @if($task->name === 'add_bot_to_group')
                                             Add <code>@baku_news_bot</code> to your Telegram group and send a message to verify.
                                         @elseif($task->name === 'follow_twitter')
                                             Follow <a href="https://x.com/Baku_builders" target="_blank">@Baku_builders</a> on Twitter.
+                                        @elseif($task->name === 'join_telegram_channel')
+                                            Join our official Telegram channel.
+                                        @elseif($task->name === 'retweet_post')
+                                            Retweet a post from @Baku_builders.
                                         @endif
                                     </div>
                                 @endif

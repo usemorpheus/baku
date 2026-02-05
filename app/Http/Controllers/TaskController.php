@@ -8,6 +8,7 @@ use App\Models\TelegramUser;
 use App\Services\TwitterVerificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class TaskController extends Controller
 {
@@ -20,12 +21,28 @@ class TaskController extends Controller
 
     public function index(Request $request)
     {
-        $telegramUserId = $request->session()->get('telegram_user_id') ?? $request->user()?->id;
+        // 获取Telegram用户ID
+        $telegramUserId = $this->getTelegramUserId($request);
+        
+        if (!$telegramUserId) {
+            // 如果没有Telegram用户ID，重定向到首页或其他页面
+            return redirect()->route('home')->with('error', 'Please access this page through Telegram bot');
+        }
+        
+        // 确保用户存在
+        $telegramUser = TelegramUser::firstOrCreate(
+            ['id' => $telegramUserId],
+            [
+                'first_name' => 'Unknown User',
+                'username' => 'user_' . $telegramUserId,
+            ]
+        );
+        
         $availableTasks = TaskType::where('is_active', true)->get();
         
         // 获取用户已完成和待完成的任务
         $userTasks = UserTask::with('taskType')
-            ->where('telegram_user_id', $telegramUserId ?? 'unknown')
+            ->where('telegram_user_id', $telegramUserId)
             ->get();
         
         $completedTasks = $userTasks->filter(function ($task) {
@@ -36,17 +53,19 @@ class TaskController extends Controller
             return $task->task_status !== 'completed';
         });
 
-        return view('tasks.index', compact('availableTasks', 'completedTasks', 'pendingTasks'));
+        return view('tasks.index', compact('availableTasks', 'completedTasks', 'pendingTasks', 'telegramUser'));
     }
 
     public function claimTask(Request $request, $taskId)
     {
-        $taskType = TaskType::findOrFail($taskId);
-        $telegramUserId = $request->session()->get('telegram_user_id') ?? $request->user()?->id;
+        // 获取Telegram用户ID
+        $telegramUserId = $this->getTelegramUserId($request);
         
         if (!$telegramUserId) {
-            return redirect()->back()->withErrors(['error' => 'User not authenticated']);
+            return redirect()->route('home')->withErrors(['error' => 'User not authenticated']);
         }
+
+        $taskType = TaskType::findOrFail($taskId);
 
         // 检查用户是否已经申请过此任务
         $existingTask = UserTask::where('telegram_user_id', $telegramUserId)
@@ -165,7 +184,16 @@ class TaskController extends Controller
 
     public function submitVerification(Request $request, $userTaskId)
     {
-        $userTask = UserTask::findOrFail($userTaskId);
+        // 获取Telegram用户ID
+        $telegramUserId = $this->getTelegramUserId($request);
+        
+        if (!$telegramUserId) {
+            return redirect()->route('home')->withErrors(['error' => 'User not authenticated']);
+        }
+
+        $userTask = UserTask::where('id', $userTaskId)
+            ->where('telegram_user_id', $telegramUserId)
+            ->firstOrFail();
         
         // 根据任务类型更新任务数据
         $updateData = [
@@ -190,7 +218,7 @@ class TaskController extends Controller
 
     public function getUserPoints(Request $request)
     {
-        $telegramUserId = $request->session()->get('telegram_user_id') ?? $request->user()?->id;
+        $telegramUserId = $this->getTelegramUserId($request);
         
         if (!$telegramUserId) {
             return response()->json(['points' => 0]);
@@ -201,5 +229,31 @@ class TaskController extends Controller
             ->sum('points');
 
         return response()->json(['points' => $totalPoints]);
+    }
+    
+    private function getTelegramUserId(Request $request)
+    {
+        // 优先级顺序获取Telegram用户ID：
+        // 1. 请求参数
+        // 2. Session
+        // 3. Cookie
+        // 4. 从Telegram webhook数据（如果有的话）
+        
+        $telegramUserId = $request->input('telegram_user_id');
+        
+        if (!$telegramUserId) {
+            $telegramUserId = session('telegram_user_id');
+        }
+        
+        if (!$telegramUserId) {
+            $telegramUserId = $request->cookie('telegram_user_id');
+        }
+        
+        // 如果以上都没有，尝试从Telegram webhook上下文获取
+        if (!$telegramUserId && $request->has('_telegram_context')) {
+            $telegramUserId = $request->input('_telegram_context.user_id');
+        }
+        
+        return $telegramUserId;
     }
 }

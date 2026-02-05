@@ -38,6 +38,9 @@ class TelegramController
                     'first_name' => $message['from']['first_name'],
                     'username'   => $message['from']['username'],
                 ]);
+                
+                // 保存Telegram用户ID到会话中，以便Web端可以识别用户
+                session(['telegram_user_id' => $user->id]);
             }
 
             if (!empty($chat) && !empty($user)) {
@@ -69,6 +72,9 @@ class TelegramController
                     'first_name' => $message['from']['first_name'],
                     'username'   => $message['from']['username'],
                 ]);
+                
+                // 保存Telegram用户ID到会话中
+                session(['telegram_user_id' => $user->id]);
             }
             if (!empty($message['chat'])) {
                 $chat = TelegramChat::updateOrCreate([
