@@ -235,9 +235,15 @@ class TaskController extends Controller
     {
         $telegramUserId = $this->getTelegramUserId($request);
         
+        // 尝试从会话中获取用户ID
+        if (!$telegramUserId) {
+            $telegramUserId = session('telegram_user_id');
+        }
+        
         return response()->json([
             'authenticated' => !empty($telegramUserId),
-            'message' => $telegramUserId ? 'User authenticated' : 'User not authenticated'
+            'message' => $telegramUserId ? 'User authenticated' : 'User not authenticated',
+            'telegram_user_id' => $telegramUserId
         ]);
     }
     

@@ -20,9 +20,17 @@
                     
                     <h5 class="mb-3">To access tasks, please connect with our Telegram bot first</h5>
                     <p class="text-muted mb-4">
-                        Our system needs to recognize you through Telegram. Please start a conversation with our bot,
+                        Our system needs to recognize you through Telegram. Simply send any message to our bot (like "hi" or "/start"),
                         then you'll be able to access your personalized tasks and earn points.
                     </p>
+                    <div class="alert alert-info mb-4">
+                        <strong>How to connect:</strong>
+                        <ol class="mb-0">
+                            <li>Click the "Start Chat with Bot" button below</li>
+                            <li>In Telegram, send any message to the bot (e.g. "hi", "hello", or just tap the /start command)</li>
+                            <li>Return to this website and click "Already Connected? Verify"</li>
+                        </ol>
+                    </div>
                     
                     <div class="row">
                         <div class="col-md-6 mb-3 mb-md-0">
@@ -54,7 +62,154 @@
     </div>
 </div>
 
+<!-- 自定义模态框样式 -->
+<style>
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    padding: 30px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.modal-header {
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #292521;
+    margin: 0;
+}
+
+.modal-body {
+    margin-bottom: 25px;
+    color: #6D6561;
+    line-height: 1.6;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.btn-modal {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-primary-modal {
+    background-color: #E67300;
+    color: white;
+}
+
+.btn-primary-modal:hover {
+    background-color: #cc6400;
+}
+
+.btn-secondary-modal {
+    background-color: #f8f9fa;
+    color: #292521;
+    border: 1px solid #dee2e6;
+}
+
+.btn-secondary-modal:hover {
+    background-color: #e9ecef;
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6D6561;
+}
+
+.modal-close:hover {
+    color: #292521;
+}
+</style>
+
+<!-- 自定义模态框HTML -->
+<div id="customModal" class="custom-modal" style="display: none;">
+    <div class="modal-content">
+        <button class="modal-close">&times;</button>
+        <div class="modal-header">
+            <h4 class="modal-title">Connect to Telegram Bot</h4>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <!-- 内容将通过JS动态填充 -->
+        </div>
+        <div class="modal-footer" id="modalFooter">
+            <!-- 按钮将通过JS动态填充 -->
+        </div>
+    </div>
+</div>
+
 <script>
+// 模态框控制函数
+function showModal(title, body, buttons) {
+    const modal = document.getElementById('customModal');
+    const modalTitle = modal.querySelector('.modal-title');
+    const modalBody = document.getElementById('modalBody');
+    const modalFooter = document.getElementById('modalFooter');
+    
+    modalTitle.textContent = title;
+    modalBody.innerHTML = body;
+    
+    // 清空现有按钮
+    modalFooter.innerHTML = '';
+    
+    // 添加按钮
+    buttons.forEach(button => {
+        const btn = document.createElement('button');
+        btn.className = `btn-modal ${button.style}`;
+        btn.textContent = button.text;
+        btn.onclick = button.onClick;
+        modalFooter.appendChild(btn);
+    });
+    
+    modal.style.display = 'flex';
+}
+
+function hideModal() {
+    document.getElementById('customModal').style.display = 'none';
+}
+
+// 关闭按钮事件
+document.querySelector('.modal-close').addEventListener('click', hideModal);
+
+// 点击背景关闭模态框
+document.getElementById('customModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideModal();
+    }
+});
+
     function checkTelegramAuth() {
         // 发起一个AJAX请求来检查用户是否已通过Telegram认证
         fetch('/tasks/verify-auth', {
@@ -69,13 +224,50 @@
                 // 如果已认证，重定向到任务页面
                 window.location.href = '/tasks';
             } else {
-                // 如果未认证，显示提示信息
-                alert('Please connect with Telegram bot first. Start a conversation with @baku_news_bot.');
+                // 如果未认证，显示自定义模态框
+                showModal(
+                    'Not Connected Yet',
+                    'Please connect with Telegram bot first. Start a conversation with @baku_news_bot by sending any message.',
+                    [
+                        {
+                            text: 'Cancel',
+                            style: 'btn-secondary-modal',
+                            onClick: hideModal
+                        },
+                        {
+                            text: 'Open Bot',
+                            style: 'btn-primary-modal',
+                            onClick: function() {
+                                window.open('https://t.me/baku_news_bot', '_blank');
+                                hideModal();
+                            }
+                        }
+                    ]
+                );
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Please connect with Telegram bot first. Start a conversation with @baku_news_bot.');
+            
+            showModal(
+                'Connection Error',
+                'Please connect with Telegram bot first. Start a conversation with @baku_news_bot.',
+                [
+                    {
+                        text: 'Cancel',
+                        style: 'btn-secondary-modal',
+                        onClick: hideModal
+                    },
+                    {
+                        text: 'Open Bot',
+                        style: 'btn-primary-modal',
+                        onClick: function() {
+                            window.open('https://t.me/baku_news_bot', '_blank');
+                            hideModal();
+                        }
+                    }
+                ]
+            );
         });
     }
 </script>
