@@ -8,6 +8,7 @@ use App\Http\Middleware\ApiVerifyMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::post('webhook/telegram', TelegramController::class);
+Route::post('webhook/telegram-tasks', [TelegramController::class, 'handleTaskUpdates']);
 Route::post('webhook/zealy', ZealyController::class);
 
 Route::group(['middleware' => [ApiVerifyMiddleware::class]], function () {

@@ -442,5 +442,54 @@ class TelegramController
             ]);
         }
     }
+    
+    /**
+     * 专门处理任务相关的Telegram更新
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function handleTaskUpdates()
+    {
+        $data = request()->all();
+        
+        // 处理 my_chat_member 更新 - 机器人被添加到群组
+        if (!empty($data['my_chat_member'])) {
+            $message = $data['my_chat_member'];
+            
+            // 检查是否是 baku_news_bot 被添加到群组
+            $newChatMember = $message['new_chat_member'] ?? null;
+            if (!empty($newChatMember) && 
+                ($newChatMember['is_bot'] ?? false) && 
+                ($newChatMember['username'] ?? '') === 'baku_news_bot') {
+                
+                // 获取邀请人信息
+                $inviterId = $message['from']['id'] ?? null;
+                
+                if ($inviterId) {
+                    // 获取或创建Telegram用户
+                    $inviter_user = \App\Models\TelegramUser::updateOrCreate([
+                        'id' => $inviterId,
+                    ], [
+                        'first_name' => $message['from']['first_name'] ?? 'Unknown',
+                        'username' => $message['from']['username'] ?? null,
+                        'is_bot' => $message['from']['is_bot'] ?? false,
+                    ]);
+                    
+                    // 获取群组信息
+                    $chat = \App\Models\TelegramChat::updateOrCreate([
+                        'id' => $message['chat']['id'],
+                    ], [
+                        'type' => $message['chat']['type'] ?? 'group',
+                        'title' => $message['chat']['title'] ?? $message['chat']['username'] ?? 'Unknown Group',
+                    ]);
+                    
+                    // 创建或更新添加机器人到群组的任务
+                    $this->handleAddBotToGroupTask($inviter_user, $chat);
+                }
+            }
+        }
+        
+        return response()->json(['status' => 'ok']);
+    }
 }
     
