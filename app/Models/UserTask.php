@@ -26,6 +26,14 @@ class UserTask extends Model
         'verified_at' => 'datetime',
         'revoked_at' => 'datetime',
     ];
+    
+    /**
+     * 获取有效积分（完成的返回正数，撤销的返回负数）
+     */
+    public function getEffectivePointsAttribute()
+    {
+        return $this->task_status === 'revoked' ? -$this->points : $this->points;
+    }
 
     public function user(): BelongsTo
     {

@@ -635,6 +635,7 @@ class TelegramController
         $taskType = TaskType::where('name', 'add_bot_to_group')->first();
         
         if (!$taskType) {
+            \Log::error("Task type 'add_bot_to_group' not found");
             return;
         }
         
@@ -644,6 +645,11 @@ class TelegramController
             ->whereJsonContains('task_data', ['chat_id' => (string)$chatId]) // 确保chat_id匹配
             ->get();
         
+        if ($completedTasks->isEmpty()) {
+            \Log::info("No completed tasks found for chat {$chatId} to revoke");
+            return;
+        }
+        
         // 撤销找到的任务
         foreach ($completedTasks as $task) {
             try {
@@ -652,11 +658,20 @@ class TelegramController
                     'task_status' => 'revoked',
                 ]);
                 
-                // 记录日志
-                \Log::info("Task revoked for user {$task->telegram_user_id} because bot was removed from group {$chatId}");
+                // 记录详细的撤销日志
+                \Log::info("Task revoked for user {$task->telegram_user_id} because bot was removed from group {$chatId}", [
+                    'task_id' => $task->id,
+                    'user_id' => $task->telegram_user_id,
+                    'task_type_id' => $task->task_type_id,
+                    'points_deducted' => $task->points,
+                    'revoker_id' => $removerId
+                ]);
             } catch (\Exception $e) {
                 // 如果更新失败，记录错误
-                \Log::error("Failed to revoke task for user {$task->telegram_user_id}: " . $e->getMessage());
+                \Log::error("Failed to revoke task for user {$task->telegram_user_id}: " . $e->getMessage(), [
+                    'task_id' => $task->id,
+                    'error' => $e->getMessage()
+                ]);
             }
         }
     }

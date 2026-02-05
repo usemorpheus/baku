@@ -330,17 +330,13 @@ class TaskController extends Controller
             }
         }
 
-        // 计算已完成任务的积分
-        $completedPoints = UserTask::where('telegram_user_id', $telegramUserId)
-            ->where('task_status', 'completed')
-            ->sum('points');
-        
-        // 计算已撤销任务的积分
-        $revokedPoints = UserTask::where('telegram_user_id', $telegramUserId)
-            ->where('task_status', 'revoked')
-            ->sum('points');
-
-        $totalPoints = $completedPoints - $revokedPoints;
+        // 计算用户的有效积分（完成的加，撤销的减）
+        $totalPoints = UserTask::where('telegram_user_id', $telegramUserId)
+            ->whereIn('task_status', ['completed', 'revoked'])
+            ->get()
+            ->sum(function ($task) {
+                return $task->effective_points;
+            });
 
         return response()->json(['points' => $totalPoints]);
     }

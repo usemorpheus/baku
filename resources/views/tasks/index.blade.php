@@ -103,6 +103,11 @@
                             @endforelse
                         </ul>
                     </div>
+                    
+                    <!-- 添加说明 -->
+                    <div class="alert alert-info mt-3">
+                        <strong>Note:</strong> Revoked tasks have had their points deducted. You can reclaim revoked tasks by completing them again.
+                    </div>
                 </div>
             </div>
         </div>
