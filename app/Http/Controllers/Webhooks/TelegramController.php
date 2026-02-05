@@ -577,6 +577,48 @@ class TelegramController
             }
         }
         
+        // 处理 message 更新 - left_chat_member 事件 (成员离开群组，包括机器人)
+        if (!empty($data['message']) && !empty($data['message']['left_chat_member'])) {
+            $message = $data['message'];
+            $leftChatMember = $message['left_chat_member'];
+            
+            // 检查是否是 baku_news_bot 离开了群组
+            if (($leftChatMember['is_bot'] ?? false) && 
+                ($leftChatMember['username'] ?? '') === 'baku_news_bot') {
+                
+                // 机器人离开了群组，撤销相关任务积分
+                $leaverId = $message['from']['id'] ?? null; // 执行移除操作的用户
+                
+                if ($leaverId) {
+                    // 查找并撤销相关任务积分
+                    $this->revokeAddBotToGroupTask($message['chat']['id'], $leaverId);
+                }
+                
+                \Log::info('Baku bot left group: ' . ($message['chat']['title'] ?? $message['chat']['id']) . ' by user: ' . $leaverId);
+            }
+        }
+        
+        // 处理 message 更新 - left_chat_participant 事件 (参与者离开群组，包括机器人)
+        if (!empty($data['message']) && !empty($data['message']['left_chat_participant'])) {
+            $message = $data['message'];
+            $leftChatParticipant = $message['left_chat_participant'];
+            
+            // 检查是否是 baku_news_bot 离开了群组
+            if (($leftChatParticipant['is_bot'] ?? false) && 
+                ($leftChatParticipant['username'] ?? '') === 'baku_news_bot') {
+                
+                // 机器人离开了群组，撤销相关任务积分
+                $leaverId = $message['from']['id'] ?? null; // 执行移除操作的用户
+                
+                if ($leaverId) {
+                    // 查找并撤销相关任务积分
+                    $this->revokeAddBotToGroupTask($message['chat']['id'], $leaverId);
+                }
+                
+                \Log::info('Baku bot left group (participant): ' . ($message['chat']['title'] ?? $message['chat']['id']) . ' by user: ' . $leaverId);
+            }
+        }
+        
         return response()->json(['status' => 'ok']);
     }
     
