@@ -1,0 +1,1 @@
+cd /Users/babbage/Desktop/baku/code/baku && php artisan migrate
