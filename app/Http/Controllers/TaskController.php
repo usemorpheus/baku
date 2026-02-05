@@ -25,8 +25,8 @@ class TaskController extends Controller
         $telegramUserId = $this->getTelegramUserId($request);
         
         if (!$telegramUserId) {
-            // 如果没有Telegram用户ID，重定向到首页
-            return redirect()->route('home')->with('error', 'Please connect with Telegram bot first to access tasks. Start a conversation with @baku_news_bot.');
+            // 如果没有Telegram用户ID，显示连接说明页面
+            return view('connect-telegram');
         }
         
         // 确保用户存在
@@ -229,6 +229,16 @@ class TaskController extends Controller
             ->sum('points');
 
         return response()->json(['points' => $totalPoints]);
+    }
+    
+    public function verifyAuth(Request $request)
+    {
+        $telegramUserId = $this->getTelegramUserId($request);
+        
+        return response()->json([
+            'authenticated' => !empty($telegramUserId),
+            'message' => $telegramUserId ? 'User authenticated' : 'User not authenticated'
+        ]);
     }
     
     private function getTelegramUserId(Request $request)

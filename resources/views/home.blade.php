@@ -343,7 +343,7 @@
                         </div>
                         
                         <div class="btn btn-primary rounded-2" style="padding: 10px 25px"
-                             onclick="window.location.href='/tasks'">
+                             onclick="checkAndNavigateToTasks()">
                             <span class="pe-1 pt-1">Complete Tasks & Earn Points</span>
                             <svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -375,5 +375,35 @@
 </div>
 
 <script src="{{asset('assets/js/jquery-3.7.1.min.js')}}"></script>
+<script>
+function checkAndNavigateToTasks() {
+    // 检查用户是否已通过Telegram认证
+    fetch('/tasks/verify-auth', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.authenticated) {
+            // 如果已认证，直接重定向到任务页面
+            window.location.href = '/tasks';
+        } else {
+            // 如果未认证，提示用户连接Telegram并重定向到说明页面
+            const result = confirm('To access tasks, you need to connect with our Telegram bot first. Would you like to start a conversation with @baku_news_bot now?');
+            if (result) {
+                window.open('https://t.me/baku_news_bot', '_blank');
+                alert('Please start a conversation with @baku_news_bot, then return to this page to access your tasks.');
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Please connect with Telegram bot first. Start a conversation with @baku_news_bot.');
+        window.open('https://t.me/baku_news_bot', '_blank');
+    });
+}
+</script>
 </body>
 </html>
