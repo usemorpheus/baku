@@ -25,8 +25,8 @@ class TaskController extends Controller
         $telegramUserId = $this->getTelegramUserId($request);
         
         if (!$telegramUserId) {
-            // 如果没有Telegram用户ID，重定向到首页或其他页面
-            return redirect()->route('home')->with('error', 'Please access this page through Telegram bot');
+            // 如果没有Telegram用户ID，重定向到首页
+            return redirect()->route('home')->with('error', 'Please connect with Telegram bot first to access tasks. Start a conversation with @baku_news_bot.');
         }
         
         // 确保用户存在
@@ -62,7 +62,7 @@ class TaskController extends Controller
         $telegramUserId = $this->getTelegramUserId($request);
         
         if (!$telegramUserId) {
-            return redirect()->route('home')->withErrors(['error' => 'User not authenticated']);
+            return redirect()->route('home')->withErrors(['error' => 'Please connect with Telegram bot first to claim tasks. Start a conversation with @baku_news_bot.']);
         }
 
         $taskType = TaskType::findOrFail($taskId);
@@ -188,7 +188,7 @@ class TaskController extends Controller
         $telegramUserId = $this->getTelegramUserId($request);
         
         if (!$telegramUserId) {
-            return redirect()->route('home')->withErrors(['error' => 'User not authenticated']);
+            return redirect()->route('home')->withErrors(['error' => 'Please connect with Telegram bot first to submit verification. Start a conversation with @baku_news_bot.']);
         }
 
         $userTask = UserTask::where('id', $userTaskId)
