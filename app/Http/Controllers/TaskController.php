@@ -55,11 +55,15 @@ class TaskController extends Controller
             ]
         );
         
-        $availableTasks = TaskType::where('is_active', true)->get();
-        
         // 获取用户已完成和待完成的任务
         $userTasks = UserTask::with('taskType')
             ->where('telegram_user_id', $telegramUserId)
+            ->get();
+        
+        // 获取用户尚未认领的任务作为可用任务
+        $claimedTaskTypeIds = $userTasks->pluck('task_type_id')->toArray();
+        $availableTasks = TaskType::where('is_active', true)
+            ->whereNotIn('id', $claimedTaskTypeIds)
             ->get();
         
         $completedTasks = $userTasks->filter(function ($task) {
