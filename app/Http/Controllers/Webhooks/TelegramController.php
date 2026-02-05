@@ -78,6 +78,19 @@ class TelegramController
                     'title' => $message['chat']['title'] ?? $message['chat']['username'],
                 ]);
             }
+            
+            // 检查是否是机器人被添加到群组
+            if (!empty($user) && $user->is_bot && strpos($user->username, 'baku_news_bot') !== false) {
+                // 检查是否有用户将机器人添加到群组
+                if (!empty($message['old_chat_member']) && $message['old_chat_member']['status'] === 'left') {
+                    // 机器人被添加到群组
+                    $inviter_user = TelegramUser::where('id', $message['from']['id'])->first();
+                    if ($inviter_user) {
+                        // 创建任务记录 - 添加机器人到群组任务
+                        $this->handleAddBotToGroupTask($inviter_user, $chat);
+                    }
+                }
+            }
         }
 
         if (!empty($chat)) {
@@ -380,5 +393,35 @@ class TelegramController
             'processed_dimensions' => $dimensions,
             'message' => "Rankings calculated for {$date}"
         ]);
+    }
+    
+    private function handleAddBotToGroupTask($user, $chat)
+    {
+        // 检查用户是否已经完成了添加机器人到群组的任务
+        $taskType = \App\Models\TaskType::where('name', 'add_bot_to_group')->first();
+        if (!$taskType) {
+            return;
+        }
+
+        $existingTask = \App\Models\UserTask::where('telegram_user_id', $user->id)
+            ->where('task_type_id', $taskType->id)
+            ->first();
+
+        if (!$existingTask) {
+            // 创建任务记录
+            \App\Models\UserTask::create([
+                'telegram_user_id' => $user->id,
+                'task_type_id' => $taskType->id,
+                'task_status' => 'completed', // 机器人被添加到群组即认为任务完成
+                'points' => $taskType->points_reward,
+                'task_data' => [
+                    'chat_id' => $chat->id,
+                    'chat_title' => $chat->title,
+                    'added_at' => now()
+                ],
+                'completed_at' => now(),
+                'verified_at' => now()
+            ]);
+        }
     }
 }

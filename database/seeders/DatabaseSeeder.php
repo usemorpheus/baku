@@ -21,5 +21,7 @@ class DatabaseSeeder extends Seeder
             'email'    => 'test@example.com',
         ]);
 
+        // 运行任务类型种子
+        $this->call(TaskTypesSeeder::class);
     }
 }
