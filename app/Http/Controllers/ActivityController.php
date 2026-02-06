@@ -108,22 +108,31 @@ class ActivityController
         
         $data['total_points'] = $total_points;
 
+        // 从数据库获取真实的KPI数据（使用缓存以提高性能）
         $data['kpis'] = [
             [
                 'label' => 'Communities Served',
-                'value' => 720,
+                'value' => Cache::remember('kpi_communities_served', 300, function () { // 缓存5分钟
+                    return \App\Models\TelegramChat::group()->count(); // 群组数量
+                }),
             ],
             [
-                'label' => 'Community Scounts',
-                'value' => 231,
+                'label' => 'Community Scouts',
+                'value' => Cache::remember('kpi_community_scouts', 300, function () { // 缓存5分钟
+                    return \App\Models\TelegramUser::count(); // 用户数量
+                }),
             ],
             [
                 'label' => 'Buzz news',
-                'value' => 33,
+                'value' => Cache::remember('kpi_buzz_news', 300, function () { // 缓存5分钟
+                    return \App\Models\Article::where('category', 'buzz_news')->count(); // 新闻数量
+                }),
             ],
             [
                 'label' => 'Reports Generated',
-                'value' => 23,
+                'value' => Cache::remember('kpi_reports_generated', 300, function () { // 缓存5分钟
+                    return \App\Models\Article::where('category', 'group_report')->count(); // 报告数量
+                }),
             ],
         ];
         return view($view, $data);
