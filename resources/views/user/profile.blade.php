@@ -14,7 +14,7 @@
                                  alt="">
                             <div>
                                 {{ $telegramUser->first_name ?? $telegramUser->username ?? 'Unknown User' }}
-                                <small class="d-block opacity-75">@{{ $telegramUser->username ?? 'unknown' }}</small>
+                                <small class="d-block opacity-75">{{ '@' . ($telegramUser->username ?? 'unknown') }}</small>
                             </div>
                         </div>
                     </h4>
