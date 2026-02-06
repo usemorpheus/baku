@@ -338,6 +338,9 @@ class TaskController extends Controller
                 return $task->effective_points;
             });
 
+        // 确保积分不会为负数
+        $totalPoints = max(0, $totalPoints);
+
         return response()->json(['points' => $totalPoints]);
     }
     

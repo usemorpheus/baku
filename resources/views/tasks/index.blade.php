@@ -58,7 +58,7 @@
                     <div class="mb-3">
                         <h5>Total Points</h5>
                         <p class="display-4 text-primary">
-                            {{ $completedTasks->sum('points') - $revokedTasks->sum('points') }}
+                            {{ max(0, $completedTasks->sum('points') - $revokedTasks->sum('points')) }}
                         </p>
                     </div>
                     
