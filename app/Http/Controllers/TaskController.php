@@ -476,4 +476,33 @@ class TaskController extends Controller
         // 所以这个方法需要结合其他方式使用
         return null; // 目前暂时返回null，因为我们无法在不知道用户ID的情况下确定是哪个用户
     }
+    
+    public function userProfile($telegramUserId)
+    {
+        $telegramUser = TelegramUser::find($telegramUserId);
+        
+        if (!$telegramUser) {
+            abort(404, 'User not found');
+        }
+        
+        // 获取用户完成的任务统计
+        $completedTasksCount = UserTask::where('telegram_user_id', $telegramUserId)
+            ->where('task_status', 'completed')
+            ->count();
+            
+        $revokedTasksCount = UserTask::where('telegram_user_id', $telegramUserId)
+            ->where('task_status', 'revoked')
+            ->count();
+            
+        $totalPoints = UserTask::where('telegram_user_id', $telegramUserId)
+            ->whereIn('task_status', ['completed', 'revoked'])
+            ->get()
+            ->sum(function ($task) {
+                return $task->effective_points;
+            });
+            
+        $totalPoints = max(0, $totalPoints); // 确保积分不为负数
+        
+        return view('user.profile', compact('telegramUser', 'completedTasksCount', 'revokedTasksCount', 'totalPoints'));
+    }
 }

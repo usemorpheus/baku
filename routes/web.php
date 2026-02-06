@@ -18,6 +18,7 @@ Route::middleware('web')->prefix('tasks')->name('tasks.')->group(function () {
     Route::post('{userTaskId}/verify', [TaskController::class, 'submitVerification'])->name('verify');
     Route::get('points', [TaskController::class, 'getUserPoints'])->name('points');
     Route::get('verify-auth', [TaskController::class, 'verifyAuth'])->name('verify-auth');
+    Route::get('{telegramUserId}/profile', [TaskController::class, 'userProfile'])->name('user-profile');
 });
 
 // 特定的Telegram任务路由，可以从Telegram bot链接直接访问

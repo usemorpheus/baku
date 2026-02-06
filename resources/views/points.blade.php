@@ -46,7 +46,13 @@
                     <td class="text-center">{{ number_format($total_points) }}</td>
                     <td class="text-center">{{ $completed_tasks_count }}</td>
                     <td class="text-end">
-                        <a href="#" class="btn btn-sm btn-outline-primary">View Profile</a>
+                        @if($user)
+                            <a href="{{ route('tasks.user-profile', ['telegramUserId' => $user->id]) }}" class="btn btn-sm btn-outline-secondary" style="border-radius: 8px; padding: 4px 12px; font-size: 12px; border-color: #dee2e6;">
+                                <i class="la la-user"></i> View Profile
+                            </a>
+                        @else
+                            <span class="text-muted" style="font-size: 12px;">Profile unavailable</span>
+                        @endif
                     </td>
                 </tr>
             @empty

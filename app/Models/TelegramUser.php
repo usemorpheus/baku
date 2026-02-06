@@ -31,6 +31,13 @@ class TelegramUser extends Model
     {
         return 'data';
     }
+    
+    public function getMetaAttribute()
+    {
+        $field = $this->getMetaField();
+        $value = $this->attributes[$field] ?? null;
+        return to_json($value ?: []);
+    }
 
     public function chats(): BelongsToMany
     {
@@ -40,5 +47,10 @@ class TelegramUser extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(TelegramMessage::class, 'telegram_user_id');
+    }
+    
+    public function userTasks(): HasMany
+    {
+        return $this->hasMany(\App\Models\UserTask::class, 'telegram_user_id');
     }
 }
