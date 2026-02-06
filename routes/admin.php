@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TelegramChatController;
 use App\Http\Controllers\Admin\TelegramMessageController;
 use App\Http\Controllers\Admin\TelegramUserController;
+use App\Http\Controllers\Admin\TaskTypeController;
 
 Route::group([
     'prefix'     => config('merlion.admin.route.prefix'),
@@ -27,5 +28,6 @@ Route::group([
         Route::resource('telegram-messages', TelegramMessageController::class);
         Route::resource('settings', SettingController::class);
         Route::resource('metrics', MetricController::class);
+        Route::resource('task-types', TaskTypeController::class);
     });
 });

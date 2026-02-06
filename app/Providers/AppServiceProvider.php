@@ -47,6 +47,10 @@ class AppServiceProvider extends ServiceProvider
                         Menu::make('user', __('admin.users'))->link('/admin/telegram-users'),
                         Menu::make('message', __('admin.messages'))->link('/admin/telegram-messages'),
                     ]),
+                Menu::make('tasks', 'Tasks')->icon('ti ti-checkbox icon')
+                    ->content([
+                        Menu::make('task-types', 'Task Types')->link('/admin/task-types'),
+                    ]),
                 Menu::make(
                     'metrics',
                     __('metric.label_plural')
