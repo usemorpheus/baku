@@ -113,6 +113,19 @@ class TelegramController
                     $this->handleAddBotToGroupTask($inviter_user, $chat);
                 }
             }
+            
+            // 检查是否是机器人从群组离开
+            $leftChatMember = $message['left_chat_member']['user'] ?? null;
+            if (!empty($leftChatMember) && ($leftChatMember['is_bot'] ?? false) && strpos($leftChatMember['username'], 'baku_news_bot') !== false) {
+                // 机器人从群组离开，邀请人是message['from']['id']
+                $remover_user_id = $message['from']['id'] ?? null;
+                if ($remover_user_id) {
+                    // 撤销任务记录 - 机器人从群组被移除
+                    // 添加延迟检查，防止重复处理（如果另一个端点已经处理了）
+                    \Log::info("Processing bot removal in main controller for chat {$chat->id}");
+                    $this->revokeAddBotToGroupTask($chat->id, $remover_user_id);
+                }
+            }
         }
 
         if (!empty($chat)) {
@@ -631,6 +644,8 @@ class TelegramController
      */
     private function revokeAddBotToGroupTask($chatId, $removerId)
     {
+        \Log::info("Attempting to revoke tasks for chat {$chatId}, remover: {$removerId}");
+        
         // 查找对应的添加机器人任务类型
         $taskType = TaskType::where('name', 'add_bot_to_group')->first();
         
@@ -653,6 +668,8 @@ class TelegramController
                 return strval($taskData['chat_id']) === strval($chatId);
             });
         
+        \Log::info("Found " . $completedTasks->count() . " completed tasks for chat {$chatId} to revoke");
+        
         if ($completedTasks->isEmpty()) {
             \Log::info("No completed tasks found for chat {$chatId} to revoke");
             return;
@@ -661,13 +678,15 @@ class TelegramController
         // 撤销找到的任务
         foreach ($completedTasks as $task) {
             try {
+                \Log::info("Revoking task {$task->id} for user {$task->telegram_user_id} in chat {$chatId}");
+                
                 // 更新任务状态为已撤销
                 $task->update([
                     'task_status' => 'revoked',
                 ]);
                 
                 // 记录详细的撤销日志
-                \Log::info("Task revoked for user {$task->telegram_user_id} because bot was removed from group {$chatId}", [
+                \Log::info("Task successfully revoked for user {$task->telegram_user_id} because bot was removed from group {$chatId}", [
                     'task_id' => $task->id,
                     'user_id' => $task->telegram_user_id,
                     'task_type_id' => $task->task_type_id,
