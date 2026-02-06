@@ -24,12 +24,11 @@ class CalculateRankings
                 ->orderBy('baku_score', 'desc')
                 ->get();
 
-            // 为每个指标分配排名
+            // 为每个指标分配排名（从1开始递增）
             $rank = 1;
             foreach ($metrics as $metric) {
                 $metric->update([
-                    'ranking_growth_rate' => $rank,  // 使用 ranking_growth_rate 存储实际排名
-                    'baku_index' => $rank           // baku_index 也设置为排名
+                    'baku_index' => $rank           // baku_index 设置为排名
                 ]);
                 $rank++;
             }

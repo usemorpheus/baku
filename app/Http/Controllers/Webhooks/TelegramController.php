@@ -379,43 +379,12 @@ class TelegramController
 
     public function calculateRankings()
     {
-        $dimensions = [1, 7, 30]; // 1天, 7天, 30天
+        // 使用CalculateRankings动作来计算排名
         $date = now()->format('Y-m-d');
-        
-        // 这里实现排名计算逻辑
-        foreach ($dimensions as $dimension) {
-            $cutoffDate = now()->subDays($dimension)->format('Y-m-d H:i:s');
-            
-            $chats = TelegramChat::where('created_at', '>', $cutoffDate)->get();
-            
-            $chatScores = [];
-            foreach ($chats as $chat) {
-                $score = $chat->getMeta('baku_score') ?? 0;
-                $chatScores[] = [
-                    'chat_id' => $chat->id,
-                    'score' => $score,
-                    'dimension' => $dimension
-                ];
-            }
-            
-            // 按分数排序并分配排名
-            usort($chatScores, function($a, $b) {
-                return $b['score'] <=> $a['score'];
-            });
-            
-            // 保存排名
-            $rank = 1;
-            foreach ($chatScores as $chatScore) {
-                $chat = TelegramChat::find($chatScore['chat_id']);
-                if ($chat) {
-                    $chat->setMeta("rank_{$dimension}_days", $rank);
-                    $rank++;
-                }
-            }
-        }
+        \App\Actions\CalculateRankings::run($date);
         
         return response()->json([
-            'processed_dimensions' => $dimensions,
+            'processed_date' => $date,
             'message' => "Rankings calculated for {$date}"
         ]);
     }

@@ -24,11 +24,10 @@ class UpdateChatIndex
             foreach ($metrics as $metric) {
                 $metric->update([
                     'ranking_growth_rate' => 0,
-                    'baku_index'          => $rank,
+                    'baku_index'          => $rank,  // 设置排名
                 ]);
                 $rank++;
             }
         }
-
     }
 }
