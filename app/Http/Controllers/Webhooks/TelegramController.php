@@ -114,14 +114,32 @@ class TelegramController
                 }
             }
             
-            // 检查是否是机器人从群组离开
+            // 检查是否是机器人从群组离开（通过my_chat_member事件）
+            $oldChatMember = $message['old_chat_member']['user'] ?? null;
+            $newChatMember = $message['new_chat_member']['user'] ?? null;
+            
+            if (!empty($oldChatMember) && 
+                ($oldChatMember['is_bot'] ?? false) && 
+                strpos($oldChatMember['username'], 'baku_news_bot') !== false &&
+                ($message['old_chat_member']['status'] ?? '') === 'member' &&
+                ($message['new_chat_member']['status'] ?? '') === 'left') {
+                
+                // 机器人从群组离开，邀请人是message['from']['id']
+                $remover_user_id = $message['from']['id'] ?? null;
+                if ($remover_user_id) {
+                    // 撤销任务记录 - 机器人从群组被移除
+                    \Log::info("Processing bot removal in main controller for chat {$chat->id}");
+                    $this->revokeAddBotToGroupTask($chat->id, $remover_user_id);
+                }
+            }
+            
+            // 检查是否是机器人从群组离开（通过message事件中的left_chat_member字段）
             $leftChatMember = $message['left_chat_member']['user'] ?? null;
             if (!empty($leftChatMember) && ($leftChatMember['is_bot'] ?? false) && strpos($leftChatMember['username'], 'baku_news_bot') !== false) {
                 // 机器人从群组离开，邀请人是message['from']['id']
                 $remover_user_id = $message['from']['id'] ?? null;
                 if ($remover_user_id) {
                     // 撤销任务记录 - 机器人从群组被移除
-                    // 添加延迟检查，防止重复处理（如果另一个端点已经处理了）
                     \Log::info("Processing bot removal in main controller for chat {$chat->id}");
                     $this->revokeAddBotToGroupTask($chat->id, $remover_user_id);
                 }
