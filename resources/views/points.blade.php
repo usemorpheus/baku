@@ -30,15 +30,15 @@
                     <td>
                         <div class="d-flex gap-2">
                             <img class="rounded-circle" width="30" height="30"
-                                 src="{{ $user ? $user->getMeta('photo') ?? asset('images/baku/avatar.png') : asset('images/baku/avatar.png') }}"
+                                 src="{{ $user ? ($user->getMeta('photo') ?? asset('images/baku/avatar.png')) : asset('images/baku/avatar.png') }}"
                                  onerror="this.src='{{asset('images/baku/avatar.png')}}'"
                                  alt="">
                             <div class="d-flex flex-column">
                                 <div style="font-size: 14px; font-weight: 500;">
-                                    {{ $user->first_name ?? $user->username ?? 'Unknown User' }}
+                                    {{ $user ? ($user->first_name ?? $user->username ?? 'Unknown User') : 'Unknown User' }}
                                 </div>
                                 <div style="font-size: 11px; color: #888888;">
-                                    {{ '@'.$user->username ?? '' }}
+                                    {{ $user ? ('@'.$user->username ?? '') : '' }}
                                 </div>
                             </div>
                         </div>
