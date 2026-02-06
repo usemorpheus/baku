@@ -640,10 +640,18 @@ class TelegramController
         }
         
         // 查找与此群组相关的已完成任务
+        // 由于chat_id可能以不同格式存储，我们使用更通用的查询
         $completedTasks = UserTask::where('task_type_id', $taskType->id)
             ->where('task_status', 'completed')
-            ->whereJsonContains('task_data', ['chat_id' => (string)$chatId]) // 确保chat_id匹配
-            ->get();
+            ->get()
+            ->filter(function ($task) use ($chatId) {
+                $taskData = $task->task_data;
+                if (!isset($taskData['chat_id'])) {
+                    return false;
+                }
+                // 比较chat_id，考虑数值相等性（-5145003749 == "-5145003749"）
+                return strval($taskData['chat_id']) === strval($chatId);
+            });
         
         if ($completedTasks->isEmpty()) {
             \Log::info("No completed tasks found for chat {$chatId} to revoke");
