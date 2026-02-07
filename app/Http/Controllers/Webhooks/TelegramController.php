@@ -400,8 +400,15 @@ class TelegramController
     public function saveBakuMetrics(Request $request)
     {
         try {
-            $data = $request->all();
-            Log::debug('Received metrics data from n8n:', $data);
+            $rawData = $request->all();
+            Log::debug('Received metrics data from n8n:', $rawData);
+
+            // 处理嵌套的 output 结构（来自 n8n 工作流）
+            if (isset($rawData['output']) && is_array($rawData['output'])) {
+                $data = $rawData['output'];
+            } else {
+                $data = $rawData;
+            }
 
             // 验证必要字段
             if (empty($data['telegram_chat_id']) || empty($data['dimension'])) {
