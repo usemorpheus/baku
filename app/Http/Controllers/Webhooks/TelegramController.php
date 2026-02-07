@@ -390,6 +390,110 @@ class TelegramController
         ]);
     }
 
+    /**
+     * 保存Baku社区指标数据到metrics表
+     * 处理n8n工作流发送的数据，将其转换为正确的字段名并存储到metrics表
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function saveBakuMetrics(Request $request)
+    {
+        try {
+            $data = $request->all();
+            Log::debug('Received metrics data from n8n:', $data);
+
+            // 验证必要字段
+            if (empty($data['telegram_chat_id']) || empty($data['dimension'])) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Missing required fields: telegram_chat_id or dimension'
+                ], 400);
+            }
+
+            // 字段名映射：n8n字段名 -> 数据库字段名
+            $fieldMapping = [
+                'price_change' => 'change',
+                'community_messages' => 'group_messages',
+                'voice_sessions' => 'voice_communications',
+                'build_level' => 'builder_level',
+                'baku_interactions' => 'baku_interactions',
+                'community_activities' => 'community_activities',
+                'community_sentiment' => 'community_sentiment',
+                'ranking_growth_rate' => 'ranking_growth_rate',
+                'baku_score' => 'baku_score',
+                'baku_index' => 'baku_index',
+                'market_cap' => 'market_cap',
+                'active_members' => 'active_members',
+                'key_builders' => 'key_builders',
+                'contract_address' => 'contract_address',
+                'price' => 'price',
+                'last_price' => 'last_price',
+                'last_baku_index' => 'last_baku_index'
+            ];
+
+            // 准备要保存的数据
+            $metricData = [
+                'telegram_chat_id' => $data['telegram_chat_id'],
+                'dimension' => $data['dimension'],
+                'date' => $data['date'] ?? now()->format('Y-m-d'),
+                'year' => $data['year'] ?? now()->year,
+                'month' => $data['month'] ?? now()->month,
+                'day' => $data['day'] ?? now()->day,
+            ];
+
+            // 映射字段
+            foreach ($fieldMapping as $n8nField => $dbField) {
+                if (isset($data[$n8nField])) {
+                    $metricData[$dbField] = $data[$n8nField];
+                }
+            }
+
+            // 处理total_members字段（可能需要从其他来源获取）
+            if (isset($data['total_members'])) {
+                $metricData['total_members'] = $data['total_members'];
+            }
+
+            // 处理meta字段
+            if (isset($data['meta'])) {
+                $metricData['meta'] = is_string($data['meta']) ? $data['meta'] : json_encode($data['meta']);
+            }
+
+            // 查找或创建指标记录
+            $metric = Metric::updateOrCreate(
+                [
+                    'telegram_chat_id' => $metricData['telegram_chat_id'],
+                    'dimension' => $metricData['dimension'],
+                    'date' => $metricData['date']
+                ],
+                $metricData
+            );
+
+            Log::info('Metrics saved successfully:', [
+                'chat_id' => $metricData['telegram_chat_id'],
+                'dimension' => $metricData['dimension'],
+                'metric_id' => $metric->id
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Metrics saved successfully',
+                'metric_id' => $metric->id
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to save metrics data: ' . $e->getMessage(), [
+                'exception' => $e,
+                'data' => $data
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to save metrics data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     private function handleAddBotToGroupTask($user, $chat)
     {
         // 检查用户是否已经完成了添加机器人到群组的任务

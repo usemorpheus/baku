@@ -17,6 +17,7 @@ Route::group(['middleware' => [ApiVerifyMiddleware::class]], function () {
     Route::post('webhook/messages', [TelegramController::class, 'saveMessage']);
     Route::post('webhook/add-baku', [TelegramController::class, 'addBaku']);
     Route::post('webhook/save-baku-community-data', [TelegramController::class, 'saveBakuCommunityData']);
+    Route::post('webhook/save-baku-metrics', [TelegramController::class, 'saveBakuMetrics']);
     Route::post('webhook/update-baku-market-data', [TelegramController::class, 'updateBakuMarketData']);
     Route::post('webhook/update-baku-index-data', [TelegramController::class, 'updateBakuIndexData']);
     Route::get('webhook/get-baku-metric-data', [TelegramController::class, 'getMetricData']);
