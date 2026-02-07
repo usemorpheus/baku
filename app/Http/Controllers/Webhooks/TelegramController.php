@@ -318,7 +318,7 @@ class TelegramController
     {
         $chat_id = $request->input('chat_id');
         $data = $request->input('data');
-
+        Log::debug($data);
         if ($chat_id && $data) {
             $chat = TelegramChat::find($chat_id);
             if ($chat) {
