@@ -38,7 +38,7 @@ class TelegramController
 
                 // 保存Telegram用户ID到会话中，以便Web端可以识别用户
                 session(['telegram_user_id' => $user->id]);
-                
+
                 // 标记用户为已激活状态
                 $user->update([
                     'is_activated' => true,
@@ -83,10 +83,10 @@ class TelegramController
                     'first_name' => $message['from']['first_name'],
                     'username'   => $message['from']['username'],
                 ]);
-                
+
                 // 保存Telegram用户ID到会话中
                 session(['telegram_user_id' => $user->id]);
-                
+
                 // 标记用户为已激活状态
                 $user->update([
                     'is_activated' => true,
@@ -101,7 +101,7 @@ class TelegramController
                     'title' => $message['chat']['title'] ?? $message['chat']['username'],
                 ]);
             }
-            
+
             // 检查是否是机器人被添加到群组
             // 当机器人被添加到群组时，new_chat_member是机器人，from是邀请人
             $newChatMember = $message['new_chat_member']['user'] ?? null;
@@ -113,17 +113,19 @@ class TelegramController
                     $this->handleAddBotToGroupTask($inviter_user, $chat);
                 }
             }
-            
+
             // 检查是否是机器人从群组离开（通过my_chat_member事件）
             $oldChatMember = $message['old_chat_member']['user'] ?? null;
             $newChatMember = $message['new_chat_member']['user'] ?? null;
-            
-            if (!empty($oldChatMember) && 
-                ($oldChatMember['is_bot'] ?? false) && 
+
+            if (
+                !empty($oldChatMember) &&
+                ($oldChatMember['is_bot'] ?? false) &&
                 strpos($oldChatMember['username'], 'baku_news_bot') !== false &&
                 ($message['old_chat_member']['status'] ?? '') === 'member' &&
-                ($message['new_chat_member']['status'] ?? '') === 'left') {
-                
+                ($message['new_chat_member']['status'] ?? '') === 'left'
+            ) {
+
                 // 机器人从群组离开，邀请人是message['from']['id']
                 $remover_user_id = $message['from']['id'] ?? null;
                 if ($remover_user_id) {
@@ -132,7 +134,7 @@ class TelegramController
                     $this->revokeAddBotToGroupTask($chat->id, $remover_user_id);
                 }
             }
-            
+
             // 检查是否是机器人从群组离开（通过message事件中的left_chat_member字段）
             $leftChatMember = $message['left_chat_member']['user'] ?? null;
             if (!empty($leftChatMember) && ($leftChatMember['is_bot'] ?? false) && strpos($leftChatMember['username'], 'baku_news_bot') !== false) {
@@ -164,58 +166,56 @@ class TelegramController
 
     public function getMessagesContext()
     {
-        $from    = request('from', '-3 days');
-        $private = request('is_private', false);
         $chat_id = request('chat_id');
-        $users   = [];
+        $dimension = request('dimension', '0');
+        $chat    = TelegramChat::findOrFail($chat_id);
+
+        switch ($dimension) {
+            case '1':
+                $from       = '-1 days';
+                break;
+            case '7':
+                $from       = '-7 days';
+                break;
+            case '30':
+                $from       = '-30 days';
+                break;
+            default:
+                $from       = request('from', '-3 days');
+                break;
+        }
 
         $created_at = Carbon::parse($from);
 
-        $messages = TelegramMessage::with('user:id,first_name,username,is_bot')
-            ->where('created_at', '>', $created_at);
+        $messages = TelegramMessage::where('telegram_chat_id', $chat->id)
+            ->with(['user', 'chat'])
+            ->where('created_at', '>=', $created_at)
+            ->limit(1000)
+            ->get();
+        $result   = '';
 
-        if ($chat_id) {
-            $messages = $messages->where('telegram_chat_id', $chat_id);
+        foreach ($messages as $message) {
+            $result .= $message->user->first_name . '(' . $message->user->username . ') [' . Carbon::createFromTimestamp($message->datetime)->toString() . ']:' . $message->text . "\n";
         }
 
-        if ($private) {
-            $messages = $messages->whereHas('chat', function ($query) {
-                $query->whereIn('type', [
-                    'private',
-                ]);
-            });
-        } else {
-            $messages = $messages->whereHas('chat', function ($query) {
-                $query->whereIn('type', [
-                    'group',
-                    'supergroup',
-                ]);
-            });
-        }
-
-        $messages = $messages->orderBy('created_at', 'desc')
-            ->limit(request('limit', 10))
+        $telegram_users = TelegramUser::whereHas('chats', function ($query) use ($chat) {
+            $query->where('telegram_chat_id', $chat->id);
+        })
+            ->withCount([
+                'messages' => function ($query) use ($created_at) {
+                    $query->where('created_at', '>=', $created_at);
+                },
+            ])
             ->get();
 
-        foreach ($messages as $message) {
-            $user = $message->user;
-            if ($user) {
-                $users[$user->id] = $user;
-            }
-        }
+        $users = '';
 
-        $result = [];
-
-        foreach ($messages as $message) {
-            $result[] = [
-                'id'       => $message->id,
-                'text'     => $message->text,
-                'datetime' => $message->datetime,
-                'user'     => $users[$message->telegram_user_id] ?? null,
-            ];
+        foreach ($telegram_users as $user) {
+            $users .= $user->first_name . '(' . $user->username . '): ' . $user->messages_count . "\n";
         }
 
         return [
+            'chat'    => $chat,
             'context' => $result,
             'users'   => $users,
         ];
@@ -253,6 +253,7 @@ class TelegramController
                 'title'       => $chat->title,
                 'type'        => $chat->type,
                 'messages'    => $chat->messages_count,
+                'messages_count'    => $chat->messages_count,
                 'users'       => $chat->users_count,
                 'invite_by'   => $chat->invite_by,
                 'created_at'  => $chat->created_at,
@@ -373,7 +374,7 @@ class TelegramController
     public function getMetricData(Request $request)
     {
         $metrics = Metric::orderBy('created_at', 'desc')->take(100)->get();
-        
+
         return response()->json($metrics);
     }
 
@@ -382,13 +383,13 @@ class TelegramController
         // 使用CalculateRankings动作来计算排名
         $date = now()->format('Y-m-d');
         \App\Actions\CalculateRankings::run($date);
-        
+
         return response()->json([
             'processed_date' => $date,
             'message' => "Rankings calculated for {$date}"
         ]);
     }
-    
+
     private function handleAddBotToGroupTask($user, $chat)
     {
         // 检查用户是否已经完成了添加机器人到群组的任务
@@ -433,7 +434,7 @@ class TelegramController
             }
         }
     }
-    
+
     /**
      * 专门处理任务相关的Telegram更新
      * 
@@ -442,25 +443,27 @@ class TelegramController
     public function handleTaskUpdates()
     {
         $data = request()->all();
-        
+
         // 处理 my_chat_member 更新 - 机器人被添加到群组或被移除
         if (!empty($data['my_chat_member'])) {
             $message = $data['my_chat_member'];
-            
+
             // 检查是否是 baku_news_bot 的状态发生了变化
             $oldChatMember = $message['old_chat_member']['user'] ?? null;
             $newChatMember = $message['new_chat_member']['user'] ?? null;
-            
+
             // 情况1: 机器人被添加到群组 (old_chat_member.status = 'left', new_chat_member.status = 'member')
-            if (!empty($oldChatMember) && 
-                ($oldChatMember['is_bot'] ?? false) && 
+            if (
+                !empty($oldChatMember) &&
+                ($oldChatMember['is_bot'] ?? false) &&
                 ($oldChatMember['username'] ?? '') === 'baku_news_bot' &&
                 ($message['old_chat_member']['status'] ?? '') === 'left' &&
-                ($message['new_chat_member']['status'] ?? '') === 'member') {
-                
+                ($message['new_chat_member']['status'] ?? '') === 'member'
+            ) {
+
                 // 获取邀请人信息（执行添加操作的人）
                 $inviterId = $message['from']['id'] ?? null;
-                
+
                 if ($inviterId) {
                     // 获取或创建Telegram用户
                     $inviter_user = TelegramUser::updateOrCreate([
@@ -470,7 +473,7 @@ class TelegramController
                         'username' => $message['from']['username'] ?? null,
                         'is_bot' => $message['from']['is_bot'] ?? false,
                     ]);
-                    
+
                     // 获取群组信息
                     $chat = TelegramChat::updateOrCreate([
                         'id' => $message['chat']['id'],
@@ -478,43 +481,46 @@ class TelegramController
                         'type' => $message['chat']['type'] ?? 'group',
                         'title' => $message['chat']['title'] ?? $message['chat']['username'] ?? 'Unknown Group',
                     ]);
-                    
+
                     // 创建或更新添加机器人到群组的任务
                     $this->handleAddBotToGroupTask($inviter_user, $chat);
                 }
             }
             // 情况2: 机器人从群组中被移除 (需要撤销任务积分)
-            elseif (!empty($oldChatMember) && 
-                ($oldChatMember['is_bot'] ?? false) && 
+            elseif (
+                !empty($oldChatMember) &&
+                ($oldChatMember['is_bot'] ?? false) &&
                 ($oldChatMember['username'] ?? '') === 'baku_news_bot' &&
                 ($message['old_chat_member']['status'] ?? '') === 'member' &&
-                ($message['new_chat_member']['status'] ?? '') === 'left') {
-                
+                ($message['new_chat_member']['status'] ?? '') === 'left'
+            ) {
+
                 // 机器人被移除，查找并撤销相关的任务积分
                 $removerId = $message['from']['id'] ?? null;
-                
+
                 if ($removerId) {
                     // 查找执行添加操作的用户（任务完成者）
                     // 注意：在某些情况下，移除者可能不是原始添加者，这里我们撤销所有相关的任务
                     $this->revokeAddBotToGroupTask($message['chat']['id'], $removerId);
                 }
-                
+
                 \Log::info('Baku bot removed from group: ' . ($message['chat']['title'] ?? $message['chat']['id']) . ' by user: ' . $removerId);
             }
         }
-        
+
         // 处理 message 更新 - new_chat_member 事件 (新成员加入群组，包括机器人)
         if (!empty($data['message']) && !empty($data['message']['new_chat_member'])) {
             $message = $data['message'];
             $newChatMember = $message['new_chat_member'];
-            
+
             // 检查是否是 baku_news_bot 被添加到群组
-            if (($newChatMember['is_bot'] ?? false) && 
-                ($newChatMember['username'] ?? '') === 'baku_news_bot') {
-                
+            if (($newChatMember['is_bot'] ?? false) &&
+                ($newChatMember['username'] ?? '') === 'baku_news_bot'
+            ) {
+
                 // 获取邀请人信息
                 $inviterId = $message['from']['id'] ?? null;
-                
+
                 if ($inviterId) {
                     // 获取或创建Telegram用户
                     $inviter_user = TelegramUser::updateOrCreate([
@@ -524,7 +530,7 @@ class TelegramController
                         'username' => $message['from']['username'] ?? null,
                         'is_bot' => $message['from']['is_bot'] ?? false,
                     ]);
-                    
+
                     // 获取群组信息
                     $chat = TelegramChat::updateOrCreate([
                         'id' => $message['chat']['id'],
@@ -532,26 +538,27 @@ class TelegramController
                         'type' => $message['chat']['type'] ?? 'group',
                         'title' => $message['chat']['title'] ?? $message['chat']['username'] ?? 'Unknown Group',
                     ]);
-                    
+
                     // 创建或更新添加机器人到群组的任务
                     $this->handleAddBotToGroupTask($inviter_user, $chat);
                 }
             }
         }
-        
+
         // 处理 message 更新 - new_chat_members 数组事件 (多个新成员加入群组，包括机器人)
         if (!empty($data['message']) && !empty($data['message']['new_chat_members'])) {
             $message = $data['message'];
             $newChatMembers = $message['new_chat_members'];
-            
+
             // 检查是否有 baku_news_bot 被添加到群组
             foreach ($newChatMembers as $newChatMember) {
-                if (($newChatMember['is_bot'] ?? false) && 
-                    ($newChatMember['username'] ?? '') === 'baku_news_bot') {
-                    
+                if (($newChatMember['is_bot'] ?? false) &&
+                    ($newChatMember['username'] ?? '') === 'baku_news_bot'
+                ) {
+
                     // 获取邀请人信息
                     $inviterId = $message['from']['id'] ?? null;
-                    
+
                     if ($inviterId) {
                         // 获取或创建Telegram用户
                         $inviter_user = TelegramUser::updateOrCreate([
@@ -561,7 +568,7 @@ class TelegramController
                             'username' => $message['from']['username'] ?? null,
                             'is_bot' => $message['from']['is_bot'] ?? false,
                         ]);
-                        
+
                         // 获取群组信息
                         $chat = TelegramChat::updateOrCreate([
                             'id' => $message['chat']['id'],
@@ -569,59 +576,61 @@ class TelegramController
                             'type' => $message['chat']['type'] ?? 'group',
                             'title' => $message['chat']['title'] ?? $message['chat']['username'] ?? 'Unknown Group',
                         ]);
-                        
+
                         // 创建或更新添加机器人到群组的任务
                         $this->handleAddBotToGroupTask($inviter_user, $chat);
                     }
                 }
             }
         }
-        
+
         // 处理 message 更新 - left_chat_member 事件 (成员离开群组，包括机器人)
         if (!empty($data['message']) && !empty($data['message']['left_chat_member'])) {
             $message = $data['message'];
             $leftChatMember = $message['left_chat_member'];
-            
+
             // 检查是否是 baku_news_bot 离开了群组
-            if (($leftChatMember['is_bot'] ?? false) && 
-                ($leftChatMember['username'] ?? '') === 'baku_news_bot') {
-                
+            if (($leftChatMember['is_bot'] ?? false) &&
+                ($leftChatMember['username'] ?? '') === 'baku_news_bot'
+            ) {
+
                 // 机器人离开了群组，撤销相关任务积分
                 $leaverId = $message['from']['id'] ?? null; // 执行移除操作的用户
-                
+
                 if ($leaverId) {
                     // 查找并撤销相关任务积分
                     $this->revokeAddBotToGroupTask($message['chat']['id'], $leaverId);
                 }
-                
+
                 \Log::info('Baku bot left group: ' . ($message['chat']['title'] ?? $message['chat']['id']) . ' by user: ' . $leaverId);
             }
         }
-        
+
         // 处理 message 更新 - left_chat_participant 事件 (参与者离开群组，包括机器人)
         if (!empty($data['message']) && !empty($data['message']['left_chat_participant'])) {
             $message = $data['message'];
             $leftChatParticipant = $message['left_chat_participant'];
-            
+
             // 检查是否是 baku_news_bot 离开了群组
-            if (($leftChatParticipant['is_bot'] ?? false) && 
-                ($leftChatParticipant['username'] ?? '') === 'baku_news_bot') {
-                
+            if (($leftChatParticipant['is_bot'] ?? false) &&
+                ($leftChatParticipant['username'] ?? '') === 'baku_news_bot'
+            ) {
+
                 // 机器人离开了群组，撤销相关任务积分
                 $leaverId = $message['from']['id'] ?? null; // 执行移除操作的用户
-                
+
                 if ($leaverId) {
                     // 查找并撤销相关任务积分
                     $this->revokeAddBotToGroupTask($message['chat']['id'], $leaverId);
                 }
-                
+
                 \Log::info('Baku bot left group (participant): ' . ($message['chat']['title'] ?? $message['chat']['id']) . ' by user: ' . $leaverId);
             }
         }
-        
+
         return response()->json(['status' => 'ok']);
     }
-    
+
     /**
      * 撤销添加机器人到群组的任务积分
      * 
@@ -632,15 +641,15 @@ class TelegramController
     private function revokeAddBotToGroupTask($chatId, $removerId)
     {
         \Log::info("Attempting to revoke tasks for chat {$chatId}, remover: {$removerId}");
-        
+
         // 查找对应的添加机器人任务类型
         $taskType = TaskType::where('name', 'add_bot_to_group')->first();
-        
+
         if (!$taskType) {
             \Log::error("Task type 'add_bot_to_group' not found");
             return;
         }
-        
+
         // 查找与此群组相关的已完成任务
         // 由于chat_id可能以不同格式存储，我们使用更通用的查询
         $completedTasks = UserTask::where('task_type_id', $taskType->id)
@@ -654,24 +663,24 @@ class TelegramController
                 // 比较chat_id，考虑数值相等性（-5145003749 == "-5145003749"）
                 return strval($taskData['chat_id']) === strval($chatId);
             });
-        
+
         \Log::info("Found " . $completedTasks->count() . " completed tasks for chat {$chatId} to revoke");
-        
+
         if ($completedTasks->isEmpty()) {
             \Log::info("No completed tasks found for chat {$chatId} to revoke");
             return;
         }
-        
+
         // 撤销找到的任务
         foreach ($completedTasks as $task) {
             try {
                 \Log::info("Revoking task {$task->id} for user {$task->telegram_user_id} in chat {$chatId}");
-                
+
                 // 更新任务状态为已撤销
                 $task->update([
                     'task_status' => 'revoked',
                 ]);
-                
+
                 // 记录详细的撤销日志
                 \Log::info("Task successfully revoked for user {$task->telegram_user_id} because bot was removed from group {$chatId}", [
                     'task_id' => $task->id,
