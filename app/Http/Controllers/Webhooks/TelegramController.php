@@ -449,16 +449,68 @@ class TelegramController
                 'day' => $data['day'] ?? now()->day,
             ];
 
-            // 映射字段
+            // 映射字段并处理数据类型转换
             foreach ($fieldMapping as $n8nField => $dbField) {
                 if (isset($data[$n8nField])) {
-                    $metricData[$dbField] = $data[$n8nField];
+                    $value = $data[$n8nField];
+                    
+                    // 处理 "Not directly available" 字符串，转换为 null 或默认值
+                    if ($value === 'Not directly available' || $value === 'null' || $value === '') {
+                        $value = null;
+                    }
+                    
+                    // 根据数据库字段类型进行转换
+                    switch ($dbField) {
+                        case 'change':
+                        case 'price':
+                        case 'last_price':
+                        case 'market_cap':
+                            // numeric 类型字段：尝试转换为数字，失败则设为 null
+                            if ($value !== null && is_numeric($value)) {
+                                $metricData[$dbField] = (float)$value;
+                            } else {
+                                $metricData[$dbField] = null;
+                            }
+                            break;
+                            
+                        case 'group_messages':
+                        case 'voice_communications':
+                        case 'builder_level':
+                        case 'baku_interactions':
+                        case 'community_activities':
+                        case 'community_sentiment':
+                        case 'ranking_growth_rate':
+                        case 'baku_score':
+                        case 'baku_index':
+                        case 'active_members':
+                        case 'key_builders':
+                        case 'total_members':
+                            // integer 类型字段：尝试转换为整数，失败则设为 0 或 null
+                            if ($value !== null && is_numeric($value)) {
+                                $metricData[$dbField] = (int)$value;
+                            } else {
+                                $metricData[$dbField] = 0; // 或者设为 null，根据业务需求
+                            }
+                            break;
+                            
+                        default:
+                            // string 类型字段：保持原样
+                            $metricData[$dbField] = $value;
+                            break;
+                    }
                 }
             }
 
             // 处理total_members字段（可能需要从其他来源获取）
             if (isset($data['total_members'])) {
-                $metricData['total_members'] = $data['total_members'];
+                $value = $data['total_members'];
+                if ($value === 'Not directly available' || $value === 'null' || $value === '') {
+                    $metricData['total_members'] = 0;
+                } elseif (is_numeric($value)) {
+                    $metricData['total_members'] = (int)$value;
+                } else {
+                    $metricData['total_members'] = 0;
+                }
             }
 
             // 处理meta字段
