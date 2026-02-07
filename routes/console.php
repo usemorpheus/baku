@@ -6,7 +6,7 @@ use App\Actions\CalculateRankings;
 
 // 每日更新Baku社区数据
 Schedule::call(function () {
-    UpdateBakuCommunity::run();
+    // UpdateBakuCommunity::run();
 })->dailyAt('00:00');
 
 // 每日计算排名
