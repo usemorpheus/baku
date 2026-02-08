@@ -47,7 +47,7 @@
                                 <td>
                                     @if($user)
                                         {{ $user->first_name ?? $user->username ?? 'N/A' }}
-                                        @if($user->username)<br><small>@{{ $user->username }}</small>@endif
+                                        @if($user->username)<br><small>{{ '@' . $user->username }}</small>@endif
                                         <br><small class="text-muted">{{ $task->telegram_user_id }}</small>
                                     @else
                                         <span class="text-muted">—</span>
