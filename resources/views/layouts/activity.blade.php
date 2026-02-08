@@ -129,3 +129,75 @@
     </style>
     <link rel="stylesheet" href="{{asset('assets/baku/news.css')}}">
 @endpush
+
+@push('scripts')
+<style>
+.custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+.modal-content { background: white; border-radius: 12px; max-width: 500px; width: 90%; padding: 30px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); position: relative; }
+.modal-header { margin-bottom: 20px; }
+.modal-title { font-size: 1.5rem; font-weight: bold; color: #292521; margin: 0; }
+.modal-body { margin-bottom: 25px; color: #6D6561; line-height: 1.6; }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; }
+.btn-modal { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s ease; }
+.btn-primary-modal { background-color: #E67300; color: white; }
+.btn-primary-modal:hover { background-color: #cc6400; }
+.btn-secondary-modal { background-color: #f8f9fa; color: #292521; border: 1px solid #dee2e6; }
+.btn-secondary-modal:hover { background-color: #e9ecef; }
+.modal-close { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6D6561; }
+.modal-close:hover { color: #292521; }
+</style>
+<div id="customModal" class="custom-modal" style="display: none;">
+    <div class="modal-content">
+        <button class="modal-close">&times;</button>
+        <div class="modal-header"><h4 class="modal-title">Connect to Telegram Bot</h4></div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer" id="modalFooter"></div>
+    </div>
+</div>
+<script>
+function showModal(title, body, buttons) {
+    var modal = document.getElementById('customModal');
+    var modalTitle = modal.querySelector('.modal-title');
+    var modalBody = document.getElementById('modalBody');
+    var modalFooter = document.getElementById('modalFooter');
+    modalTitle.textContent = title;
+    modalBody.innerHTML = body;
+    modalFooter.innerHTML = '';
+    buttons.forEach(function(button) {
+        var btn = document.createElement('button');
+        btn.className = 'btn-modal ' + button.style;
+        btn.textContent = button.text;
+        btn.onclick = button.onClick;
+        modalFooter.appendChild(btn);
+    });
+    modal.style.display = 'flex';
+}
+function hideModal() { document.getElementById('customModal').style.display = 'none'; }
+document.querySelector('#customModal .modal-close').addEventListener('click', hideModal);
+document.getElementById('customModal').addEventListener('click', function(e) { if (e.target === this) hideModal(); });
+function checkAndNavigateToTasks() {
+    fetch('/tasks/verify-auth', { method: 'GET', headers: { 'Content-Type': 'application/json' } })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.authenticated) { window.location.href = '/tasks'; }
+            else {
+                showModal('Connect to Telegram Bot', 'To access tasks, you need to connect with our Telegram bot first. Simply send any message (like "hi" or "/start") to the bot.', [
+                    { text: 'Cancel', style: 'btn-secondary-modal', onClick: hideModal },
+                    { text: 'Open Bot', style: 'btn-primary-modal', onClick: function() {
+                        window.open('https://t.me/baku_news_bot', '_blank');
+                        showModal('Next Steps', '1. Send any message to the bot (e.g. "hi" or "/start")<br>2. Return to this page<br>3. Click the task button again to access your personalized tasks', [
+                            { text: 'OK', style: 'btn-primary-modal', onClick: hideModal }
+                        ]);
+                    }}
+                ]);
+            }
+        })
+        .catch(function() {
+            showModal('Connection Required', 'Please connect with Telegram bot first. Start a conversation with @baku_news_bot.', [
+                { text: 'Cancel', style: 'btn-secondary-modal', onClick: hideModal },
+                { text: 'Open Bot', style: 'btn-primary-modal', onClick: function() { window.open('https://t.me/baku_news_bot', '_blank'); hideModal(); } }
+            ]);
+        });
+}
+</script>
+@endpush
