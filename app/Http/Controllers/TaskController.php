@@ -203,10 +203,10 @@ class TaskController extends Controller
 
     private function verifyTwitterFollow(UserTask $userTask)
     {
-        // 从任务数据中获取用户的Twitter用户名
-        $twitterUsername = $userTask->task_data['twitter_username'] ?? null;
-        
-        if (!$twitterUsername) {
+        $taskData = is_array($userTask->task_data) ? $userTask->task_data : (array) $userTask->task_data;
+        $twitterUsername = $taskData['twitter_username'] ?? null;
+
+        if (!$twitterUsername || !is_string($twitterUsername) || trim($twitterUsername) === '') {
             return [
                 'success' => false,
                 'message' => 'Please provide your Twitter username for verification',
@@ -214,11 +214,13 @@ class TaskController extends Controller
             ];
         }
 
+        $twitterUsername = trim($twitterUsername);
+        $targetUsername = config('services.twitter.follow_target', 'Baku_builders');
+
         try {
-            // 使用Twitter验证服务检查关注状态
             $isFollowing = $this->twitterService->verifyFollow(
                 $twitterUsername,
-                'Baku_builders'  // 目标账户
+                $targetUsername
             );
 
             if ($isFollowing) {
@@ -273,15 +275,20 @@ class TaskController extends Controller
         $userTask = UserTask::where('id', $userTaskId)
             ->where('telegram_user_id', $telegramUserId)
             ->firstOrFail();
-        
+
+        $mergedTaskData = array_merge($userTask->task_data ?? [], $request->all());
+
         // 根据任务类型更新任务数据
         $updateData = [
             'task_status' => 'pending',
-            'task_data' => array_merge($userTask->task_data ?? [], $request->all())
+            'task_data' => $mergedTaskData,
         ];
-        
-        // 如果是Twitter任务，尝试验证
+
+        $verificationResult = ['message' => 'Verification data submitted. Please wait for review.'];
+
+        // 如果是关注 Twitter 任务，使用合并后的 task_data 尝试验证（确保使用用户刚提交的 twitter_username）
         if ($userTask->taskType->name === 'follow_twitter' && isset($request->twitter_username)) {
+            $userTask->task_data = $mergedTaskData;
             $verificationResult = $this->verifyTwitterFollow($userTask);
             if ($verificationResult['success']) {
                 $updateData['task_status'] = 'completed';
@@ -289,20 +296,24 @@ class TaskController extends Controller
                 $updateData['completed_at'] = now();
             }
         }
-        
-        // 如果是Twitter转发任务，尝试验证
+
+        // 如果是 Twitter 转发任务，尝试验证（使用合并后的 task_data）
         if ($userTask->taskType->name === 'retweet_post' && isset($request->tweet_url)) {
-            $verificationResult = $this->verifyRetweet($userTask);
-            if ($verificationResult['success']) {
+            $userTask->task_data = $mergedTaskData;
+            $retweetVerified = $this->verifyRetweet($userTask);
+            $verificationResult = $retweetVerified
+                ? ['message' => 'Retweet task verified successfully']
+                : ['message' => 'Retweet task requires manual verification'];
+            if ($retweetVerified) {
                 $updateData['task_status'] = 'completed';
                 $updateData['verified_at'] = now();
                 $updateData['completed_at'] = now();
             }
         }
-        
+
         $userTask->update($updateData);
 
-        return redirect()->back()->with('status', $verificationResult['message'] ?? 'Verification data submitted. Please wait for review.');
+        return redirect()->back()->with('status', $verificationResult['message']);
     }
 
     public function getUserPoints(Request $request)

@@ -13,7 +13,7 @@ class TwitterVerificationService
 
     public function __construct()
     {
-        // 使用环境变量或配置文件中的Twitter API凭据
+        // 所有凭据从 .env 经 config('services.twitter.*') 读取
         $this->apiKey = config('services.twitter.client_id');
         $this->apiSecret = config('services.twitter.client_secret');
         $this->accessToken = config('services.twitter.access_token');
@@ -30,15 +30,18 @@ class TwitterVerificationService
     public function verifyFollow(string $followerUsername, string $targetUsername): bool
     {
         try {
-            // 检查是否配置了Twitter API凭据
             $bearerToken = config('services.twitter.bearer_token');
-            
-            if (!$bearerToken) {
-                // 如果没有API凭据，返回false，表示需要手动验证
+            if (empty($bearerToken)) {
                 return false;
             }
-            
-            // 实际的Twitter API调用
+
+            $followerUsername = trim($followerUsername);
+            $targetUsername = trim($targetUsername);
+            if ($followerUsername === '' || $targetUsername === '') {
+                return false;
+            }
+
+            // Twitter API v2：GET users/by/username 使用 Bearer Token 可用
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $bearerToken,
             ])->get("https://api.twitter.com/2/users/by/username/{$followerUsername}");
@@ -55,11 +58,11 @@ class TwitterVerificationService
                     $targetUserData = $followResponse->json();
                     $targetUserId = $targetUserData['data']['id'];
                     
-                    // 检查关注关系
+                    // 检查关注关系（此接口需要 User Context，仅 Bearer Token 可能返回 403，届时走手动验证）
                     $checkResponse = Http::withHeaders([
                         'Authorization' => 'Bearer ' . $bearerToken,
                     ])->get("https://api.twitter.com/2/users/{$userId}/following?user.fields=id,username&max_results=1000");
-                    
+
                     if ($checkResponse->successful()) {
                         $followingData = $checkResponse->json();
                         if (isset($followingData['data'])) {
@@ -143,12 +146,14 @@ class TwitterVerificationService
      */
     private function extractTweetId(string $tweetUrl): ?string
     {
-        // 匹配Twitter URL模式提取推文ID
-        $pattern = '/twitter\.com\/[^\/]+\/status\/(\d+)/';
-        if (preg_match($pattern, $tweetUrl, $matches)) {
-            return $matches[1];
+        $tweetUrl = trim($tweetUrl);
+        // 支持 twitter.com 与 x.com
+        if (preg_match('/twitter\.com\/[^\/]+\/status\/(\d+)/', $tweetUrl, $m)) {
+            return $m[1];
         }
-        
+        if (preg_match('/x\.com\/[^\/]+\/status\/(\d+)/', $tweetUrl, $m)) {
+            return $m[1];
+        }
         return null;
     }
 }

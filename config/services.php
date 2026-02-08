@@ -45,5 +45,6 @@ return [
         'access_token' => env('TWITTER_ACCESS_TOKEN'),
         'access_secret' => env('TWITTER_ACCESS_SECRET'),
         'bearer_token' => env('TWITTER_BEARER_TOKEN'),
+        'follow_target' => env('TWITTER_FOLLOW_TARGET', 'Baku_builders'),
     ]
 ];
