@@ -22,8 +22,8 @@ class PendingVerificationController
                 return !empty($data['under_review']);
             });
 
-        admin()->pageTitle(__('admin.manual_verification'))
-            ->title(__('admin.manual_verification'))
+        admin()->pageTitle('Manual verification')
+            ->title('Manual verification')
             ->content(view('admin.pending-verifications.index', [
                 'pendingTasks' => $pendingTasks,
             ])->render());

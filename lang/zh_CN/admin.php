@@ -6,5 +6,4 @@ return [
     'chats'     => '对话',
     'users'     => '用户',
     'messages'  => '消息',
-    'manual_verification' => '人工审核',
 ];

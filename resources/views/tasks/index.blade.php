@@ -93,28 +93,28 @@
                                     @if($underReview)
                                         <p class="small text-primary mb-0 mt-2 d-flex align-items-center gap-1">
                                             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                            {{ __('task.verification_in_progress') }}
+                                            Verification in progress. Please wait for review.
                                         </p>
                                     @elseif($rejectionReason)
                                         <div class="alert alert-light border border-danger border-opacity-25 mt-2 mb-2 py-2 px-3 small">
-                                            <strong class="text-danger">{{ __('task.not_passed') }}:</strong> {{ $rejectionReason }}
+                                            <strong class="text-danger">Not passed:</strong> {{ $rejectionReason }}
                                         </div>
-                                        <p class="small text-muted mb-2">{{ __('task.resubmit_hint') }}</p>
+                                        <p class="small text-muted mb-2">You can correct the information and submit again.</p>
                                         @if($task->taskType->name === 'follow_twitter')
                                             <form method="POST" action="{{ route('tasks.verify', $task->id) }}" class="mt-2">
                                                 @csrf
                                                 <div class="input-group mb-2">
-                                                    <input type="text" name="twitter_username" class="form-control rounded-2" placeholder="{{ __('task.your_twitter_username') }}" value="{{ $taskData['twitter_username'] ?? '' }}" required>
-                                                    <button type="submit" class="btn btn-primary rounded-2 px-4">{{ __('task.resubmit') }}</button>
+                                                    <input type="text" name="twitter_username" class="form-control rounded-2" placeholder="Your Twitter username" value="{{ $taskData['twitter_username'] ?? '' }}" required>
+                                                    <button type="submit" class="btn btn-primary rounded-2 px-4">Resubmit</button>
                                                 </div>
                                             </form>
                                         @elseif($task->taskType->name === 'retweet_post')
                                             <form method="POST" action="{{ route('tasks.verify', $task->id) }}" class="mt-2">
                                                 @csrf
-                                                <input type="url" name="tweet_url" class="form-control rounded-2 mb-2" placeholder="{{ __('task.retweet_url') }}" value="{{ $taskData['tweet_url'] ?? '' }}" required>
+                                                <input type="url" name="tweet_url" class="form-control rounded-2 mb-2" placeholder="Retweet URL" value="{{ $taskData['tweet_url'] ?? '' }}" required>
                                                 <div class="input-group">
-                                                    <input type="text" name="twitter_username" class="form-control rounded-2" placeholder="{{ __('task.your_twitter_username') }}" value="{{ $taskData['twitter_username'] ?? '' }}" required>
-                                                    <button type="submit" class="btn btn-primary rounded-2 px-4">{{ __('task.resubmit') }}</button>
+                                                    <input type="text" name="twitter_username" class="form-control rounded-2" placeholder="Your Twitter username" value="{{ $taskData['twitter_username'] ?? '' }}" required>
+                                                    <button type="submit" class="btn btn-primary rounded-2 px-4">Resubmit</button>
                                                 </div>
                                             </form>
                                         @endif
@@ -123,22 +123,22 @@
                                             <p class="small text-muted mb-2 mt-2">Join <a href="https://t.me/bakubuilders" target="_blank">@bakubuilders</a> then click Verify.</p>
                                             <form method="POST" action="{{ route('tasks.verify', $task->id) }}" class="d-inline">
                                                 @csrf
-                                                <button type="submit" class="btn btn-primary rounded-2 px-3">{{ __('task.verify') }}</button>
+                                                <button type="submit" class="btn btn-primary rounded-2 px-3">Verify</button>
                                             </form>
                                         @elseif($task->taskType->name === 'retweet_post')
                                             <p class="small text-muted mb-2 mt-2">Submit your retweet link and Twitter username (must be the pinned tweet from @Baku_builders).</p>
                                             <form method="POST" action="{{ route('tasks.verify', $task->id) }}" class="mt-2">
                                                 @csrf
-                                                <input type="url" name="tweet_url" class="form-control rounded-2 mb-2" placeholder="{{ __('task.retweet_url') }}" value="{{ $taskData['tweet_url'] ?? '' }}" required>
-                                                <input type="text" name="twitter_username" class="form-control rounded-2 mb-2" placeholder="{{ __('task.your_twitter_username') }}" value="{{ $taskData['twitter_username'] ?? '' }}" required>
-                                                <button type="submit" class="btn btn-primary rounded-2 px-4">{{ __('task.submit_verification') }}</button>
+                                                <input type="url" name="tweet_url" class="form-control rounded-2 mb-2" placeholder="Retweet URL" value="{{ $taskData['tweet_url'] ?? '' }}" required>
+                                                <input type="text" name="twitter_username" class="form-control rounded-2 mb-2" placeholder="Your Twitter username" value="{{ $taskData['twitter_username'] ?? '' }}" required>
+                                                <button type="submit" class="btn btn-primary rounded-2 px-4">Submit verification</button>
                                             </form>
                                         @elseif($task->taskType->name === 'follow_twitter')
                                             <form method="POST" action="{{ route('tasks.verify', $task->id) }}" class="mt-2">
                                                 @csrf
                                                 <div class="input-group">
-                                                    <input type="text" name="twitter_username" class="form-control rounded-2" placeholder="{{ __('task.your_twitter_username') }}" value="{{ $taskData['twitter_username'] ?? '' }}" required>
-                                                    <button type="submit" class="btn btn-primary rounded-2 px-4">{{ __('task.submit_verification') }}</button>
+                                                    <input type="text" name="twitter_username" class="form-control rounded-2" placeholder="Your Twitter username" value="{{ $taskData['twitter_username'] ?? '' }}" required>
+                                                    <button type="submit" class="btn btn-primary rounded-2 px-4">Submit verification</button>
                                                 </div>
                                             </form>
                                         @endif
