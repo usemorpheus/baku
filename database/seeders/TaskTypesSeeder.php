@@ -36,19 +36,19 @@ class TaskTypesSeeder extends Seeder
         TaskType::create([
             'name' => 'join_telegram_channel',
             'title' => 'Join Telegram Channel',
-            'description' => 'Join our official Telegram channel',
+            'description' => 'Join the official Telegram channel @bakubuilders',
             'points_reward' => 50,
-            'verification_method' => 'manual',
-            'requirements' => json_encode(['channel_username' => 'baku_channel']),
+            'verification_method' => 'api_check',
+            'requirements' => json_encode(['channel_username' => 'bakubuilders']),
             'is_active' => true,
         ]);
 
         TaskType::create([
             'name' => 'retweet_post',
             'title' => 'Retweet Post',
-            'description' => 'Retweet a post from @Baku_builders',
+            'description' => 'Retweet the pinned tweet from @Baku_builders on Twitter/X',
             'points_reward' => 75,
-            'verification_method' => 'manual',
+            'verification_method' => 'api_check',
             'requirements' => json_encode(['must_retweet_from' => 'Baku_builders']),
             'is_active' => true,
         ]);

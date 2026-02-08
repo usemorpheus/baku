@@ -46,5 +46,7 @@ return [
         'access_secret' => env('TWITTER_ACCESS_SECRET'),
         'bearer_token' => env('TWITTER_BEARER_TOKEN'),
         'follow_target' => env('TWITTER_FOLLOW_TARGET', 'Baku_builders'),
+        /** Retweet 任务要求转发的账号（须为其置顶推文） */
+        'retweet_pinned_from' => env('TWITTER_RETWEET_PINNED_FROM', 'Baku_builders'),
     ]
 ];

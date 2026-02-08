@@ -86,52 +86,117 @@ class TwitterVerificationService
     }
     
     /**
+     * 获取指定用户的置顶推文 ID（Twitter API v2）
+     */
+    public function getPinnedTweetId(string $username): ?string
+    {
+        $bearerToken = config('services.twitter.bearer_token');
+        if (empty($bearerToken)) {
+            return null;
+        }
+        $username = trim($username);
+        if ($username === '') {
+            return null;
+        }
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $bearerToken,
+            ])->get('https://api.twitter.com/2/users/by/username/' . $username, [
+                'user.fields' => 'pinned_tweet_id',
+            ]);
+            if (!$response->successful()) {
+                return null;
+            }
+            $data = $response->json();
+            $pinnedId = $data['data']['pinned_tweet_id'] ?? null;
+            return $pinnedId ? (string) $pinnedId : null;
+        } catch (\Throwable $e) {
+            \Log::error('Twitter getPinnedTweetId error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
      * 验证推文转发
-     * 
-     * @param string $tweetUrl 推文URL
-     * @param string $userTwitterUsername 用户的Twitter用户名
+     * 当 $requiredPinnedFromUsername 非空时，要求转发的必须是该账号的置顶推文。
+     *
+     * @param string $tweetUrl 用户提交的推文 URL（应为用户自己的 RT 链接）
+     * @param string $userTwitterUsername 用户的 Twitter 用户名
+     * @param string|null $requiredPinnedFromUsername 必须转发的账号（其置顶推文），如 'Baku_builders'
      * @return bool
      */
-    public function verifyRetweet(string $tweetUrl, string $userTwitterUsername): bool
+    public function verifyRetweet(string $tweetUrl, string $userTwitterUsername, ?string $requiredPinnedFromUsername = null): bool
     {
         try {
-            // 检查是否配置了Twitter API凭据
             $bearerToken = config('services.twitter.bearer_token');
-            
-            if (!$bearerToken) {
-                // 如果没有API凭据，返回false，表示需要手动验证
+            if (empty($bearerToken)) {
                 return false;
             }
-            
-            // 从推文URL提取推文ID
+
             $tweetId = $this->extractTweetId($tweetUrl);
-            
             if (!$tweetId) {
                 return false;
             }
-            
-            // 检查推文是否为转发
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $bearerToken,
-            ])->get("https://api.twitter.com/2/tweets/{$tweetId}?expansions=author_id&user.fields=username");
-            
-            if ($response->successful()) {
-                $tweetData = $response->json();
-                
-                // 检查是否为转发（RT）
-                if (isset($tweetData['data']['text']) && 
-                    (str_starts_with($tweetData['data']['text'], 'RT @') || 
-                     str_contains($tweetData['data']['text'], 'RT @'))) {
-                    // 检查是否是目标用户转发的
-                    if (isset($tweetData['includes']['users'][0]['username'])) {
-                        $retweetedByUsername = $tweetData['includes']['users'][0]['username'];
-                        return strtolower($retweetedByUsername) === strtolower($userTwitterUsername);
-                    }
+
+            $pinnedTweetId = null;
+            if ($requiredPinnedFromUsername !== null && trim($requiredPinnedFromUsername) !== '') {
+                $pinnedTweetId = $this->getPinnedTweetId(trim($requiredPinnedFromUsername));
+                if ($pinnedTweetId === null) {
+                    return false;
                 }
             }
-            
+
+            // 请求推文时带上 referenced_tweets 与 author_id，用于判断是否为 RT 以及原推 id、作者
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $bearerToken,
+            ])->get("https://api.twitter.com/2/tweets/{$tweetId}", [
+                'tweet.fields' => 'referenced_tweets,author_id',
+                'expansions' => 'author_id',
+                'user.fields' => 'username',
+            ]);
+
+            if (!$response->successful()) {
+                return false;
+            }
+
+            $tweetData = $response->json();
+            $tweet = $tweetData['data'] ?? null;
+            if (!$tweet) {
+                return false;
+            }
+
+            // 1) 必须是转发：存在 type=retweeted 的 referenced_tweets
+            $referenced = $tweet['referenced_tweets'] ?? [];
+            $retweetedId = null;
+            foreach ($referenced as $ref) {
+                if (($ref['type'] ?? '') === 'retweeted') {
+                    $retweetedId = $ref['id'] ?? null;
+                    break;
+                }
+            }
+            if ($retweetedId === null) {
+                return false;
+            }
+
+            // 2) 若要求置顶推文，则被转发的推文 ID 必须等于该账号的置顶推文 ID
+            if ($pinnedTweetId !== null && $retweetedId !== $pinnedTweetId) {
+                return false;
+            }
+
+            // 3) 转发者必须是该用户（author_id 对应 username）
+            $authorId = $tweet['author_id'] ?? null;
+            if (!$authorId) {
+                return false;
+            }
+            $users = $tweetData['includes']['users'] ?? [];
+            foreach ($users as $u) {
+                if (($u['id'] ?? '') === $authorId) {
+                    $authorUsername = $u['username'] ?? '';
+                    return strtolower($authorUsername) === strtolower(trim($userTwitterUsername));
+                }
+            }
+
             return false;
-            
         } catch (\Exception $e) {
             \Log::error('Twitter retweet verification error: ' . $e->getMessage());
             return false;

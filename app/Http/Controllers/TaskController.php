@@ -6,6 +6,7 @@ use App\Models\TaskType;
 use App\Models\UserTask;
 use App\Models\TelegramUser;
 use App\Services\TwitterVerificationService;
+use App\Actions\Telegram\GetChatMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -177,19 +178,14 @@ class TaskController extends Controller
                 return $this->verifyTwitterFollow($userTask);
                 
             case 'join_telegram_channel':
-                // Telegram频道加入任务 - 通常是手动验证
-                return [
-                    'success' => false,
-                    'message' => 'Telegram channel join task requires manual verification',
-                    'details' => ['requires_manual_verification' => true]
-                ];
-                
+                return $this->verifyJoinTelegramChannel($userTask);
+
             case 'retweet_post':
-                // 转发推文任务 - 通常是手动验证
+                // 认领时无 tweet_url，保持待验证
                 return [
                     'success' => false,
-                    'message' => 'Retweet task requires manual verification',
-                    'details' => ['requires_manual_verification' => true]
+                    'message' => 'Please submit your retweet link and Twitter username for verification',
+                    'details' => ['requires_tweet_url_and_username' => true]
                 ];
                 
             default:
@@ -297,7 +293,7 @@ class TaskController extends Controller
             }
         }
 
-        // 如果是 Twitter 转发任务，尝试验证（使用合并后的 task_data）
+        // 如果是 Twitter 转发任务，尝试验证（须为 @Baku_builders 置顶推文）
         if ($userTask->taskType->name === 'retweet_post' && isset($request->tweet_url)) {
             $userTask->task_data = $mergedTaskData;
             $retweetVerified = $this->verifyRetweet($userTask);
@@ -305,6 +301,19 @@ class TaskController extends Controller
                 ? ['message' => 'Retweet task verified successfully']
                 : ['message' => 'Retweet task requires manual verification'];
             if ($retweetVerified) {
+                $updateData['task_status'] = 'completed';
+                $updateData['verified_at'] = now();
+                $updateData['completed_at'] = now();
+            }
+        }
+
+        // 如果是加入 Telegram 频道任务，用当前用户检查是否已在频道内
+        if ($userTask->taskType->name === 'join_telegram_channel') {
+            $channelVerified = $this->verifyJoinTelegramChannelForUser($telegramUserId);
+            $verificationResult = $channelVerified
+                ? ['message' => 'Channel join verified successfully']
+                : ['message' => 'Please join the channel @' . config('baku.telegram_channel_username', 'bakubuilders') . ' and try again'];
+            if ($channelVerified) {
                 $updateData['task_status'] = 'completed';
                 $updateData['verified_at'] = now();
                 $updateData['completed_at'] = now();
@@ -355,13 +364,44 @@ class TaskController extends Controller
         return response()->json(['points' => $totalPoints]);
     }
     
+    /**
+     * 验证用户是否已加入指定 Telegram 频道（用于认领时或提交验证时）
+     */
+    private function verifyJoinTelegramChannel(UserTask $userTask): array
+    {
+        $telegramUserId = $userTask->telegram_user_id;
+        $isMember = $this->verifyJoinTelegramChannelForUser($telegramUserId);
+        if ($isMember) {
+            return [
+                'success' => true,
+                'message' => 'Channel join verified successfully',
+                'details' => []
+            ];
+        }
+        return [
+            'success' => false,
+            'message' => 'Please join the official Telegram channel and try again',
+            'details' => ['requires_manual_verification' => true]
+        ];
+    }
+
+    /**
+     * 根据 Telegram 用户 ID 检查是否在配置的官方频道内
+     */
+    private function verifyJoinTelegramChannelForUser(string $telegramUserId): bool
+    {
+        $channel = config('baku.telegram_channel_username', 'bakubuilders');
+        $chatId = str_starts_with($channel, '@') ? $channel : '@' . $channel;
+        return GetChatMember::isMember($chatId, $telegramUserId);
+    }
+
     private function verifyRetweet(UserTask $userTask)
     {
-        // 从任务数据中获取推文URL和用户的Twitter用户名
-        $tweetUrl = $userTask->task_data['tweet_url'] ?? null;
-        $twitterUsername = $userTask->task_data['twitter_username'] ?? null;
-        
-        if (!$tweetUrl || !$twitterUsername) {
+        $taskData = is_array($userTask->task_data) ? $userTask->task_data : (array) $userTask->task_data;
+        $tweetUrl = $taskData['tweet_url'] ?? null;
+        $twitterUsername = $taskData['twitter_username'] ?? null;
+
+        if (!$tweetUrl || !$twitterUsername || trim((string) $twitterUsername) === '') {
             return [
                 'success' => false,
                 'message' => 'Please provide tweet URL and your Twitter username for verification',
@@ -369,11 +409,13 @@ class TaskController extends Controller
             ];
         }
 
+        $requiredPinnedFrom = config('services.twitter.retweet_pinned_from', 'Baku_builders');
+
         try {
-            // 使用Twitter验证服务检查转发
             $isRetweeted = $this->twitterService->verifyRetweet(
-                $tweetUrl,
-                $twitterUsername
+                trim((string) $tweetUrl),
+                trim((string) $twitterUsername),
+                $requiredPinnedFrom
             );
 
             if ($isRetweeted) {

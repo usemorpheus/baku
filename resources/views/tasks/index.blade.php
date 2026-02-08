@@ -27,9 +27,9 @@
                                         @elseif($task->name === 'follow_twitter')
                                             Follow <a href="https://x.com/Baku_builders" target="_blank">@Baku_builders</a> on Twitter.
                                         @elseif($task->name === 'join_telegram_channel')
-                                            Join our official Telegram channel.
+                                            Join the official Telegram channel <a href="https://t.me/bakubuilders" target="_blank">@bakubuilders</a>.
                                         @elseif($task->name === 'retweet_post')
-                                            Retweet a post from @Baku_builders.
+                                            Retweet the <strong>pinned tweet</strong> from <a href="https://x.com/Baku_builders" target="_blank">@Baku_builders</a> on Twitter/X, then submit the retweet link and your Twitter username.
                                         @endif
                                     </div>
                                 @endif
@@ -80,9 +80,32 @@
                         <h6>Pending Tasks</h6>
                         <ul class="list-group">
                             @forelse($pendingTasks as $task)
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>{{ $task->taskType->title }}</span>
-                                    <span class="badge bg-warning">{{ ucfirst(str_replace('_', ' ', $task->task_status)) }}</span>
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                        <span>{{ $task->taskType->title }}</span>
+                                        <span class="badge bg-warning">{{ ucfirst(str_replace('_', ' ', $task->task_status)) }}</span>
+                                    </div>
+                                    @if($task->taskType->name === 'join_telegram_channel')
+                                        <p class="small text-muted mb-2 mt-2">Join <a href="https://t.me/bakubuilders" target="_blank">@bakubuilders</a> then click Verify.</p>
+                                        <form method="POST" action="{{ route('tasks.verify', $task->id) }}" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">Verify</button>
+                                        </form>
+                                    @elseif($task->taskType->name === 'retweet_post')
+                                        <p class="small text-muted mb-2 mt-2">Submit your retweet link and Twitter username (must be the pinned tweet from @Baku_builders).</p>
+                                        <form method="POST" action="{{ route('tasks.verify', $task->id) }}" class="mt-2">
+                                            @csrf
+                                            <input type="url" name="tweet_url" class="form-control form-control-sm mb-1" placeholder="Retweet URL" required>
+                                            <input type="text" name="twitter_username" class="form-control form-control-sm mb-1" placeholder="Your Twitter username" value="{{ $task->task_data['twitter_username'] ?? '' }}" required>
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">Submit verification</button>
+                                        </form>
+                                    @elseif($task->taskType->name === 'follow_twitter')
+                                        <form method="POST" action="{{ route('tasks.verify', $task->id) }}" class="d-inline mt-2">
+                                            @csrf
+                                            <input type="text" name="twitter_username" class="form-control form-control-sm d-inline-block mb-1" style="width: 140px;" placeholder="Your Twitter username" value="{{ $task->task_data['twitter_username'] ?? '' }}">
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">Submit verification</button>
+                                        </form>
+                                    @endif
                                 </li>
                             @empty
                                 <li class="list-group-item">No pending tasks</li>
