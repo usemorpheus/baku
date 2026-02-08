@@ -16,7 +16,7 @@
                                 </a>
                             </div>
                             <div class="col-12 col-lg-5">
-                                <button class="btn btn-secondary w-100">Share</button>
+                                <a class="btn btn-secondary w-100" href="https://twitter.com/intent/tweet?text={{ rawurlencode('Baku | Web3 Community Reporter - Your voice, your reporter. Join the community: https://baku.builders/') }}" target="_blank" rel="noopener noreferrer">Share</a>
                             </div>
                         </div>
                         <div>
