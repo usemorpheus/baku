@@ -6,4 +6,5 @@ return [
     'chats'     => 'Chats',
     'users'     => 'Users',
     'messages'  => 'Messages',
+    'manual_verification' => 'Manual verification',
 ];

@@ -50,6 +50,7 @@ class AppServiceProvider extends ServiceProvider
                 Menu::make('tasks', 'Tasks')->icon('ti ti-checkbox icon')
                     ->content([
                         Menu::make('task-types', 'Task Types')->link('/admin/task-types'),
+                        Menu::make('pending-verifications', 'Manual verification')->link('/admin/pending-verifications'),
                     ]),
                 Menu::make(
                     'metrics',

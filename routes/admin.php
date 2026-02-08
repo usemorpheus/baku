@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MetricController;
+use App\Http\Controllers\Admin\PendingVerificationController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TelegramChatController;
 use App\Http\Controllers\Admin\TelegramMessageController;
@@ -29,5 +30,9 @@ Route::group([
         Route::resource('settings', SettingController::class);
         Route::resource('metrics', MetricController::class);
         Route::resource('task-types', TaskTypeController::class);
+
+        Route::get('pending-verifications', [PendingVerificationController::class, 'index'])->name('pending-verifications.index');
+        Route::post('pending-verifications/{id}/approve', [PendingVerificationController::class, 'approve'])->name('pending-verifications.approve');
+        Route::post('pending-verifications/{id}/reject', [PendingVerificationController::class, 'reject'])->name('pending-verifications.reject');
     });
 });

@@ -273,8 +273,9 @@ class TaskController extends Controller
             ->firstOrFail();
 
         $mergedTaskData = array_merge($userTask->task_data ?? [], $request->all());
+        // 提交验证时清除之前的不通过原因，便于重新审核
+        unset($mergedTaskData['rejection_reason']);
 
-        // 根据任务类型更新任务数据
         $updateData = [
             'task_status' => 'pending',
             'task_data' => $mergedTaskData,
@@ -282,7 +283,7 @@ class TaskController extends Controller
 
         $verificationResult = ['message' => 'Verification data submitted. Please wait for review.'];
 
-        // 如果是关注 Twitter 任务，使用合并后的 task_data 尝试验证（确保使用用户刚提交的 twitter_username）
+        // 关注 Twitter：先 API 验证，未通过则标记为待人工审核
         if ($userTask->taskType->name === 'follow_twitter' && isset($request->twitter_username)) {
             $userTask->task_data = $mergedTaskData;
             $verificationResult = $this->verifyTwitterFollow($userTask);
@@ -290,24 +291,31 @@ class TaskController extends Controller
                 $updateData['task_status'] = 'completed';
                 $updateData['verified_at'] = now();
                 $updateData['completed_at'] = now();
+            } else {
+                $mergedTaskData['under_review'] = true;
+                $mergedTaskData['submitted_at'] = now()->toIso8601String();
+                $updateData['task_data'] = $mergedTaskData;
             }
         }
 
-        // 如果是 Twitter 转发任务，尝试验证（须为 @Baku_builders 置顶推文）
+        // 转发推文：先 API 验证，未通过则标记为待人工审核
         if ($userTask->taskType->name === 'retweet_post' && isset($request->tweet_url)) {
             $userTask->task_data = $mergedTaskData;
             $retweetVerified = $this->verifyRetweet($userTask);
-            $verificationResult = $retweetVerified
-                ? ['message' => 'Retweet task verified successfully']
-                : ['message' => 'Retweet task requires manual verification'];
             if ($retweetVerified) {
+                $verificationResult = ['message' => 'Retweet task verified successfully'];
                 $updateData['task_status'] = 'completed';
                 $updateData['verified_at'] = now();
                 $updateData['completed_at'] = now();
+            } else {
+                $verificationResult = ['message' => 'Submitted. Under review.'];
+                $mergedTaskData['under_review'] = true;
+                $mergedTaskData['submitted_at'] = now()->toIso8601String();
+                $updateData['task_data'] = $mergedTaskData;
             }
         }
 
-        // 如果是加入 Telegram 频道任务，用当前用户检查是否已在频道内
+        // 加入 Telegram 频道：仅 API 验证
         if ($userTask->taskType->name === 'join_telegram_channel') {
             $channelVerified = $this->verifyJoinTelegramChannelForUser($telegramUserId);
             $verificationResult = $channelVerified
