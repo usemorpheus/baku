@@ -37,7 +37,7 @@
                         </div>
                     </td>
                     <td class="text-nowrap">
-                        <strong>{{$metric->market_cap}}</strong>
+                        <strong>{{ ($metric->market_cap !== null && $metric->market_cap !== '') ? '$' . number_format((float) $metric->market_cap) : '$0' }}</strong>
                     </td>
                     <td class="text-nowrap">
                         @if($metric->change > 0)
