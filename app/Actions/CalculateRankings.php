@@ -18,7 +18,7 @@ class CalculateRankings
         $dimensions = [1, 7, 30];
 
         foreach ($dimensions as $dimension) {
-            // 获取指定日期和维度的所有指标，按 baku_score 降序排列
+            // 获取指定维度的所有指标，按 baku_score 降序排列
             $metrics = Metric::where('dimension', $dimension)
                 ->orderBy('baku_score', 'desc')
                 ->get();

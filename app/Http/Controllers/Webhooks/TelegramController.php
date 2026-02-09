@@ -519,11 +519,11 @@ class TelegramController
             }
 
             // 查找或创建指标记录
+            // 只用 telegram_chat_id + dimension 作为唯一键，确保每个群每个维度只有一条记录
             $metric = Metric::updateOrCreate(
                 [
                     'telegram_chat_id' => $metricData['telegram_chat_id'],
                     'dimension' => $metricData['dimension'],
-                    'date' => $metricData['date']
                 ],
                 $metricData
             );
