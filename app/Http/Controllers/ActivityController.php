@@ -26,24 +26,16 @@ class ActivityController
         }
 
         try {
-            // 获取最新日期的数据
-            $latestDate = Metric::where('dimension', $dimension)
-                ->max('date');
-            
-            if (!$latestDate) {
-                $latestDate = now()->format('Y-m-d');
-            }
-
+            // 直接按维度获取所有群组数据（不再按日期过滤，因为每个群每个维度只有一条记录）
             $data['metrics'] = Metric::with(['chat' => function($query) {
                     $query->select('id', 'title', 'type', 'data'); // 仅选择必要的字段
                 }])
                 ->where('dimension', $dimension)
-                ->where('date', $latestDate)
                 ->orderBy('baku_index')
                 ->paginate(15) // 明确指定每页数量
                 ->appends(request()->except('page'));
 
-            $data['current_date'] = $latestDate;
+            $data['current_date'] = now()->format('Y-m-d');
         } catch (\Exception $e) {
             // 如果查询失败，记录错误并返回空集合
             \Log::error('Community metrics query failed: ' . $e->getMessage());
